@@ -126,7 +126,7 @@ public class BaseRepository<T> {
     @SuppressWarnings("unchecked")
 	public void initialize() throws XMLDBException, JAXBException, UndefinedNamespacePrefixMapper, IOException {
         Unmarshaller unmarshaller = this.context.createUnmarshaller();
-		T objects = (T) unmarshaller.unmarshal(new ClassPathResource("xml/" + this.documentId + ".xml").getFile());
+		T objects = (T) unmarshaller.unmarshal(new ClassPathResource("instances/" + this.documentId + ".xml").getFile());
         System.out.println(objects);
         this.saveAll(objects);
 	}
