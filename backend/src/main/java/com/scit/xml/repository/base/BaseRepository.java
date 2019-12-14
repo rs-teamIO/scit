@@ -1,6 +1,7 @@
 package com.scit.xml.repository.base;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -16,17 +17,17 @@ import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 
+import com.scit.xml.domain.IDomain;
 import com.scit.xml.exception.UndefinedNamespacePrefixMapper;
-import com.scit.xml.repository.base.utils.ExistAuthenticationUtilities.ExistConnectionProperties;
-import com.scit.xml.repository.base.utils.ExistConnection;
-import com.scit.xml.repository.base.utils.RepositoryUtils;
+import com.scit.xml.repository.base.utility.ExistAuthenticationUtilities.ExistConnectionProperties;
+import com.scit.xml.repository.base.utility.ExistConnection;
+import com.scit.xml.repository.base.utility.RepositoryUtils;
 
-public class BaseRepository<T> {
+public class BaseRepository<T extends IDomain> {
 
 	private final ExistConnectionProperties connection;
 	
 	protected String collectionId;
-	protected String documentId;
 	protected JAXBContext context;
 	
 	public BaseRepository(
@@ -37,7 +38,7 @@ public class BaseRepository<T> {
 		this.context = JAXBContext.newInstance("com.scit.xml.domain");
 	}
 
-    protected void saveAll(Object object) throws XMLDBException, JAXBException, UndefinedNamespacePrefixMapper {
+    protected void save(T object) throws XMLDBException, JAXBException, UndefinedNamespacePrefixMapper {
     
         // a collection of Resources stored within an XML database
         Collection collection = null;
@@ -49,8 +50,8 @@ public class BaseRepository<T> {
             System.out.println("[INFO] Retrieving the collection: " + this.collectionId);
             collection = RepositoryUtils.getOrCreateCollection(this.connection, this.collectionId);
 
-            System.out.println("[INFO] Inserting the document: " + this.documentId);
-            resource = (XMLResource) collection.createResource(this.documentId, XMLResource.RESOURCE_TYPE);
+            System.out.println("[INFO] Inserting the document: " + object.getId());
+            resource = (XMLResource) collection.createResource(object.getId().toString(), XMLResource.RESOURCE_TYPE);
 
             System.out.println("[INFO] Unmarshalling XML document to an JAXB instance: ");
 
@@ -84,14 +85,14 @@ public class BaseRepository<T> {
     }
 
 
-    protected XMLResource getResource(String collectionId, String documentId) throws Exception {
+    protected XMLResource getResource(String documentId) throws Exception {
 
         Collection collection = null;
         XMLResource resource = null;
 
         try {
-            System.out.println("[INFO] Retrieving the collection: " + collectionId);
-            collection = DatabaseManager.getCollection(this.connection.uri + collectionId, this.connection.user, this.connection.password);
+            System.out.println("[INFO] Retrieving the collection: " + this.collectionId);
+            collection = DatabaseManager.getCollection(this.connection.uri + this.collectionId, this.connection.user, this.connection.password);
             collection.setProperty(OutputKeys.INDENT, "yes");
 
             System.out.println("[INFO] Retrieving the document: " + documentId);
@@ -108,13 +109,13 @@ public class BaseRepository<T> {
         }
     }
 
-    protected Collection getCollection(String collectionId) throws Exception {
+    protected Collection getCollection() throws Exception {
 
         Collection collection = null;
 
         try {
-            System.out.println("[INFO] Retrieving the collection: " + collectionId);
-            collection = DatabaseManager.getCollection(this.connection.uri + collectionId, this.connection.user, this.connection.password);
+            System.out.println("[INFO] Retrieving the collection: " + this.collectionId);
+            collection = DatabaseManager.getCollection(this.connection.uri + this.collectionId, this.connection.user, this.connection.password);
             collection.setProperty("indent", "yes");
             return collection;
             
@@ -126,9 +127,20 @@ public class BaseRepository<T> {
     @SuppressWarnings("unchecked")
 	public void initialize() throws XMLDBException, JAXBException, UndefinedNamespacePrefixMapper, IOException {
         Unmarshaller unmarshaller = this.context.createUnmarshaller();
-		T objects = (T) unmarshaller.unmarshal(new ClassPathResource("instances/" + this.documentId + ".xml").getFile());
-        System.out.println(objects);
-        this.saveAll(objects);
+        String[] holder = this.collectionId.split("/");
+        String collectionPath = "instances/";
+    	for(int i = 3; i<holder.length; i++) {
+    		collectionPath = collectionPath+"/"+holder[i];
+    	}
+        System.out.println(holder[holder.length-1]);
+        final File folder = new ClassPathResource(collectionPath).getFile();
+        
+        for (final File fileEntry : folder.listFiles()) {
+        	System.out.println(fileEntry.getName());
+        	T objects = (T) unmarshaller.unmarshal(new ClassPathResource( collectionPath +"/" + fileEntry.getName()).getFile());
+            System.out.println(objects);
+            this.save(objects);
+        }
 	}
     
 

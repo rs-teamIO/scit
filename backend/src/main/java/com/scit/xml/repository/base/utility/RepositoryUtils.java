@@ -1,9 +1,10 @@
-package com.scit.xml.repository.base.utils;
+package com.scit.xml.repository.base.utility;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.exist.xmldb.EXistResource;
 import org.xmldb.api.DatabaseManager;
@@ -12,7 +13,7 @@ import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.CollectionManagementService;
 import org.xmldb.api.modules.XMLResource;
 
-import com.scit.xml.repository.base.utils.ExistAuthenticationUtilities.ExistConnectionProperties;
+import com.scit.xml.repository.base.utility.ExistAuthenticationUtilities.ExistConnectionProperties;
 
 public class RepositoryUtils {
 
@@ -77,6 +78,19 @@ public class RepositoryUtils {
             }
         }
     }
+    
+    public static void cleanUpResource(List<XMLResource> resources){
+    	for(XMLResource resource : resources) {
+	    	if(resource != null) {
+	            try {
+	                ((EXistResource)resource).freeResources();
+	            } catch (XMLDBException xe) {
+	                xe.printStackTrace();
+	            }
+	        }
+    	}
+    }
+    
     
     public static void cleanUpCollection(Collection collection){
     	if(collection != null) {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE user>
+<user id="1c7206ce-5bd1-47ce-8ab5-6c7e92442ae7" role="PROF">
+	<username>test</username>
+	<password>test</password>
+	<email>test@email.com</email>
+</user>

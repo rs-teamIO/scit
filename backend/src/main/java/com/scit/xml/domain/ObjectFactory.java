@@ -37,14 +37,6 @@ public class ObjectFactory {
         return new User();
     }
 
-    /**
-     * Create an instance of {@link Users }
-     * 
-     */
-    public Users createUsers() {
-        return new Users();
-    }
-
 
 
 }

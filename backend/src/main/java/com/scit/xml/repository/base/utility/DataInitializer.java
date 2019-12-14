@@ -1,4 +1,4 @@
-package com.scit.xml.repository.base.utils;
+package com.scit.xml.repository.base.utility;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

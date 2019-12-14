@@ -1,4 +1,4 @@
-package com.scit.xml.repository.base.utils;
+package com.scit.xml.repository.base.utility;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 

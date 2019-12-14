@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
     "email"
 })
 @XmlRootElement(name = "user")
-public class User {
+public class User implements IDomain {
 	
     @XmlAttribute(name = "id", required = true)
     @XmlSchemaType(name = "anyURI")
@@ -55,6 +55,18 @@ public class User {
 		this.role = role;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder("User:");
+		builder.append("\n\tId: " + id);
+		builder.append("\n\tUsername: " + username);
+		builder.append(" [" + role.toUpperCase()+"]");
+		builder.append("\n\tPassword: " + password);
+		builder.append("\n\tEmail: " + email);
+		builder.append("\n");
+		return builder.toString();
+	}
+	
 	public UUID getId() {
 		return id;
 	}

@@ -1,4 +1,4 @@
-package com.scit.xml.repository.base.utils;
+package com.scit.xml.repository.base.utility;
 
 import java.io.IOException;
 
@@ -7,7 +7,7 @@ import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Database;
 import org.xmldb.api.base.XMLDBException;
 
-import com.scit.xml.repository.base.utils.ExistAuthenticationUtilities.ExistConnectionProperties;
+import com.scit.xml.repository.base.utility.ExistAuthenticationUtilities.ExistConnectionProperties;
 
 @Component
 public class ExistConnection {
