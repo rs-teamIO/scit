@@ -47,7 +47,7 @@ public class BaseRepository<T extends IDomain> {
 		this.context = JAXBContext.newInstance("com.scit.xml.domain");
 	}
 
-    protected void save(T object) throws XMLDBException, JAXBException, UndefinedNamespacePrefixMapper {
+    public UUID save(T object) throws XMLDBException, JAXBException, UndefinedNamespacePrefixMapper {
     
         // a collection of Resources stored within an XML database
         Collection collection = null;
@@ -84,6 +84,8 @@ public class BaseRepository<T extends IDomain> {
             collection.storeResource(resource);
             
             System.out.println("[INFO] Done.");
+            
+            return object.getId();
 
         } finally {
             RepositoryUtils.cleanUpResource(resource);
