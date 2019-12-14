@@ -17,9 +17,12 @@ public class DataInitializer {
     @EventListener(ApplicationReadyEvent.class)
     private void saveXmlFiles() {
         try {
-
+        	
+        	
             userRepository.initialize();
-
+            userRepository.findAll();
+            
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

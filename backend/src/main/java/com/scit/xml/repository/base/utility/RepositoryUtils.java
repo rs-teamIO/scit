@@ -9,9 +9,11 @@ import java.util.List;
 import org.exist.xmldb.EXistResource;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.Resource;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.CollectionManagementService;
 import org.xmldb.api.modules.XMLResource;
+import org.xmldb.api.modules.XQueryService;
 
 import com.scit.xml.repository.base.utility.ExistAuthenticationUtilities.ExistConnectionProperties;
 
@@ -69,7 +71,7 @@ public class RepositoryUtils {
     }
 	
     
-    public static void cleanUpResource(XMLResource resource){
+    public static void cleanUpResource(Resource resource){
     	if(resource != null) {
             try {
                 ((EXistResource)resource).freeResources();
@@ -106,5 +108,13 @@ public class RepositoryUtils {
         byte[] allBytes = Files.readAllBytes(Paths.get(path));
         return new String(allBytes, StandardCharsets.UTF_8);
     }
+    
+    public static XQueryService initializeXQueryService(Collection collection) throws XMLDBException {
+    	XQueryService xQueryService = (XQueryService) collection.getService("XQueryService", "1.0");
+        xQueryService.setProperty("indent", "yes");
+        return xQueryService;
+    }
+    
+    
       
 }
