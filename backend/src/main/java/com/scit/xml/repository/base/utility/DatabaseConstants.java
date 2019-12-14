@@ -1,8 +1,8 @@
-package com.scit.xml.repository.base.utils;
+package com.scit.xml.repository.base.utility;
 
 public class DatabaseConstants {
 
-	public static final String USERS_DOCUMENT_ID = "users";
+	//public static final String USERS_DOCUMENT_ID = "users";
 	public static final String USERS_COLLECTION_ID = "/db/scit/users";
 	
 }
