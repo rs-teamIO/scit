@@ -18,6 +18,30 @@
         <java.version>1.8</java.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 	</properties>
+	
+	<!-- Dodato, ne znam zasto  -->
+	<repositories>
+		<repository>
+			<id>exist-db</id>
+			<url>http://repo.evolvedbinary.com/content/repositories/exist-db/</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>
+		</repository>
+		<repository>
+			<id>exist-db-snapshots</id>
+			<url>http://repo.evolvedbinary.com/content/repositories/exist-db-snapshots/</url>
+			<releases><enabled>false</enabled></releases>
+			<snapshots><enabled>true</enabled></snapshots>
+		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+		<repository>
+			<id>exist</id>
+			<url>https://raw.github.com/eXist-db/mvn-repo/master/</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 <!--		<dependency>-->
@@ -51,6 +75,33 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		
+		<!-- Dodato, exist  -->
+		<dependency>
+			<groupId>org.exist-db.thirdparty.org.xmldb</groupId>
+			<artifactId>xmldb-api</artifactId>
+			<version>1.1-patched</version>
+		</dependency>
+		<dependency>
+			<groupId>org.exist-db</groupId>
+			<artifactId>exist-core</artifactId>
+			<version>LATEST</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-xjc</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+	
+		
 	</dependencies>
 
 	<build>
