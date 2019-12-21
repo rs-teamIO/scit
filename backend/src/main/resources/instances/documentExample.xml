@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<document id="1c7206ce-5bd1-47ce-8ab5-6c7e92442ae7" role="PROF">
+<document role="PROF" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.ftn.uns.ac.rs/scit/xml/document">
 	
 	<username>test</username>
 	<password>test</password>

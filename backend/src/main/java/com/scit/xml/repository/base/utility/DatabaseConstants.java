@@ -7,11 +7,11 @@ public class DatabaseConstants {
 	
 	
 	
-	public static final String PAPERS = "papers/paper";
+	public static final String PAPER = "papers/paper";
 	
-	public static final String COVER_LETTERS = "cover_letters/cover_letter";
+	public static final String COVER_LETTER = "cover_letters/cover_letter";
 	
-	public static final String REVIEWS = "reviews/review";
+	public static final String REVIEW = "reviews/review";
 
 
 	

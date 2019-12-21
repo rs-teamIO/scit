@@ -1,5 +1,9 @@
 package com.scit.xml.repository.base;
 
+import static com.scit.xml.repository.base.utility.XUpdateTemplate.REMOVE;
+import static com.scit.xml.repository.base.utility.XUpdateTemplate.UPDATE;
+import static com.scit.xml.repository.base.utility.XUpdateTemplate.APPEND;
+
 import java.io.IOException;
 import java.util.UUID;
 
@@ -17,6 +21,7 @@ import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XQueryService;
+import org.xmldb.api.modules.XUpdateQueryService;
 
 import com.scit.xml.repository.base.utility.DatabaseConstants;
 import com.scit.xml.repository.base.utility.ExistAuthenticationUtilities.ExistConnectionProperties;
@@ -38,7 +43,10 @@ public class BaseRepository {
 	
 	public UUID saveNewDocument(String content) throws XMLDBException {
 		UUID id = UUID.randomUUID();
-
+		
+		content = tempBuilder(content, id.toString());
+		
+		System.out.println(content);
 		System.out.println("\t- collection ID: " + collectionId);
     	System.out.println("\t- document ID: " + id);
 		
@@ -121,13 +129,82 @@ public class BaseRepository {
         return null;
     }
     
+    //TARGET_NAMESPACE is http://www.ftn.uns.ac.rs/scit/xml/document
+    public void removeById(UUID documentId, String context, UUID id) throws XMLDBException {
+    	
+    	String contextXPathPatern = "/document/"+ context +"[@id = '%s']";
+    	String contextXPath = String.format(contextXPathPatern, id.toString());
+    	
+        System.out.println("\t- collection ID: " + collectionId);
+        Collection collection = null; 
+        try { 
+        	collection = getCollection();  
+            XUpdateQueryService xupdateService = RepositoryUtilities.initializeXUpdateQueryService(collection);
+
+            System.out.println("[INFO] Removing " + contextXPath + " node.");
+         	long mods = xupdateService.updateResource(documentId.toString(), String.format(REMOVE, contextXPath));
+            System.out.println("[INFO] " + mods + " modifications processed.");
+            
+        } finally {
+        	RepositoryUtilities.cleanUpCollection(collection);
+        }
+    }
     
-    //insert
+    //TARGET_NAMESPACE is http://www.ftn.uns.ac.rs/scit/xml/document
+    public void insert(UUID documentId, String context, String content) throws XMLDBException {
+    	
+    	UUID id = UUID.randomUUID();
+    	String[] holder = context.split("/");
+    	String subcontext =  holder[holder.length-1];   	
+    	content = tempBuilder(documentId.toString(), subcontext, content, id.toString());
+    	//System.out.println(content);
+    	
+    	String contextXPath= "/document/"+holder[0];
+    	
+        System.out.println("\t- collection ID: " + collectionId);
+        Collection collection = null; 
+        try { 
+        	collection = getCollection();  
+            XUpdateQueryService xupdateService = RepositoryUtilities.initializeXUpdateQueryService(collection);
+            
+            System.out.println("[INFO] Appending fragments as last child of " + contextXPath + " node.");
+            long mods = xupdateService.updateResource(documentId.toString(), String.format(APPEND, contextXPath, content));
+            System.out.println("[INFO] " + mods + " modifications processed."); 
+        } finally {
+        	RepositoryUtilities.cleanUpCollection(collection);
+        }
+    }
     
-    //delete
+    //TARGET_NAMESPACE is http://www.ftn.uns.ac.rs/scit/xml/document
+    public void update(UUID documentId, String context, String id, String property, String content) throws XMLDBException {
+    	String xPath = context+String.format("[@id='%s']/@%s", id, property);
+    	update(documentId, xPath, content);
+    }
     
-    //move from one document to another
-	
+    public void update(UUID documentId, String context, String id, String content) throws XMLDBException {
+    	String xPath = context+String.format("[@id='%s']", id);
+    	update(documentId, xPath, content);
+    }
+    
+    public void update(UUID documentId, String xPath, String content) throws XMLDBException {
+    	System.out.println("\t- collection ID: " + collectionId);
+        Collection collection = null; 
+        try { 
+        	collection = getCollection();  
+            XUpdateQueryService xupdateService = RepositoryUtilities.initializeXUpdateQueryService(collection);
+
+            System.out.println("[INFO] Removing " + xPath + " node.");
+         	long mods = xupdateService.updateResource(documentId.toString(), String.format(UPDATE, xPath, content));
+            System.out.println("[INFO] " + mods + " modifications processed.");
+            
+        } finally {
+        	RepositoryUtilities.cleanUpCollection(collection);
+        }
+    }
+    
+    
+    
+    	
     protected Collection getCollection() throws XMLDBException {
 
         Collection collection = null;
@@ -149,6 +226,42 @@ public class BaseRepository {
         return this.saveNewDocument(content);
 	}
 
+	
+	//there should be builder for new docuent... params (String id, String username, String password, String email)
+	//probably from shema
+	
+	@SuppressWarnings("unused")
+	private static String initialDocumentBuilder(String id, String username, String password, String email) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("<document id = \"%s\">\n", id));
+		builder.append(String.format("\t<username>%s</username>\n", username));
+		builder.append(String.format("\t<password>%s</password>\n", password));
+		builder.append(String.format("\t<email>%s</email>\n", email));
+		builder.append("<papers></papers>");
+		builder.append("<cover_letters></cover_letters>");
+		builder.append("<reviewss></reviews>");
+		return builder.toString();
+	}
+	
+	private static String tempBuilder(String documentId, String context, String content, String id) {
+        StringBuffer newString  = new StringBuffer(content); 
+        
+        String counter = "<" + context;
+
+        newString.insert(counter.length(), String.format(" documentId=\"%s\" id = \"%s\" ", documentId, id)); 
+
+        return newString.toString(); 
+	}
+	
+	private static String tempBuilder(String content, String id) {
+        StringBuffer newString  = new StringBuffer(content); 
+        
+        String counter = "<document>";
+        newString.insert(counter.length(), String.format("id = \"%s\" ", id)); 
+
+        return newString.toString(); 
+	}
+	
 	
 
 }

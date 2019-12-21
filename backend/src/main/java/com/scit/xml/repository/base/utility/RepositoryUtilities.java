@@ -14,6 +14,7 @@ import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.CollectionManagementService;
 import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XQueryService;
+import org.xmldb.api.modules.XUpdateQueryService;
 
 import com.scit.xml.repository.base.utility.ExistAuthenticationUtilities.ExistConnectionProperties;
 
@@ -115,6 +116,13 @@ public class RepositoryUtilities {
     	XQueryService xQueryService = (XQueryService) collection.getService("XQueryService", "1.0");
         xQueryService.setProperty("indent", "yes");
         return xQueryService;
+    }
+    
+    public static XUpdateQueryService initializeXUpdateQueryService(Collection collection) throws XMLDBException {
+        System.out.println("[INFO] Fetching XUpdate service for the collection.");
+        XUpdateQueryService xupdateService = (XUpdateQueryService) collection.getService("XUpdateQueryService", "1.0");
+        xupdateService.setProperty("indent", "yes");
+        return xupdateService;
     }
     
     
