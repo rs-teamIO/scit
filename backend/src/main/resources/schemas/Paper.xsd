@@ -6,6 +6,7 @@
     <xs:element name="paper">
         <xs:complexType>
             <xs:sequence>
+                <xs:element ref="paper:paper_info"/>
                 <xs:element name="title" type="xs:string"/>
                 <xs:element maxOccurs="1" minOccurs="1" name="authors">
                     <xs:complexType>
@@ -55,15 +56,69 @@
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
+            <xs:element name="email" type="xs:string"/>
             <xs:element name="affiliation" type="xs:string"/>
         </xs:sequence>
-        <xs:attribute name="username" type="xs:string">
-            <xs:annotation>
-                <xs:documentation>Potrebno da bi korisnik mogao da pronadje neobjavljene radove u kojima je on jedan od autora
-</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
     </xs:complexType>
+    <xs:element name="paper_info">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="status">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="submitted"/>
+                            <xs:enumeration value="cancelled"/>
+                            <xs:enumeration value="rejected"/>
+                            <xs:enumeration value="accepted"/>
+                            <xs:enumeration value="revision"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element minOccurs="0" name="category"/>
+                <xs:element minOccurs="1" name="submitted" nillable="true" type="paper:dates"/>
+                <xs:element minOccurs="1" name="revised" nillable="true" type="paper:dates"/>
+                <xs:element minOccurs="1" name="accepted" nillable="true" type="paper:dates"/>
+                <xs:element minOccurs="0" name="journal_id" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="content">
+        <xs:complexType mixed="true">
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+                <xs:element ref="paper:image"/>
+                <xs:element name="table">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="tr">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element maxOccurs="unbounded" name="td" type="xs:string"
+                                        />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="list">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="item" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="reference">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute ref="paper:reference_id" use="required"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="section">
         <xs:complexType>
             <xs:sequence>
@@ -73,18 +128,6 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="content">
-        <xs:annotation>
-            <xs:documentation>Kako da napravim da content ne sme da bude prazan
-</xs:documentation>
-        </xs:annotation>
-        <xs:complexType mixed="true">
-            <xs:choice maxOccurs="unbounded" minOccurs="0">
-                <xs:element ref="paper:image"/>
-                <xs:element ref="paper:reference"/>
-            </xs:choice>
-        </xs:complexType>
-    </xs:element>
     <xs:element name="image">
         <xs:complexType>
             <xs:attribute name="link" use="required"/>
@@ -92,20 +135,25 @@
         </xs:complexType>
     </xs:element>
     <xs:element name="reference">
-        <xs:complexType mixed="false">
+        <xs:complexType mixed="true">
+            <xs:choice>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="paper:cross_reference"/>
+            </xs:choice>
+            <xs:attribute ref="paper:reference_id" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cross_reference">
+        <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="xs:string">
-                    <xs:attribute ref="paper:referenceId"/>
-                    <xs:attribute ref="paper:crossReferenceId"/>
+                    <xs:attribute ref="paper:cross_reference_id" use="required"/>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
-    <xs:attribute name="referenceId" type="xs:string">
-        <xs:annotation>
-            <xs:documentation>Ovo je okej za reference unutar rada, da li je potrebno na neki nacin omoguciti da se stavi link
-</xs:documentation>
-        </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="crossReferenceId" type="xs:string"/>
+    <xs:attribute name="reference_id" type="xs:string"> </xs:attribute>
+    <xs:attribute name="cross_reference_id" type="xs:string"/>
+    <xs:simpleType name="dates">
+        <xs:list itemType="xs:date"/>
+    </xs:simpleType>
 </xs:schema>

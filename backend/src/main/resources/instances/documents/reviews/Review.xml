@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <review xmlns="http://www.ftn.uns.ac.rs/publishing/reviews"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.ftn.uns.ac.rs/publishing/reviews Review.xsd">
+    xsi:schemaLocation="http://www.ftn.uns.ac.rs/publishing/reviews Review.xsd" 
+    reviewer_id="id korisnika koji ostavlja recenziju">
     <title>
         Comments about the title (optional)
     </title>

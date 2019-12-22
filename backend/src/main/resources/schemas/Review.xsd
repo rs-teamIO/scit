@@ -20,7 +20,7 @@
                 <xs:element name="general"/>
             </xs:sequence>
             <xs:attribute name="paperId" type="xs:string"/>
-            <xs:attribute name="author_username" type="xs:string"/>
+            <xs:attribute name="reviewer_id" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
 </xs:schema>

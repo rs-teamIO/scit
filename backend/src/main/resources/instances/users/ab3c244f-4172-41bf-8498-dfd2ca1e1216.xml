@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE user>
-<user id="ab3c244f-4172-41bf-8498-dfd2ca1e1216" role="PROF2">
-	<username>test2</username>
-	<password>test2</password>
-	<email>test2@email.com</email>
+<user xmlns="http://www.ftn.uns.ac.rs/publishing/users"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ftn.uns.ac.rs/publishing/users User.xsd"
+      id="ab3c244f-4172-41bf-8498-dfd2ca1e1216" role="EDITOR">
+    <username></username>
+    <password></password>
+    <email></email>
+    <papers>
+        <paper xmlns="http://www.ftn.uns.ac.rs/publishing/paper">
+            <paper_info>
+                <status>submitted</status>
+                <submitted/>
+                <revised/>
+                <accepted/>
+            </paper_info>
+            <title></title>
+            <authors></authors>
+            <abstract>
+                <content>Some content</content>
+                <keywords></keywords>
+            </abstract>
+            <section>
+                <heading></heading>
+                <content></content>
+            </section>
+            <references></references>
+        </paper>
+    </papers>
+    <cover_letters>
+        <cover_letter xmlns="http://www.ftn.uns.ac.rs/publishing/coverLetters"></cover_letter>
+    </cover_letters>
+    <received_reviews>
+        <review xmlns="http://www.ftn.uns.ac.rs/publishing/reviews" reviewer_id="">
+            <general></general>
+        </review>
+    </received_reviews>
 </user>

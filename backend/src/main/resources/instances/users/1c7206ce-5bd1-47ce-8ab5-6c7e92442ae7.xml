@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE user>
-<user id="1c7206ce-5bd1-47ce-8ab5-6c7e92442ae7" role="PROF">
-	<username>test</username>
-	<password>test</password>
-	<email>test@email.com</email>
+<user xmlns="http://www.ftn.uns.ac.rs/publishing/users"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ftn.uns.ac.rs/publishing/users User.xsd"
+      id="1c7206ce-5bd1-47ce-8ab5-6c7e92442ae7" role="AUTHOR">
+    <username></username>
+    <password></password>
+    <email></email>
+    <papers>
+        <paper xmlns="http://www.ftn.uns.ac.rs/publishing/paper">
+            <paper_info>
+                <status>submitted</status>
+                <submitted/>
+                <revised/>
+                <accepted/>
+            </paper_info>
+            <title></title>
+            <authors></authors>
+            <abstract>
+                <content>Some content</content>
+                <keywords></keywords>
+            </abstract>
+            <section>
+                <heading></heading>
+                <content></content>
+            </section>
+            <references></references>
+        </paper>
+    </papers>
+    <cover_letters>
+        <cover_letter xmlns="http://www.ftn.uns.ac.rs/publishing/coverLetters"></cover_letter>
+    </cover_letters>
+    <received_reviews>
+        <review xmlns="http://www.ftn.uns.ac.rs/publishing/reviews" reviewer_id="">
+            <general></general>
+        </review>
+    </received_reviews>
 </user>

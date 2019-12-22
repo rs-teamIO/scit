@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.ftn.uns.ac.rs/publishing/users" elementFormDefault="qualified"
+           xmlns:cletter="http://www.ftn.uns.ac.rs/publishing/coverLetters"
+           xmlns:paper="http://www.ftn.uns.ac.rs/publishing/paper"
+           xmlns:review="http://www.ftn.uns.ac.rs/publishing/reviews"
+           xmlns:user="http://www.ftn.uns.ac.rs/publishing/users">
+
+    <xs:import namespace="http://www.ftn.uns.ac.rs/publishing/paper" schemaLocation="Paper.xsd"/>
+    <xs:import namespace="http://www.ftn.uns.ac.rs/publishing/coverLetters"
+               schemaLocation="CoverLetter.xsd"/>
+    <xs:import namespace="http://www.ftn.uns.ac.rs/publishing/reviews" schemaLocation="Review.xsd"/>
+    <xs:element name="user">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="username" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+                <xs:element name="email" type="xs:string"/>
+                <xs:element ref="user:papers"/>
+                <xs:element ref="user:cover_letters"/>
+                <xs:element ref="user:received_reviews"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string"/>
+            <xs:attribute ref="user:role"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="papers">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="paper:paper"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cover_letters">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="cletter:cover_letter"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="received_reviews">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="review:review"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:attribute name="role">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="AUTHOR"/>
+                <xs:enumeration value="EDITOR"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+</xs:schema>

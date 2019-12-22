@@ -3,10 +3,19 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.ftn.uns.ac.rs/publishing/paper Paper.xsd"
     xmlns:paper="http://www.ftn.uns.ac.rs/publishing/paper" id="1">
+    <paper_info>
+        <status>submitted</status>
+        <category>In which category does this paper belong</category>
+        <submitted></submitted>
+        <revised></revised>
+        <accepted></accepted>
+        <journal_id>Idk</journal_id>
+    </paper_info>
     <title>Some long paper title</title>
     <authors>
         <author>
             <name>Katarina Tukelic</name>
+            <email>tukelic.katarina@gmail.com</email>
             <affiliation>Fakultet tehnickih nauka</affiliation>
         </author>
     </authors>
@@ -21,9 +30,19 @@
             After image you can continue with writing whatever you want. 
             You can also put another picture:
             <image link="www.drugaslika.com"/> 
+            You can add a table like this:
+            <table>
+                <tr>
+                    <td>You need to hav at least one cell that says something</td>
+                </tr>
+            </table>
+            Also, a list:
+            <list>
+                <item>One and only list item in this case</item>
+            </list>
             You can also put a reference to literature down below:
-            <reference paper:referenceId="1"></reference>
-            You can add section in this section, but it most be after content
+            <reference paper:reference_id="1"></reference>
+            You can add section in this section, but it must be after content
         </content>
         <section>
             <heading>Second smaller section with smaller heading</heading>
@@ -31,6 +50,8 @@
         </section>
     </section>
     <references>
-        <reference paper:referenceId="1" paper:crossReferenceId="someOtherPaperId">Some book title and some other stuff</reference>
+        <reference paper:reference_id="1">Some book title and some other stuff. 
+            And <cross_reference paper:cross_reference_id="link">this</cross_reference> is a link.
+        </reference>
     </references>
 </paper>
