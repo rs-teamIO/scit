@@ -20,7 +20,7 @@ public class DataInitializer {
     private void saveXmlFiles() {
         try {
         	
-        	repo.test();
+//        	repo.test();
 //        	repo.findOne(DatabaseConstants.PAPER, "@id", "66aa2262-10ed-42ae-bd52-ad713041f0c2");
 //        	repo.findOne(DatabaseConstants.COVER_LETTER,"@id", "8d90cc23-b9b2-4ca4-8659-96d3307075ff");
 //        	repo.findOne(DatabaseConstants.REVIEW, "@id", "95970644-3f54-4916-8a88-a90009f9bf19");

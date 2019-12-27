@@ -9,8 +9,14 @@ public class XQueryUtilities {
 	private static String exactMatch(String collectionId, String path, String property, String value) {
 		StringBuilder builder = new StringBuilder("xquery version \"3.1\";\n");
 		builder.append("for $file in collection(\""+collectionId+"\")\r\n");
-		builder.append("where $file//"+path+"/" + property + " eq \""+value+"\"\n");
-		builder.append("return $file//"+path+"\n");
+		if(path.equals("")){
+			builder.append("where $file//" + property + " eq \""+value+"\"\n");
+			builder.append("return $file\n");
+		}
+		else {
+			builder.append("where $file//"+path+"/" + property + " eq \""+value+"\"\n");
+			builder.append("return $file//"+path+"\n");
+		}
 		return builder.toString();
 	}
 	
@@ -19,7 +25,7 @@ public class XQueryUtilities {
 		builder.append("for $file in collection(\""+DatabaseConstants.DATABASE_COLLECTION+"\")\r\n");
 		builder.append("where $file//username eq \""+username+"\"\n");
 		builder.append("  and $file//password eq \""+password+"\"\n");
-		builder.append("return $file//@id\n");
+		builder.append("return $file\n");
 		return builder.toString();
 	}
 
