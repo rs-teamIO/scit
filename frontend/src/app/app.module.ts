@@ -4,17 +4,16 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 
 import { CoreModule } from './core/core.module';
-import { SigninComponent } from './auth/signin/signin.component';
-import { SignupComponent } from './auth/signup/signup.component';
+import { AuthModule } from './auth/auth.module';
 
 
 @NgModule({
   declarations: [
-    AppComponent,
-    SigninComponent,
-    SignupComponent
+    AppComponent
   ],
   imports: [
+    AuthModule,
+    BrowserModule,
     CoreModule
   ],
   providers: [],

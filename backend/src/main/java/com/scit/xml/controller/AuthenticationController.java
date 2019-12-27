@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,6 +55,7 @@ public class AuthenticationController {
     }
 
 
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(
 			value = "/",
 			method = RequestMethod.GET,
@@ -60,4 +64,11 @@ public class AuthenticationController {
 		
 		return new ResponseEntity<AuthenticationResponse>(authenticationService.getCurrentUser(), HttpStatus.OK);
 	}
+	
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/signout")
+    public ResponseEntity<?> signout() {
+        SecurityContextHolder.clearContext();
+        return new ResponseEntity<String>(HttpStatus.OK);
+    }
 }

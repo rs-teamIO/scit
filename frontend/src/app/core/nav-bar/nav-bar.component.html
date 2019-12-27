@@ -6,8 +6,10 @@
             <li><a routerLink="Paper" routerLinkActive = "active">Paper</a></li>
             <li><a routerLink="Compose" routerLinkActive = "active">Compose</a></li>
             <span class="vl"></span>
-            <li><a routerLink="signin" routerLinkActive = "active">SignIn</a></li>
-            <li><a routerLink="signup" routerLinkActive = "active">SignUp</a></li>
+            <li><a routerLink="signin" routerLinkActive = "active" *ngIf="!isAuthenticated()">SignIn</a></li>
+            <li><a routerLink="signup" routerLinkActive = "active" *ngIf="!isAuthenticated()">SignUp</a></li>
+            <li><a routerLink="signin" *ngIf="isAuthenticated()" (click) = "signout()">SignOut</a></li>
+
 
         </ul>
     </nav>

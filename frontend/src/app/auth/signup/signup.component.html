@@ -1,6 +1,6 @@
-<form class="wrapper">
+<form class="wrapper" (ngSubmit)="signup()">
     <h1>SignUP!</h1>
-    <p>Hello, my username is <input class="text-input" type="text"> and password is <input class="text-input" type="password">,<br>
-    also this is email <input class="text-email" type="text"> where you can contact me.</p>
+    <p>Hello, my username is <input class="text-input" type="text" name="username" [(ngModel)]="username" > and password is <input class="text-input" name="password" type="password" [(ngModel)]="password">,<br>
+    also this is email <input class="text-email" type="text" name="email" [(ngModel)]="email"> where you can contact me.</p>
     <input class="btn btn-outline-light" type="submit" value="Confirm">
 </form>

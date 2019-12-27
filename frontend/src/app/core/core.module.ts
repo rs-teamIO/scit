@@ -6,6 +6,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { AuthService } from './http/auth.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,11 @@ import { NotFoundComponent } from './not-found/not-found.component';
   imports: [
     AppRoutingModule,
     BrowserAnimationsModule,
-    CommonModule
+    CommonModule,
+    HttpClientModule
+  ],
+  providers: [
+    AuthService
   ]
 })
 export class CoreModule { }

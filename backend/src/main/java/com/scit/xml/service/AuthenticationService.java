@@ -70,7 +70,7 @@ public class AuthenticationService {
         final Authentication authentication = new PreAuthenticatedAuthenticationToken(id, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return new AuthenticationResponse(UUID.fromString(id), role);
+        return new AuthenticationResponse(UUID.fromString(id), username, role);
     }
     
     public AuthenticationResponse getCurrentUser() {
@@ -80,5 +80,9 @@ public class AuthenticationService {
         final String role = authorities.length > 0 ? authorities[0].toString() : null;
 
         return new AuthenticationResponse(id, role);
+    }
+    
+    public boolean isAuthenticated() {
+        return !SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().equals("anonymousUser");
     }
 }
