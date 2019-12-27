@@ -11,3 +11,8 @@ body{
     padding: 0;
     overflow: hidden;
 }
+
+@font-face {
+    font-family: 'Indonesia';
+    src: url('assets/fonts/indonesia.ttf');
+  }
