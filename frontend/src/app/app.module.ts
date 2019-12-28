@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 
 import { CoreModule } from './core/core.module';
 import { AuthModule } from './auth/auth.module';
-
+import { PapersModule } from './papers/papers.module'
 
 @NgModule({
   declarations: [
@@ -14,7 +14,8 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     AuthModule,
     BrowserModule,
-    CoreModule
+    CoreModule,
+    PapersModule
   ],
   providers: [],
   bootstrap: [AppComponent]

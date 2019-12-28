@@ -20,7 +20,7 @@ import org.xmldb.api.modules.XMLResource;
 
 import com.scit.xml.DTO.AuthenticationResponse;
 import com.scit.xml.repository.AuthenticationRepository;
-import com.scit.xml.repository.base.utility.XPathUtil;
+import com.scit.xml.utility.XPathUtil;
 
 
 @Service

@@ -1,4 +1,4 @@
-package com.scit.xml.repository.base.utility;
+package com.scit.xml.utility;
 
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;

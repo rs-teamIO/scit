@@ -8,6 +8,7 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { AuthService } from './http/auth.service';
 import { HttpClientModule } from '@angular/common/http';
+import { PaperService } from './http/paper.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule
   ],
   providers: [
-    AuthService
+    AuthService,
+    PaperService
   ]
 })
 export class CoreModule { }

@@ -1,0 +1,31 @@
+.elements-wrapper{
+    height: 100%;
+    width:100%;
+    background:white;
+    overflow: hidden;
+}
+
+.tab-wrapper{
+    height: calc(100% - 60px);
+}
+
+.button-wrapper{
+    width: 100%;
+    height: 60px;
+    background:white;
+    
+    position: absolute;
+}
+
+.xonomy-form {
+    height:calc(100% - 100px);
+    width: 100%;
+    border: none;
+
+    position: absolute;
+}
+
+.conf{
+    float:right;
+    margin: 10px;
+}

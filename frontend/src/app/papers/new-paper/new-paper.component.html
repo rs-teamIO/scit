@@ -1,0 +1,20 @@
+<div class = "elements-wrapper">
+
+    <div class="tab-wrapper">
+        <tabset>
+            <tab heading="Paper">
+                <iframe src=" assets/forms/paper-form.html " class="xonomy-form" #paperFrame (load)="loadPaper()"></iframe>
+            </tab>
+            <tab heading="Cover Letter" >
+                <iframe src=" assets/forms/cover-letter-form.html " class="xonomy-form" #coverLetterFrame></iframe>
+            </tab>
+            <tab heading="Preview">
+                <div class="jumbotron"></div>
+            </tab>
+        </tabset>
+    </div>
+
+    <div class="button-wrapper">
+        <input type="button" class="conf btn btn-outline-dark" value="Confirm">
+     </div>
+</div>
