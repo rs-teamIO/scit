@@ -9,6 +9,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { AuthService } from './http/auth.service';
 import { HttpClientModule } from '@angular/common/http';
 import { PaperService } from './http/paper.service';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { PaperService } from './http/paper.service';
     AppRoutingModule,
     BrowserAnimationsModule,
     CommonModule,
+    SharedModule,
     HttpClientModule
   ],
   providers: [

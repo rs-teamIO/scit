@@ -29,3 +29,18 @@
     float:right;
     margin: 10px;
 }
+
+.refresh{
+    float:right;
+    padding: 2px;
+    border-radius: 25px;
+    margin: 7px;
+}
+
+.refresh:hover{
+    background-color: white;
+}
+
+*:focus {
+    outline: none;
+}

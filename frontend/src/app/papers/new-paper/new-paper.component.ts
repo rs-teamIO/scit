@@ -9,8 +9,9 @@ import { PaperService } from 'src/app/core/http/paper.service';
 export class NewPaperComponent implements OnInit {
 
   @ViewChild('paperFrame', {static: false}) paperFrame: ElementRef;
-
   @ViewChild('coverLetterFrame', {static: false}) coverLetterFrame: ElementRef;
+
+  paperPreview: string;
 
 
   constructor(
@@ -24,4 +25,19 @@ export class NewPaperComponent implements OnInit {
     this.paperFrame.nativeElement.contentWindow.start();
   }
 
+  getPreview() {
+    console.log("TRIGGERED");
+
+    this.paperService.preview(this.harvestPaper()).subscribe(
+      res => {
+        this.paperPreview = res;
+      },
+      err => { });
+  }
+
+  harvestPaper(): string {
+    let paperXml = this.paperFrame.nativeElement.contentWindow.Xonomy.harvest();
+    paperXml = paperXml.replace(/xml:space='preserve'/g, '');
+    return paperXml;
+  }
 }

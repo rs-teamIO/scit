@@ -18,15 +18,6 @@ body{
 }
 
 
-.xonomy-form {
-    height:calc(100% - 100px);
-    width: 100%;
-    position: absolute;
-
-    border: none;
-}
-
-
 /* width */
 ::-webkit-scrollbar {
     width: 5px;
