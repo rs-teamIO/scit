@@ -1,0 +1,27 @@
+<ul>
+    <li class="list-group-item pointer" *ngFor="let paper of papers">
+      <div class="row">
+        <span class="col-md-10">
+          {{paper.title}}
+        </span>
+        <!-- 
+        <span class="col-md-2" *ngIf="isAssigned()">
+          <button class="btn btn-primary" (click)="acceptPaper(paper)">Accept</button>
+          <button class="btn btn-primary" (click)="rejectPaper(paper)">Reject</button>
+        </span>
+        <span class="col-md-2" *ngIf="isAccepted()">
+          <button class="btn btn-primary" (click)="reviewPaper(paper)">Review</button>
+        </span> 
+        -->
+        <span class="col-md-2" *ngIf="true">
+          <button class="btn btn-outline-light">Process paper</button>
+        </span>
+        <!-- 
+        <span class="col-md-2" *ngIf="isAuthorPapers()">
+          <button class="btn btn-primary" *ngIf="paper.revisionRequired" (click)="sendRevision(paper)">Send revision</button>
+          <button class="btn btn-lighjt" *ngIf="!paper.revisionRequired" [disabled]="true">Published</button>
+        </span> 
+        -->
+      </div>
+    </li>
+</ul>

@@ -26,8 +26,6 @@ export class NewPaperComponent implements OnInit {
   }
 
   getPreview() {
-    console.log("TRIGGERED");
-
     this.paperService.preview(this.harvestPaper()).subscribe(
       res => {
         this.paperPreview = res;
@@ -35,9 +33,30 @@ export class NewPaperComponent implements OnInit {
       err => { });
   }
 
+  save(){
+    const paperXml = this.harvestPaper();
+    const coverLetterXml = this.harvestCoverLetter(); //UNDONE
+    this.paperService.save(paperXml)
+    .subscribe(
+      response => {
+        console.log(response); //add paperId to coverLetterId and change background to process this
+      }, 
+      err => { }
+    );
+  }
+
   harvestPaper(): string {
     let paperXml = this.paperFrame.nativeElement.contentWindow.Xonomy.harvest();
     paperXml = paperXml.replace(/xml:space='preserve'/g, '');
     return paperXml;
   }
+
+  harvestCoverLetter(): string {
+    let coverLetterXml = this.coverLetterFrame.nativeElement.contentWindow.Xonomy.harvest();
+    coverLetterXml = coverLetterXml.replace(/xml:space='preserve'/g, '');
+
+    return coverLetterXml;
+  }
+
+
 }

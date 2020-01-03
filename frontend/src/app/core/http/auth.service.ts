@@ -2,9 +2,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { SignUpRequest } from 'src/app/shared/model/signup-request';
-import { SignInRequest } from 'src/app/shared/model/signin-request';
-import { SignInResponse } from 'src/app/shared/model/signin-resposne';
+import { SignUpRequest } from '../../shared/model/signup-request';
+import { SignInRequest } from '../../shared/model/signin-request';
+import { SignInResponse } from '../../shared/model/signin-resposne';
 
 const authenticatedUserKey = 'authenticatedUser';
 const url = "/api/auth"

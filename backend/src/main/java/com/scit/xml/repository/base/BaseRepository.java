@@ -148,7 +148,7 @@ public class BaseRepository {
         }
     }
     
-    //TARGET_NAMESPACE is http://www.ftn.uns.ac.rs/scit/xml/document
+    //TARGET_NAMESPACE is http://ftn.uns.ac.rs/scit/xml/document
     public UUID insert(UUID documentId, String context, String content) throws XMLDBException {
     	
     	UUID id = UUID.randomUUID();
@@ -177,7 +177,7 @@ public class BaseRepository {
 
     }
     
-    //TARGET_NAMESPACE is http://www.ftn.uns.ac.rs/scit/xml/document
+    //TARGET_NAMESPACE ishttp://ftn.uns.ac.rs/scit/xml/document
     public void update(UUID documentId, String context, String id, String property, String content) throws XMLDBException {
     	String xPath = context+String.format("[@id='%s']/@%s", id, property);
     	update(documentId, xPath, content);

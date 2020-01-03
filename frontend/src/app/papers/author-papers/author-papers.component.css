@@ -1,0 +1,31 @@
+h1{
+    font-family: 'Indonesia';
+    margin-bottom: 3vh;
+}
+
+.wrapper{
+    width: 88vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wrapper h1{
+    text-align: center;
+}
+
+.author-wrapper{
+    float:right;
+}
+
+.author-sign{
+    font-family: 'Indonesia';
+}
+
+input, button, div, p, h1 {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* supported by Chrome, Opera and Firefox */
+}

@@ -5,6 +5,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { PapersListComponent } from './papers-list/papers-list.component';
 
 
 @NgModule({
@@ -21,7 +22,9 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     CollapseModule,
     TabsModule,
     FormsModule,
+    
+    PapersListComponent
   ],
-  declarations: []
+  declarations: [PapersListComponent]
 })
 export class SharedModule { }
