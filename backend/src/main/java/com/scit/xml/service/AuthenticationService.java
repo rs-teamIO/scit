@@ -57,9 +57,8 @@ public class AuthenticationService {
     	if (document == null)
             throw new BadRequestException("Invalid username or password!");
     	
-    	
-        final Node nodeRole = (Node) XPathUtil.evaluate("/document/@role", document.getContentAsDOM(), XPathConstants.NODE);
-        final Node nodeId = (Node) XPathUtil.evaluate("/document/@id", document.getContentAsDOM(), XPathConstants.NODE);
+        final Node nodeRole = (Node) XPathUtil.evaluate("/d:document/@role", document.getContentAsDOM(), XPathConstants.NODE);
+        final Node nodeId = (Node) XPathUtil.evaluate("/d:document/@id", document.getContentAsDOM(), XPathConstants.NODE);
 
         final String role = nodeRole.getTextContent();
         final String id = nodeId.getTextContent();

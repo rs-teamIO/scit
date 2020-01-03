@@ -14,6 +14,7 @@ import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XQueryService;
 
 import com.scit.xml.repository.base.BaseRepository;
+import com.scit.xml.repository.base.utility.DatabaseConstants;
 import com.scit.xml.repository.base.utility.ExistConnection;
 import com.scit.xml.repository.base.utility.RepositoryUtilities;
 import com.scit.xml.repository.base.utility.XQueryUtilities;
@@ -92,7 +93,7 @@ public class AuthenticationRepository extends BaseRepository {
 
 	private static String initialDocumentBuilder(String id, String username, String password, String email, String role) {
 		StringBuilder builder = new StringBuilder();
-		builder.append(String.format("<document id = \"%s\" role =\"%s\">\n", id, role));
+		builder.append(String.format("<document xmlns=\"%s\" id = \"%s\" role =\"%s\">\n",DatabaseConstants.ROOT_NAMESPACE, id, role));
 		builder.append(String.format("\t<username>%s</username>\n", username));
 		builder.append(String.format("\t<password>%s</password>\n", password));
 		builder.append(String.format("\t<email>%s</email>\n", email));

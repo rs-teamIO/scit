@@ -4,6 +4,8 @@ import static com.scit.xml.repository.base.utility.XUpdateTemplate.APPEND;
 import static com.scit.xml.repository.base.utility.XUpdateTemplate.REMOVE;
 import static com.scit.xml.repository.base.utility.XUpdateTemplate.UPDATE;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.xml.transform.OutputKeys;
@@ -94,6 +96,37 @@ public class BaseRepository {
         return null;
     }
     
+    public List<XMLResource> findAll(UUID id, String collectionPath) throws XMLDBException{
+		Collection collection = null;
+		Resource resource = null;
+		
+		collection = getCollection();
+        XQueryService xQueryService = RepositoryUtilities.initializeXQueryService(collection);
+        String xquery = XQueryUtilities.collectionMatchForUser(id, collectionPath);
+        System.out.print(xquery+"\n==================================\n");
+        
+        CompiledExpression compiledExpression = xQueryService.compile(xquery);
+        ResourceSet resourceSet = xQueryService.execute(compiledExpression);
+        ResourceIterator i = resourceSet.getIterator();
+        
+        List<XMLResource> list = new ArrayList<XMLResource>();
+
+        while(i.hasMoreResources()) {
+            try {
+                resource = i.nextResource();
+                XMLResource xmlResource = (XMLResource) resource;
+                System.out.println("\n"+resource.getContent().toString());
+                list.add(xmlResource);
+            } 
+            finally {
+            	RepositoryUtilities.cleanUpResource(resource);
+            	RepositoryUtilities.cleanUpCollection(collection);
+            }
+        }
+        return list;
+    }
+    
+    
     //TARGET_NAMESPACE is http://www.ftn.uns.ac.rs/scit/xml/document
     public void removeById(UUID documentId, String context, UUID id) throws XMLDBException {
     	
@@ -116,7 +149,7 @@ public class BaseRepository {
     }
     
     //TARGET_NAMESPACE is http://www.ftn.uns.ac.rs/scit/xml/document
-    public void insert(UUID documentId, String context, String content) throws XMLDBException {
+    public UUID insert(UUID documentId, String context, String content) throws XMLDBException {
     	
     	UUID id = UUID.randomUUID();
     	String[] holder = context.split("/");
@@ -135,9 +168,13 @@ public class BaseRepository {
             System.out.println("[INFO] Appending fragments as last child of " + contextXPath + " node.");
             long mods = xupdateService.updateResource(documentId.toString(), String.format(APPEND, contextXPath, content));
             System.out.println("[INFO] " + mods + " modifications processed."); 
-        } finally {
+            
+            return id;
+        } 
+        finally {
         	RepositoryUtilities.cleanUpCollection(collection);
-        }
+        }    
+
     }
     
     //TARGET_NAMESPACE is http://www.ftn.uns.ac.rs/scit/xml/document

@@ -13,8 +13,8 @@ import com.scit.xml.repository.base.BaseRepository;
 public class DataInitializer {
 
 
-    @Autowired
-    private BaseRepository repo;
+//    @Autowired
+//    private BaseRepository repo;
 
     @EventListener(ApplicationReadyEvent.class)
     private void saveXmlFiles() {

@@ -4,7 +4,7 @@ public class DatabaseConstants {
 
 	public static final String DATABASE_COLLECTION = "/db/scit";
 	
-	
+	public static final String ROOT_NAMESPACE = "http://www.ftn.uns.ac.rs/scit/xml/document";
 	
 	
 	public static final String PAPER = "papers/paper";
