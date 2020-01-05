@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -28,15 +28,16 @@ export class PaperService {
     );
   }
 
-  save(xml: string): Observable<string> {
+  save(xml: string): Observable<HttpResponse<Object>>{
+
     return this.http.post(`${url}/`, xml, {
       headers: new HttpHeaders({
         'Content-Type': 'application/xml',
         'Accept': '*/*, application/xml, application/json'
       }),
-      responseType: 'text'
+      observe: 'response'
     }).pipe(
-      catchError(this.handleError<string>())
+      catchError(this.handleError<HttpResponse<Object>>())
     );
   }
 

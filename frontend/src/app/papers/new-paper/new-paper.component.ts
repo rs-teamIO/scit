@@ -39,7 +39,9 @@ export class NewPaperComponent implements OnInit {
     this.paperService.save(paperXml)
     .subscribe(
       response => {
-        console.log(response); //add paperId to coverLetterId and change background to process this
+        let idArray = response.headers.get("Location").split("/");
+        let id = idArray[idArray.length-1];
+        console.log(id); //add paperId to coverLetter and change background to process this
       }, 
       err => { }
     );
