@@ -1,0 +1,25 @@
+# For reference visit the link given below
+# https://github.com/eXist-db/docker-existdb/blob/master/docker-compose.yml
+
+version: '3.7'
+services:
+  # eXist XML Database
+  exist-db:
+    image: existdb/existdb:4.7.0
+    container_name: exist-db
+    hostname: exist-db
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+
+  # Apache Jena Fuseki 2
+  jena-fuseki:
+    image: stain/jena-fuseki
+    container_name: jena-fuseki
+    hostname: jena-fuseki
+    environment:
+      - ADMIN_PASSWORD=admin
+    ports:
+      - "3030:3030"
+    depends_on:
+      - "exist-db"
