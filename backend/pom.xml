@@ -19,6 +19,29 @@
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>exist-db</id>
+			<url>http://repo.evolvedbinary.com/content/repositories/exist-db/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>exist-db-snapshots</id>
+			<url>http://repo.evolvedbinary.com/content/repositories/exist-db-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -75,6 +98,12 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>28.2-jre</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.exist-db</groupId>
+			<artifactId>exist-core</artifactId>
+			<version>4.7.0</version>
 		</dependency>
 
 	</dependencies>
