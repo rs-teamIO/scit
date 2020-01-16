@@ -116,7 +116,8 @@ public class XmlWrapper {
         try {
             final DocumentBuilder builder = factory.newDocumentBuilder();
             // Parse the content of the given input source as an XML document and return a new DOM.
-            this.document = builder.parse(new InputSource(new StringReader(this.xml)));
+            InputSource inputSource = new InputSource(new StringReader(this.xml));
+            this.document = builder.parse(inputSource);
         } catch (Exception e) {
             throw new BadRequestException(ResponseCode.INVALID_DATA, "Invalid XML provided.");
         }

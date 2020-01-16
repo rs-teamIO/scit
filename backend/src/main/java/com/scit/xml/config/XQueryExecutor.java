@@ -1,4 +1,4 @@
-package com.scit.xml.common;
+package com.scit.xml.config;
 
 import com.scit.xml.exception.InternalServerException;
 import org.exist.interpreter.Compiled;
@@ -9,13 +9,14 @@ import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.*;
 import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XQueryService;
+import org.xmldb.api.modules.XUpdateQueryService;
 
 import javax.xml.transform.OutputKeys;
 
 @Configuration
 public class XQueryExecutor {
 
-    private final String COLLECTION_ID = "/db/rs/scit";
+    private final String COLLECTION_ID = "/db/apps/scit";
 
     private String connectionUri = "xmldb:exist://%1$s:%2$s/exist/xmlrpc";
 
@@ -73,6 +74,54 @@ public class XQueryExecutor {
             ResourceSet result = xQueryService.execute(compiledXquery);
 
             return result;
+        } catch (Exception e) {
+            throw new InternalServerException(e);
+        } finally {
+            if (resource != null) {
+                try {
+                    ((EXistResource) resource).freeResources();
+                } catch (XMLDBException xe) {
+                    throw new InternalServerException(xe);
+                }
+            }
+
+            if (collection != null) {
+                try {
+                    collection.close();
+                } catch (XMLDBException xe) {
+                    throw new InternalServerException(xe);
+                }
+            }
+        }
+    }
+
+    /**
+     * Performs update operation against a resource stored in a collection
+     * @param documentId unique identifier of the document resource
+     * @param query query to be executed
+     */
+    public void updateResource(String documentId, String query) {
+        Collection collection = null;
+        XMLResource resource = null;
+
+        try {
+            Class<?> cl = Class.forName(this.driver);
+            Database database = (Database) cl.newInstance();
+            database.setProperty("create-database", "true");
+            DatabaseManager.registerDatabase(database);
+
+            collection = DatabaseManager.getCollection(getCollectionUri());
+            collection.setProperty(OutputKeys.INDENT, "yes");
+            resource = (XMLResource) collection.getResource(documentId);
+
+            if (resource == null) {
+                throw new InternalServerException();
+            }
+
+            XUpdateQueryService xQueryService = (XUpdateQueryService) collection.getService("XUpdateQueryService", "1.0");
+            xQueryService.setProperty(OutputKeys.INDENT, "yes");
+
+            xQueryService.updateResource(documentId, query);
         } catch (Exception e) {
             throw new InternalServerException(e);
         } finally {

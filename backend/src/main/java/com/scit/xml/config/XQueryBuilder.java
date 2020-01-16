@@ -1,4 +1,4 @@
-package com.scit.xml.common;
+package com.scit.xml.config;
 
 import com.scit.xml.exception.InternalServerException;
 import org.springframework.core.io.Resource;
