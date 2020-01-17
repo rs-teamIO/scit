@@ -1,7 +1,10 @@
 package com.scit.xml.controller;
 
+import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
+import com.scit.xml.common.util.XmlResponseUtils;
 import com.scit.xml.dto.RegisterDto;
+import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.service.UserService;
 import com.scit.xml.service.validator.dto.RegisterDtoValidator;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +27,7 @@ public class UsersController {
     public ResponseEntity<String> register(@RequestBody String xml) {
         RegisterDto registerDto = registerDtoValidator.validate(xml);
         String id = userService.register(registerDto);
-
-        // TODO: Fix
-        return ResponseEntity.ok(id);
+        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, id));
+        return ResponseEntity.ok(responseBody);
     }
 }

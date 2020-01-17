@@ -8,4 +8,8 @@ public final class RestApiEndpoints {
 
     public static final String USER = API_ROOT + "/user";
     public static final String USERS = API_ROOT + "/users";
+
+    public static final String TEST = "/test";
+    public static final String TEST_AUTHOR = TEST + "/author";
+    public static final String TEST_EDITOR = TEST + "/editor";
 }
