@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.scit.org/schema/paper" xmlns="http://www.scit.org/schema/paper">
+
+    <xs:element name="paper">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="paper_info"/>
+                <xs:element ref="title"/>
+                <xs:element name="authors">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" minOccurs="1" name="author"
+                                type="Author"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="abstract">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="content">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:minLength value="10"/>
+                                        <xs:maxLength value="300"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element maxOccurs="unbounded" name="keywords">
+                                <xs:simpleType>
+                                    <xs:list itemType="xs:string"/>
+                                </xs:simpleType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" minOccurs="1" ref="section"/>
+                <xs:element name="references">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" ref="reference"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="comment"/>
+            </xs:sequence>
+            <xs:attribute ref="id"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:element name="title" type="xs:string"/>
+    <xs:complexType name="Author">
+        <xs:sequence>
+            <xs:element name="name">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="email">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern
+                            value="([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})"
+                        />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="affilliation" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="username" type="xs:string"/>
+    </xs:complexType>
+    <xs:element name="paper_info">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="journal_id" type="xs:string"/>
+                <xs:element minOccurs="0" name="category" type="xs:string"/>
+                <xs:element name="status">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="submitted"/>
+                            <xs:enumeration value="cancelled"/>
+                            <xs:enumeration value="rejected"/>
+                            <xs:enumeration value="accepted"/>
+                            <xs:enumeration value="revision"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="submission_dates" nillable="true" type="dates"/>
+                <xs:element name="revision_dates" nillable="true" type="dates"/>
+                <xs:element form="qualified" name="acceptance_dates" nillable="true" type="dates"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="content">
+        <xs:complexType mixed="true">
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+                <xs:element ref="image"/>
+                <xs:element name="table">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="tr">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element maxOccurs="unbounded" name="td" type="xs:string"
+                                        />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="list">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="item" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="reference">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute ref="reference_id" use="required"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="section">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="heading" type="xs:string"/>
+                <xs:element ref="content"/>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="section"/>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="comment"/>
+            </xs:sequence>
+            <xs:attribute ref="id"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="image">
+        <xs:complexType>
+            <xs:attribute name="link" use="required"/>
+            <xs:attribute name="img_title" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="dates">
+        <xs:list itemType="xs:date"/>
+    </xs:simpleType>
+    <xs:attribute name="reference_id" type="xs:string"> </xs:attribute>
+    <xs:element name="reference">
+        <xs:complexType mixed="true">
+            <xs:choice>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="cross_reference"/>
+            </xs:choice>
+            <xs:attribute ref="reference_id" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:attribute name="cross_reference_id" type="xs:string"/>
+    <xs:element name="cross_reference">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute ref="cross_reference_id" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="comment" type="xs:string"/>
+</xs:schema>
