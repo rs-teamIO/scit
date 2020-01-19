@@ -1,6 +1,6 @@
 package com.scit.xml.service;
 
-import com.scit.xml.model.Paper;
+import com.scit.xml.model.paper.Paper;
 import com.scit.xml.repository.PaperRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,9 +16,6 @@ public class PaperService {
         // TODO: DB Validation
         // this.paperDatabaseValidator.validate(paperDto);
 
-        // TODO: Give paper object as parameter
-        String paperId = this.paperRepository.save(paper);
-
-        return paperId;
+        return this.paperRepository.save(paper);
     }
 }

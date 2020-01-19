@@ -6,7 +6,7 @@
 //
 
 
-package com.scit.xml.model;
+package com.scit.xml.model.paper;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
@@ -70,11 +70,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link com.scit.xml.model.Reference }
+     * Create an instance of {@link Reference }
      * 
      */
-    public com.scit.xml.model.Reference createReference() {
-        return new com.scit.xml.model.Reference();
+    public Reference createReference() {
+        return new Reference();
     }
 
     /**

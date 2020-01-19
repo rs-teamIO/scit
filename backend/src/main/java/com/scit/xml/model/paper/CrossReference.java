@@ -6,14 +6,14 @@
 //
 
 
-package com.scit.xml.model;
+package com.scit.xml.model.paper;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 
 /**
@@ -23,74 +23,74 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * <pre>
  * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="link" use="required" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
- *       &lt;attribute name="img_title" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
+ *   &lt;simpleContent>
+ *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
+ *       &lt;attribute ref="{http://www.scit.org/schema/paper}cross_reference_id use="required""/>
+ *     &lt;/extension>
+ *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
-@XmlRootElement(name = "image", namespace = "http://www.scit.org/schema/paper")
-public class Image {
+@XmlType(name = "", propOrder = {
+    "value"
+})
+@XmlRootElement(name = "cross_reference", namespace = "http://www.scit.org/schema/paper")
+public class CrossReference {
 
-    @XmlAttribute(name = "link", required = true)
-    @XmlSchemaType(name = "anySimpleType")
-    protected String link;
-    @XmlAttribute(name = "img_title")
-    protected String imgTitle;
+    @XmlValue
+    protected String value;
+    @XmlAttribute(name = "cross_reference_id", namespace = "http://www.scit.org/schema/paper", required = true)
+    protected String crossReferenceId;
 
     /**
-     * Gets the value of the link property.
+     * Gets the value of the value property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getLink() {
-        return link;
+    public String getValue() {
+        return value;
     }
 
     /**
-     * Sets the value of the link property.
+     * Sets the value of the value property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setLink(String value) {
-        this.link = value;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     /**
-     * Gets the value of the imgTitle property.
+     * Gets the value of the crossReferenceId property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getImgTitle() {
-        return imgTitle;
+    public String getCrossReferenceId() {
+        return crossReferenceId;
     }
 
     /**
-     * Sets the value of the imgTitle property.
+     * Sets the value of the crossReferenceId property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setImgTitle(String value) {
-        this.imgTitle = value;
+    public void setCrossReferenceId(String value) {
+        this.crossReferenceId = value;
     }
 
 }

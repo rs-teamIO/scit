@@ -1,7 +1,7 @@
 package com.scit.xml.common.util;
 
-import com.scit.xml.model.Person;
-import com.scit.xml.model.User;
+import com.scit.xml.model.user.Person;
+import com.scit.xml.model.user.User;
 
 public class XmlMapper {
 

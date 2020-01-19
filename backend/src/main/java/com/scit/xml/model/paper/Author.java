@@ -6,7 +6,7 @@
 //
 
 
-package com.scit.xml.model;
+package com.scit.xml.model.paper;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

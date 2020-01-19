@@ -4,9 +4,9 @@ import com.scit.xml.common.util.BadRequestUtils;
 import com.scit.xml.common.util.XmlExtractorUtil;
 import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.dto.RegisterDto;
-import com.scit.xml.model.Person;
-import com.scit.xml.model.Role;
-import com.scit.xml.model.User;
+import com.scit.xml.model.user.Person;
+import com.scit.xml.model.user.Role;
+import com.scit.xml.model.user.User;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 

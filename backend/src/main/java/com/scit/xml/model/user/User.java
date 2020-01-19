@@ -1,4 +1,4 @@
-package com.scit.xml.model;
+package com.scit.xml.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

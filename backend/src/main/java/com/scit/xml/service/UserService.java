@@ -21,14 +21,14 @@ public class UserService {
         this.registerDatabaseValidator.validate(registerDto);
         String userId = this.userRepository.save(registerDto.getUser(), registerDto.getPerson());
 
-        switch (registerDto.getUser().getRole()) {
-            case AUTHOR:
-                // TODO:
-                break;
-            case EDITOR:
-                // TODO:
-                break;
-        }
+//        switch (registerDto.getUser().getRole()) {
+//            case AUTHOR:
+//                // TODO:
+//                break;
+//            case EDITOR:
+//                // TODO:
+//                break;
+//        }
 
         return userId;
     }

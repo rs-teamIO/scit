@@ -6,7 +6,7 @@
 //
 
 
-package com.scit.xml.model;
+package com.scit.xml.model.paper;
 
 import java.util.ArrayList;
 import javax.xml.bind.JAXBElement;
