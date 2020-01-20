@@ -1,5 +1,6 @@
 package com.scit.xml.repository;
 
+import com.scit.xml.common.util.DefaultNamespacePrefixMapper;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
 import com.scit.xml.exception.InternalServerException;
@@ -31,6 +32,7 @@ public abstract class BaseRepository {
             final Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+            marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new DefaultNamespacePrefixMapper());
             marshaller.marshal(instance, stringWriter);
             return stringWriter.toString();
         } catch (Exception e) {

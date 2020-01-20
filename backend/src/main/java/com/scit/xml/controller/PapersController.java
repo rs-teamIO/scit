@@ -1,5 +1,6 @@
 package com.scit.xml.controller;
 
+import com.scit.xml.common.Constants;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
 import com.scit.xml.common.util.XmlResponseUtils;
@@ -44,8 +45,7 @@ public class PapersController {
         Paper paper = this.paperDtoValidator.validate(xml);
         String id = this.paperService.createPaper(paper);
 
-        // TODO: Editor username should be a constant
-        String editorEmail = this.userService.getUserEmail("editor1");
+        String editorEmail = this.userService.getUserEmail(Constants.EDITOR_USERNAME);
 
         byte[] pdf = ByteStreams.toByteArray(this.paperService.exportToPdf(id).getInputStream());
         Resource htmlResource = this.paperService.exportToHtml(id);
