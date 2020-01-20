@@ -4,18 +4,8 @@ import static java.util.UUID.randomUUID;
 
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
-import com.scit.xml.exception.InternalServerException;
 import com.scit.xml.model.paper.Paper;
-import jdk.nashorn.internal.objects.annotations.Constructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import java.io.StringWriter;
 
 @Component
 public class PaperRepository extends BaseRepository {
