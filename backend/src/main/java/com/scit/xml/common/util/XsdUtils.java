@@ -2,8 +2,6 @@ package com.scit.xml.common.util;
 
 import com.scit.xml.common.api.ResponseCode;
 import com.scit.xml.exception.BadRequestException;
-import com.scit.xml.exception.InternalServerException;
-import com.scit.xml.model.paper.Paper;
 import org.springframework.core.io.Resource;
 
 import javax.xml.XMLConstants;
@@ -51,7 +49,7 @@ public class XsdUtils {
         final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
         try {
-            final JAXBContext context = JAXBContext.newInstance(Paper.class);
+            final JAXBContext context = JAXBContext.newInstance(clazz);
             final Unmarshaller unmarshaller = context.createUnmarshaller();
             final String path = resource.getURI().getPath();
             final Schema schema = factory.newSchema(new StreamSource(new FileInputStream(path)));

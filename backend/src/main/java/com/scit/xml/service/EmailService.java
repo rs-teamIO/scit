@@ -1,7 +1,7 @@
 package com.scit.xml.service;
 
+import com.scit.xml.model.cover_letter.CoverLetter;
 import com.scit.xml.model.paper.Paper;
-import com.scit.xml.model.user.User;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.CharEncoding;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,31 +38,35 @@ public class EmailService {
      * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
      *
      * @param recipient e-mail address of the recipient
-     * @param paper     {@link Paper} instance to be attached in PDF and HTML format in the e-mail
+     * @param paper {@link Paper} instance to be attached in PDF and HTML format in the e-mail
+     * @param html HTML representation of the {@link Paper} instance
+     * @param pdf PDF representation of the {@link Paper} instance
      * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
      */
     @Async
     public void sendPaperSubmissionNotificationEmail(String recipient, Paper paper, byte[] pdf, String html) throws MessagingException {
-        String currentDate = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
-        String fileName = String.format("%s_%s", paper.getTitle(), currentDate);
+        final String subject = "New paper has been submitted";
+        final String text = String.format("A new paper named <b>%s</b> has been submitted.", paper.getTitle());
 
-        MimeBodyPart textBodyPart = new MimeBodyPart();
-        textBodyPart.setContent(String.format("A new paper named <b>%s</b> has been submitted.", paper.getTitle()), TEXT_HTML_VALUE);
+        this.sendEmailWithAttachments(recipient, subject, text, paper.getTitle(), pdf, html);
+    }
 
-        MimeBodyPart pdfAttachmentBodyPart = new MimeBodyPart();
-        pdfAttachmentBodyPart.setContent(pdf, APPLICATION_PDF_VALUE);
-        pdfAttachmentBodyPart.setFileName(fileName + ".pdf");
+    /**
+     * Sends a cover letter submission notiication e-mail to the recipient.
+     * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
+     *
+     * @param recipient e-mail address of the recipient
+     * @param paper {@link CoverLetter} instance to be attached in PDF and HTML format in the e-mail
+     * @param html HTML representation of the {@link CoverLetter} instance
+     * @param pdf PDF representation of the {@link CoverLetter} instance
+     * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
+     */
+    @Async
+    public void sendCoverLetterSubmissionNotificationEmail(String recipient, CoverLetter coverLetter, byte[] pdf, String html) throws MessagingException {
+        final String subject = "New cover letter has been submitted";
+        final String text = String.format("A new cover letter named <b>%s</b> has been submitted.", "PLACEHOLDER");
 
-        MimeBodyPart htmlAttachmentBodyPart = new MimeBodyPart();
-        htmlAttachmentBodyPart.setContent(html, TEXT_HTML_VALUE);
-        htmlAttachmentBodyPart.setFileName(fileName + ".html");
-
-        Multipart multipartContent = new MimeMultipart();
-        multipartContent.addBodyPart(textBodyPart);
-        multipartContent.addBodyPart(pdfAttachmentBodyPart);
-        multipartContent.addBodyPart(htmlAttachmentBodyPart);
-
-        this.sendEmail(recipient, "New paper has been submitted", multipartContent);
+        this.sendEmailWithAttachments(recipient, subject, text, "PLACEHOLDER", pdf, html);
     }
 
     /**
@@ -107,5 +111,42 @@ public class EmailService {
         mailMessage.setContent(content);
 
         this.mailSender.send(mailMessage);
+    }
+
+    /**
+     * Sends an email with given content and attachments to the recipient.
+     *
+     * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
+     * @param recipient Recipient's email address
+     * @param subject Email subject
+     * @param text Email content
+     * @param fileName Name of the attachment file
+     * @param pdf PDF file
+     * @param html HTML file
+     * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
+     */
+    @Async
+    void sendEmailWithAttachments(String recipient, String subject, String text, String fileName, byte[] pdf, String html) throws MessagingException {
+
+        final String currentDate = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
+        final String newFileName = String.format("%s_%s", fileName, currentDate);
+
+        MimeBodyPart textBodyPart = new MimeBodyPart();
+        textBodyPart.setContent(text, TEXT_HTML_VALUE);
+
+        MimeBodyPart pdfAttachmentBodyPart = new MimeBodyPart();
+        pdfAttachmentBodyPart.setContent(pdf, APPLICATION_PDF_VALUE);
+        pdfAttachmentBodyPart.setFileName(newFileName + ".pdf");
+
+        MimeBodyPart htmlAttachmentBodyPart = new MimeBodyPart();
+        htmlAttachmentBodyPart.setContent(html, TEXT_HTML_VALUE);
+        htmlAttachmentBodyPart.setFileName(newFileName + ".html");
+
+        Multipart multipartContent = new MimeMultipart();
+        multipartContent.addBodyPart(textBodyPart);
+        multipartContent.addBodyPart(pdfAttachmentBodyPart);
+        multipartContent.addBodyPart(htmlAttachmentBodyPart);
+
+        this.sendEmail(recipient, subject, multipartContent);
     }
 }
