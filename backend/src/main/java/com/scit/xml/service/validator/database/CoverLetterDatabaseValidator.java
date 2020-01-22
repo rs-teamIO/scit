@@ -4,7 +4,9 @@ package com.scit.xml.service.validator.database;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiErrors;
 import com.scit.xml.common.api.RestApiRequestParameters;
+import com.scit.xml.common.util.BadRequestUtils;
 import com.scit.xml.common.util.NotFoundUtils;
+import com.scit.xml.exception.RestApiError;
 import com.scit.xml.model.cover_letter.CoverLetter;
 import com.scit.xml.repository.CoverLetterRepository;
 import com.scit.xml.repository.PaperRepository;
@@ -21,6 +23,7 @@ public class CoverLetterDatabaseValidator {
 
     public void validateCreateRequest(CoverLetter coverLetter) {
         this.validateThatPaperExists(coverLetter.getPaperId());
+        this.validateThatCoverLetterDoesNotExistForGivenPaper(coverLetter.getPaperId());
     }
 
     public String validateExportRequest(String coverLetterId) {
@@ -38,5 +41,11 @@ public class CoverLetterDatabaseValidator {
         String xml = this.paperRepository.findById(paperId);
         NotFoundUtils.throwNotFoundExceptionIf(StringUtils.isEmpty(xml),
                 RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiRequestParameters.ID));
+    }
+
+    private void validateThatCoverLetterDoesNotExistForGivenPaper(String paperId) {
+        String xml = this.coverLetterRepository.findByPaperId(paperId);
+        BadRequestUtils.throwInvalidRequestDataExceptionIf(StringUtils.isNotEmpty(xml),
+                RestApiErrors.entityWithGivenFieldAlreadyExists(RestApiConstants.COVER_LETTER, RestApiRequestParameters.PAPER_ID));
     }
 }

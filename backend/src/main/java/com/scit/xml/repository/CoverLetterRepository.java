@@ -33,6 +33,9 @@ public class CoverLetterRepository extends BaseRepository {
     @Value("classpath:xq/cover_letter/findById.xq")
     private Resource findByIdQuery;
 
+    @Value("classpath:xq/cover_letter/findByPaperId.xq")
+    private Resource findByPaperIdQuery;
+
     public CoverLetterRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor) {
         super(xQueryBuilder, xQueryExecutor);
     }
@@ -62,6 +65,13 @@ public class CoverLetterRepository extends BaseRepository {
 
     public String findById(String id) {
         String query = xQueryBuilder.buildQuery(findByIdQuery, id);
+        ResourceSet resourceSet = xQueryExecutor.execute(DOCUMENT_ID, query);
+
+        return ResourceSetUtils.toXml(resourceSet);
+    }
+
+    public String findByPaperId(String paperId) {
+        String query = xQueryBuilder.buildQuery(findByPaperIdQuery, paperId);
         ResourceSet resourceSet = xQueryExecutor.execute(DOCUMENT_ID, query);
 
         return ResourceSetUtils.toXml(resourceSet);
