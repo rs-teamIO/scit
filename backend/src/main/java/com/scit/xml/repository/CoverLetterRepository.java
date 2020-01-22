@@ -47,7 +47,7 @@ public class CoverLetterRepository extends BaseRepository {
             XMLGregorianCalendar currentDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
             coverLetter.setDate(currentDate);
         } catch (DatatypeConfigurationException e) {
-            throw new InternalServerException();
+            throw new InternalServerException(e);
         }
 
 

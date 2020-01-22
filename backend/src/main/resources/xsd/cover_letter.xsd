@@ -9,7 +9,7 @@
                     <xs:attribute name="paper_id" use="optional">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
-                                <xs:minLength value="1"/>
+                                <xs:minLength value="63"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>

@@ -13,4 +13,7 @@ public final class RestApiConstants {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String EMAIL = "email";
+
+    public static final String PAPER = "paper";
+    public static final String COVER_LETTER = "cover_letter";
 }
