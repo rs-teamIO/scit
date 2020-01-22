@@ -67,7 +67,7 @@ public class DocumentConverter {
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
             document.open();
             // TODO: Remove placeholder when XSLT is implemented
-            document.add(new Chunk("PLACEHOLDER"));
+            document.add(new Chunk("SCIT - Scientific Paper Publishing System"));
             XMLWorkerHelper.getInstance().parseXHtml(writer, document, new StringInputStream(html));
             document.close();
         } catch (Exception e) {

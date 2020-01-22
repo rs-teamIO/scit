@@ -45,11 +45,11 @@ public class CoverLetter {
 
     @XmlValue
     protected String value;
-    @XmlAttribute(name = "id")
+    @XmlAttribute(name = "id", namespace = "http://www.scit.org/schema/cover_letter")
     protected String id;
-    @XmlAttribute(name = "paper_id")
+    @XmlAttribute(name = "paper_id", namespace = "http://www.scit.org/schema/cover_letter")
     protected String paperId;
-    @XmlAttribute(name = "date")
+    @XmlAttribute(name = "date", namespace = "http://www.scit.org/schema/cover_letter")
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar date;
 

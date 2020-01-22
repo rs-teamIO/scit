@@ -3,11 +3,19 @@ package com.scit.xml.repository;
 import com.scit.xml.common.util.ResourceSetUtils;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
+import com.scit.xml.exception.InternalServerException;
 import com.scit.xml.model.cover_letter.CoverLetter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.xmldb.api.base.ResourceSet;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static java.util.UUID.randomUUID;
 
@@ -32,6 +40,17 @@ public class CoverLetterRepository extends BaseRepository {
     public String save(CoverLetter coverLetter) {
         String id = String.format(COVER_LETTERS_NAMESPACE_FORMAT, randomUUID().toString());
         coverLetter.setId(id);
+
+        try {
+            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+            gregorianCalendar.setTime(new Date());
+            XMLGregorianCalendar currentDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
+            coverLetter.setDate(currentDate);
+        } catch (DatatypeConfigurationException e) {
+            throw new InternalServerException();
+        }
+
+
         String xml = this.marshal(CoverLetter.class, coverLetter);
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, COVER_LETTER_NAMESPACE_ALIAS,
                 COVER_LETTER_NAMESPACE, COVER_LETTERS_COLLECTION, xml, COVER_LETTERS_NAMESPACE);
