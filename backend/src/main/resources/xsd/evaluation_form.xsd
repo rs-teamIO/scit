@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+           targetNamespace="http://www.scit.org/schema/evaluation_form"
+           xmlns="http://www.scit.org/schema/evaluation_form">
+    <xs:simpleType name="score">
+        <xs:restriction base="xs:positiveInteger">
+            <xs:maxInclusive value="5"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="evaluation_form">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="general">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="relevance">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="readability">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="language">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="organization">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="abstract">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="keywords">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="figures">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="conclusion">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="references">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="overall_quality">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="technical">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="originality">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="contribution_value">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="academic_standards">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="rationale">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="methodology">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="accuracy">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="evidence">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="scientific_quality">
+                                <xs:complexType>
+                                    <xs:attribute name="score" type="score"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="recommendation" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

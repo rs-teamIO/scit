@@ -1,6 +1,7 @@
 package com.scit.xml.service;
 
 import com.scit.xml.model.cover_letter.CoverLetter;
+import com.scit.xml.model.evaluation_form.EvaluationForm;
 import com.scit.xml.model.paper.Paper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.CharEncoding;
@@ -65,6 +66,15 @@ public class EmailService {
     public void sendCoverLetterSubmissionNotificationEmail(String recipient, CoverLetter coverLetter, byte[] pdf, String html) throws MessagingException {
         final String subject = "New cover letter has been submitted";
         final String text = String.format("A new cover letter named <b>%s</b> has been submitted.", "PLACEHOLDER");
+
+        this.sendEmailWithAttachments(recipient, subject, text, "PLACEHOLDER", pdf, html);
+    }
+
+    // TODO: Docs
+    @Async
+    public void sendEvaluationFormSubmissionNotificationEmail(String recipient, EvaluationForm evaluationForm, byte[] pdf, String html) throws MessagingException {
+        final String subject = "New evaluation form has been submitted";
+        final String text = String.format("A new evaluation form named <b>%s</b> has been submitted.", "PLACEHOLDER");
 
         this.sendEmailWithAttachments(recipient, subject, text, "PLACEHOLDER", pdf, html);
     }

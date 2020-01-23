@@ -32,6 +32,8 @@ public class DefaultNamespacePrefixMapper extends NamespacePrefixMapper {
         this.addMapping("http://www.scit.org/schema/paper", "paper");
         this.addMapping("http://www.scit.org/schema/cover_letters", "cover_letters");
         this.addMapping("http://www.scit.org/schema/cover_letter", "cover_letter");
+        this.addMapping("http://www.scit.org/schema/evaluation_forms", "evaluation_forms");
+        this.addMapping("http://www.scit.org/schema/evaluation_form", "evaluation_form");
         this.addMapping("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         this.addMapping("http://java.sun.com/xml/ns/jaxb", "jaxb");
     }
