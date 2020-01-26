@@ -55,110 +55,110 @@
     <xsl:template match="evaluation_form:relevance">
         <tr>
             <td>Relevance</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:readability">
         <tr>
             <td>Readability</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:language">
         <tr>
             <td>Language</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:organization">
         <tr>
             <td>Organization</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:abstract">
         <tr>
             <td>Abstract</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:keywords">
         <tr>
             <td>Keywords</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:figures">
         <tr>
             <td>Figures</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:conclusion">
         <tr>
             <td>Conclusion</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:references">
         <tr>
             <td>References</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:overall_quality">
         <tr>
             <td>Overall quality</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
 
     <xsl:template match="evaluation_form:originality">
         <tr>
             <td>Originality</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:contribution_value">
         <tr>
             <td>Contribution Value</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:academic_standards">
         <tr>
             <td>Academic Standards</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:rationale">
         <tr>
             <td>Rationale</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:methodology">
         <tr>
             <td>Methodology</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:accuracy">
         <tr>
             <td>Accuracy</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:evidence">
         <tr>
             <td>Evidence</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
     <xsl:template match="evaluation_form:scientific_quality">
         <tr>
             <td>Scientific Quality</td>
-            <td><xsl:value-of select="./@evaluation_form:score"/></td>
+            <td><xsl:value-of select="./@score"/></td>
         </tr>
     </xsl:template>
 </xsl:stylesheet>
