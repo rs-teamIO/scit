@@ -19,6 +19,8 @@ import javax.xml.xpath.XPathConstants;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
+
 @Data
 public class XmlWrapper {
 
@@ -74,6 +76,7 @@ public class XmlWrapper {
         try {
             // Create transformer instance that is used for serializing the DOM model
             final Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OMIT_XML_DECLARATION, "yes");
             // Execute transformation from XML source to result
             transformer.transform(domSource, result);
             // Write result to field
