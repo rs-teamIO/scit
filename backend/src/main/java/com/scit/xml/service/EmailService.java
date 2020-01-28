@@ -46,8 +46,8 @@ public class EmailService {
      */
     @Async
     public void sendPaperSubmissionNotificationEmail(String recipient, Paper paper, byte[] pdf, String html) throws MessagingException {
-        final String subject = "New paper has been submitted";
-        final String text = String.format("A new paper named <b>%s</b> has been submitted.", paper.getTitle());
+        final String subject = String.format("New paper titled \"%s\" has been submitted", paper.getTitle());
+        final String text = String.format("A new paper titled \"<b>%s</b>\" has been submitted.<br><br>The files can be found in the attachment.", paper.getTitle());
 
         this.sendEmailWithAttachments(recipient, subject, text, paper.getTitle(), pdf, html);
     }
@@ -63,20 +63,29 @@ public class EmailService {
      * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
      */
     @Async
-    public void sendCoverLetterSubmissionNotificationEmail(String recipient, CoverLetter coverLetter, byte[] pdf, String html) throws MessagingException {
-        final String subject = "New cover letter has been submitted";
-        final String text = String.format("A new cover letter named <b>%s</b> has been submitted.", "PLACEHOLDER");
+    public void sendCoverLetterSubmissionNotificationEmail(String recipient, CoverLetter coverLetter, String paperTitle, byte[] pdf, String html) throws MessagingException {
+        final String subject = String.format("Cover letter for paper \"%s\" has been submitted", paperTitle);
+        final String text = String.format("A new cover letter for paper with title \"<b>%s</b>\" has been submitted.<br><br>The files can be found in the attachment.", paperTitle);
 
-        this.sendEmailWithAttachments(recipient, subject, text, "PLACEHOLDER", pdf, html);
+        this.sendEmailWithAttachments(recipient, subject, text, paperTitle, pdf, html);
     }
 
-    // TODO: Docs
+    /**
+     * Sends a evaluation form submission notiication e-mail to the recipient.
+     * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
+     *
+     * @param recipient e-mail address of the recipient
+     * @param paper {@link EvaluationForm} instance to be attached in PDF and HTML format in the e-mail
+     * @param html HTML representation of the {@link EvaluationForm} instance
+     * @param pdf PDF representation of the {@link EvaluationForm} instance
+     * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
+     */
     @Async
-    public void sendEvaluationFormSubmissionNotificationEmail(String recipient, EvaluationForm evaluationForm, byte[] pdf, String html) throws MessagingException {
-        final String subject = "New evaluation form has been submitted";
-        final String text = String.format("A new evaluation form named <b>%s</b> has been submitted.", "PLACEHOLDER");
+    public void sendEvaluationFormSubmissionNotificationEmail(String recipient, EvaluationForm evaluationForm, String paperTitle, byte[] pdf, String html) throws MessagingException {
+        final String subject = String.format("Evaluation form for paper \"%s\" has been submitted", paperTitle);
+        final String text = String.format("A new evaluation form for paper with title \"<b>%s</b>\" has been submitted.<br><br>The files can be found in the attachment.", paperTitle);
 
-        this.sendEmailWithAttachments(recipient, subject, text, "PLACEHOLDER", pdf, html);
+        this.sendEmailWithAttachments(recipient, subject, text, paperTitle, pdf, html);
     }
 
     /**
