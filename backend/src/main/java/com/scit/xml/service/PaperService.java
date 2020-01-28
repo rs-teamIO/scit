@@ -4,6 +4,7 @@ import com.scit.xml.common.Constants;
 import com.scit.xml.common.Predicate;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiErrors;
+import com.scit.xml.common.util.ForbiddenUtils;
 import com.scit.xml.common.util.NotFoundUtils;
 import com.scit.xml.common.util.XmlExtractorUtil;
 import com.scit.xml.common.util.XmlWrapper;
@@ -100,5 +101,18 @@ public class PaperService {
         rdfTriples.add(submittedRdfTriple);
 
         return rdfTriples;
+    }
+
+    public String getRawPaperForDownload(String paperId) {
+        // 1. Check if paper is published
+        final boolean isPublished = this.isPaperPublished(paperId);
+        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!isPublished);
+
+        return this.findById(paperId);
+    }
+
+    public boolean isPaperPublished(String paperId) {
+        // TODO: Check if paper is published.
+        return true;
     }
 }
