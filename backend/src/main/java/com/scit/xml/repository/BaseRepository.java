@@ -57,31 +57,4 @@ public abstract class BaseRepository {
             throw new InternalServerException(e);
         }
     }
-
-    /**
-     * Performs validation of XML document against given XML schema and
-     * unmarshalling to given type.
-     * @param clazz target type class
-     * @param resource XML Schema resource
-     * @param xml XML to be validated and unmarshalled
-     * @param <T> target type
-     * @return deserialized instance of type T
-     */
-    protected <T> T unmarshal(Class<T> clazz, Resource resource, String xml) {
-        LOGGER.info(String.format("Unmarshalling to %s instance...", clazz.getName()));
-        final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        try {
-            final JAXBContext context = JAXBContext.newInstance(clazz);
-            final Unmarshaller unmarshaller = context.createUnmarshaller();
-            final String path = resource.getURI().getPath();
-            final Schema schema = factory.newSchema(new StreamSource(new FileInputStream(path)));
-            unmarshaller.setSchema(schema);
-            unmarshaller.setEventHandler(new SchemaValidationEventHandler());
-            LOGGER.info(String.format("Unmarshalling to %s instance successful.", clazz.getName()));
-            return (T)unmarshaller.unmarshal(new StringReader(xml));
-        } catch (Exception e) {
-            LOGGER.error(String.format("Unmarshalling to %s unsuccessful.", clazz.getName()));
-            throw new BadRequestException(ResponseCode.INVALID_MEDIA_TYPE, "Schema validation error: Given XML document is invalid.");
-        }
-    }
 }
