@@ -6,7 +6,6 @@ import com.scit.xml.common.api.RestApiErrors;
 import com.scit.xml.common.api.RestApiRequestParameters;
 import com.scit.xml.common.util.BadRequestUtils;
 import com.scit.xml.common.util.NotFoundUtils;
-import com.scit.xml.exception.RestApiError;
 import com.scit.xml.model.cover_letter.CoverLetter;
 import com.scit.xml.repository.CoverLetterRepository;
 import com.scit.xml.repository.PaperRepository;
@@ -21,9 +20,9 @@ public class CoverLetterDatabaseValidator {
     private final CoverLetterRepository coverLetterRepository;
     private final PaperRepository paperRepository;
 
-    public void validateCreateRequest(CoverLetter coverLetter) {
-        this.validateThatPaperExists(coverLetter.getPaperId());
-        this.validateThatCoverLetterDoesNotExistForGivenPaper(coverLetter.getPaperId());
+    public void validateCreateRequest(CoverLetter coverLetter, String paperId) {
+        this.validateThatPaperExists(paperId);
+        this.validateThatCoverLetterDoesNotExistForGivenPaper(paperId);
     }
 
     public String validateExportRequest(String coverLetterId) {

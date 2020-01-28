@@ -1,13 +1,7 @@
 
 package com.scit.xml.model.cover_letter;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
@@ -18,19 +12,22 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  * <pre>
  * &lt;complexType>
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="text" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="paper_id">
  *         &lt;simpleType>
  *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *             &lt;minLength value="1"/>
+ *             &lt;minLength value="63"/>
  *           &lt;/restriction>
  *         &lt;/simpleType>
  *       &lt;/attribute>
  *       &lt;attribute name="date" type="{http://www.w3.org/2001/XMLSchema}date" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
  * 
@@ -38,43 +35,43 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "value"
+    "text"
 })
 @XmlRootElement(name = "cover_letter", namespace = "http://www.scit.org/schema/cover_letter")
 public class CoverLetter {
 
-    @XmlValue
-    protected String value;
-    @XmlAttribute(name = "id", namespace = "http://www.scit.org/schema/cover_letter")
+    @XmlElement(namespace = "http://www.scit.org/schema/cover_letter", required = true)
+    protected String text;
+    @XmlAttribute(namespace = "http://www.scit.org/schema/cover_letter", name = "id")
     protected String id;
-    @XmlAttribute(name = "paper_id", namespace = "http://www.scit.org/schema/cover_letter")
+    @XmlAttribute(namespace = "http://www.scit.org/schema/cover_letter", name = "paper_id")
     protected String paperId;
-    @XmlAttribute(name = "date", namespace = "http://www.scit.org/schema/cover_letter")
+    @XmlAttribute(namespace = "http://www.scit.org/schema/cover_letter", name = "date")
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar date;
 
     /**
-     * Gets the value of the value property.
+     * Gets the value of the text property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getValue() {
-        return value;
+    public String getText() {
+        return text;
     }
 
     /**
-     * Sets the value of the value property.
+     * Sets the value of the text property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
-        this.value = value;
+    public void setText(String value) {
+        this.text = value;
     }
 
     /**
