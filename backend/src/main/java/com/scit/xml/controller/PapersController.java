@@ -1,6 +1,5 @@
 package com.scit.xml.controller;
 
-import com.google.common.io.ByteStreams;
 import com.scit.xml.common.Constants;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
@@ -14,11 +13,9 @@ import com.scit.xml.service.PaperService;
 import com.scit.xml.service.UserService;
 import com.scit.xml.service.validator.dto.PaperDtoValidator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping(RestApiEndpoints.PAPERS)
