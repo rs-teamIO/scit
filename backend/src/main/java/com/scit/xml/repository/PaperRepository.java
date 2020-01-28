@@ -1,7 +1,5 @@
 package com.scit.xml.repository;
 
-import static java.util.UUID.randomUUID;
-
 import com.scit.xml.common.util.ResourceSetUtils;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
@@ -10,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.xmldb.api.base.ResourceSet;
+
+import static java.util.UUID.randomUUID;
 
 @Component
 public class PaperRepository extends BaseRepository {
