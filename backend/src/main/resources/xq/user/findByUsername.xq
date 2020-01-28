@@ -4,5 +4,5 @@ declare namespace users = "http://www.scit.org/schema/users";
 declare namespace user = "http://www.scit.org/schema/user";
 
 for $user in fn:doc("/db/apps/scit/users.xml")/users:users/user:user
-where $user/user:username = "%1$s" and $user/@isActive = "true"
+where $user/user:username = "%1$s"
 return $user

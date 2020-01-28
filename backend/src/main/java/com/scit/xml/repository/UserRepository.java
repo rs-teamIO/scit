@@ -1,19 +1,15 @@
 package com.scit.xml.repository;
 
-import static java.util.UUID.randomUUID;
-
 import com.scit.xml.common.util.ResourceSetUtils;
-import com.scit.xml.common.util.XmlMapper;
+import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
-import com.scit.xml.model.user.Person;
-import com.scit.xml.model.user.User;
-import lombok.RequiredArgsConstructor;
-import org.exist.xquery.functions.util.BaseConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.xmldb.api.base.ResourceSet;
+
+import static java.util.UUID.randomUUID;
 
 @Component
 public class UserRepository extends BaseRepository {
@@ -39,14 +35,16 @@ public class UserRepository extends BaseRepository {
         super(xQueryBuilder, xQueryExecutor);
     }
 
-    public String save(User user, Person person) {
-        user.setId(randomUUID().toString());
-        String xml = XmlMapper.toXml(user, person);
-        String query = this.xQueryBuilder.buildQuery(this.appendTemplate, USER_NAMESPACE_ALIAS, USER_NAMESPACE, USERS_COLLECTION, xml, USERS_NAMESPACE);
+    public String save(XmlWrapper xmlWrapper) {
+        final String id = String.format(USERS_NAMESPACE_FORMAT, randomUUID().toString());
+        xmlWrapper.getDocument().getDocumentElement().setAttribute("id", id);
+        xmlWrapper.updateXml();
 
+        String xml = xmlWrapper.getXml();
+        final String query = this.xQueryBuilder.buildQuery(this.appendTemplate, USER_NAMESPACE_ALIAS, USER_NAMESPACE, USERS_COLLECTION, xml, USERS_NAMESPACE);
         this.xQueryExecutor.updateResource(DOCUMENT_ID, query);
 
-        return String.format(USERS_NAMESPACE_FORMAT, user.getId());
+        return id;
     }
 
     public String findById(String id) {
