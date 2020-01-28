@@ -22,6 +22,9 @@ public class PaperRepository extends BaseRepository {
 
     private final String PAPERS_NAMESPACE_FORMAT = "http://www.scit.org/papers/%s";
 
+    @Value("classpath:xsd/paper.xsd")
+    private Resource paperSchema;
+
     @Value("classpath:xq/paper/findById.xq")
     private Resource findByIdQuery;
 
@@ -45,5 +48,12 @@ public class PaperRepository extends BaseRepository {
         ResourceSet resourceSet = xQueryExecutor.execute(DOCUMENT_ID, query);
 
         return ResourceSetUtils.toXml(resourceSet);
+    }
+
+    public Paper findByIdReturnsPaper(String id) {
+        String query = xQueryBuilder.buildQuery(findByIdQuery, id);
+        ResourceSet resourceSet = xQueryExecutor.execute(DOCUMENT_ID, query);
+
+        return this.unmarshal(Paper.class, paperSchema, ResourceSetUtils.toXml(resourceSet));
     }
 }

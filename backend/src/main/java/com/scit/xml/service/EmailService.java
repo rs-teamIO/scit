@@ -52,6 +52,15 @@ public class EmailService {
         this.sendEmailWithAttachments(recipient, subject, text, paper.getTitle(), pdf, html);
     }
 
+    // TODO: Doc
+    @Async
+    public void sendPaperAssignmentNotificationEmail(String recipient, String paperTitle) throws MessagingException {
+        final String subject = String.format("Paper \"%s\" has been assigned to you for review", paperTitle);
+        final String text = String.format("A new paper titled \"<b>%s</b>\" has been assigned to you for review.<br><br>Please visit the website to submit the review.", paperTitle);
+
+        this.sendEmail(recipient, subject, text);
+    }
+
     /**
      * Sends a cover letter submission notiication e-mail to the recipient.
      * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.

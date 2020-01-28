@@ -1,13 +1,11 @@
 package com.scit.xml.service;
 
+import com.google.common.collect.Lists;
 import com.scit.xml.common.Constants;
 import com.scit.xml.common.Predicate;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiErrors;
-import com.scit.xml.common.util.ForbiddenUtils;
-import com.scit.xml.common.util.NotFoundUtils;
-import com.scit.xml.common.util.XmlExtractorUtil;
-import com.scit.xml.common.util.XmlWrapper;
+import com.scit.xml.common.util.*;
 import com.scit.xml.exception.InternalServerException;
 import com.scit.xml.model.paper.Paper;
 import com.scit.xml.rdf.RdfExtractor;
@@ -26,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,12 +39,12 @@ public class PaperService {
     private final DocumentConverter documentConverter;
     private final RdfRepository rdfRepository;
 
-    public String createPaper(Paper paper, String creatorUsername) {
+    public String createPaper(Paper paper, String creatorId) {
         // TODO: DB Validation (if necessary)
         // this.paperDatabaseValidator.validateCreateRequest(paper, creatorUsername);
         String id = this.paperRepository.save(paper);
 
-        List<RdfTriple> rdfTriples = this.extractRdfTriples(id, creatorUsername);
+        List<RdfTriple> rdfTriples = this.extractRdfTriples(id, creatorId);
         this.rdfRepository.insertTriples(rdfTriples);
 
         return id;
@@ -84,7 +83,7 @@ public class PaperService {
         return XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/title");
     }
 
-    private List<RdfTriple> extractRdfTriples(String id, String creatorUsername) {
+    private List<RdfTriple> extractRdfTriples(String id, String _creatorId) {
         // TODO: This method can't stay like this
 
         final String paperXml = this.paperRepository.findById(id);
@@ -94,7 +93,7 @@ public class PaperService {
 
         final String paperId = RdfExtractor.wrapId(id);
         // TODO: Fix this - shouldn't be wrapped
-        final String creatorId = RdfExtractor.wrapId(creatorUsername);
+        final String creatorId = RdfExtractor.wrapId(_creatorId);
         RdfTriple createdRdfTriple = new RdfTriple(creatorId, Predicate.CREATED, paperId);
         RdfTriple submittedRdfTriple = new RdfTriple(creatorId, Predicate.SUBMITTED, paperId);
         rdfTriples.add(createdRdfTriple);
@@ -114,5 +113,42 @@ public class PaperService {
     public boolean isPaperPublished(String paperId) {
         // TODO: Check if paper is published.
         return true;
+    }
+
+    private final String SPARQL_GET_PAPERS_OF_USER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:created ?o.\n" + "}";
+
+    public String getPapersByUserId(String currentUserId) {
+        List<String> paperIds = rdfRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_OF_USER_QUERY, currentUserId));
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<papers>\n");
+        paperIds.forEach(id -> sb.append(String.format(this.findById(id))));
+        sb.append("</papers>\n");
+
+        return sb.toString();
+    }
+
+    public String getPublishedPapers(String userId) {
+        // TODO: Get published papers
+        return "";
+    }
+
+    public void assignReviewer(String paperId, XmlWrapper paperWrapper, String username) {
+        List<String> authorUsernames = XmlExtractorUtil.extractSetOfAttributeValuesAndValidateNotEmpty(paperWrapper.getDocument(), "/paper/authors/*", "username");
+        boolean invalidAssignment = authorUsernames.stream().anyMatch(username::equals);
+        BadRequestUtils.throwInvalidRequestDataExceptionIf(invalidAssignment, String.format("Unable to assign the paper for review to user with username %s", username));
+
+        RdfTriple assignedRdfTriple = new RdfTriple(RdfExtractor.wrapId(username), Predicate.ASSIGNED_TO, RdfExtractor.wrapId(paperId));
+        List<RdfTriple> rdfTriples = Lists.newArrayList(assignedRdfTriple);
+        this.rdfRepository.insertTriples(rdfTriples);
+    }
+
+    public Paper findByIdReturnsPaper(String paperId) {
+        final Paper paper = this.paperRepository.findByIdReturnsPaper(paperId);
+        NotFoundUtils.throwNotFoundExceptionIf(paper == null,
+                RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiConstants.ID));
+        return paper;
+
     }
 }

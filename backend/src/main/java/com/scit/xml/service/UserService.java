@@ -50,6 +50,13 @@ public class UserService {
         return userXml;
     }
 
+    public String findByUsername(String username) {
+        final String userXml = this.userRepository.findByUsername(username);
+        NotFoundUtils.throwNotFoundExceptionIf(StringUtils.isEmpty(userXml),
+                RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.USER, RestApiConstants.USERNAME));
+        return userXml;
+    }
+
     // TODO: Should be changed
     public String getUserEmail(String username) {
         final String userXml = this.userRepository.findByUsername(username);
