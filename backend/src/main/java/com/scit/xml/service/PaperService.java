@@ -6,6 +6,7 @@ import com.scit.xml.common.Predicate;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiErrors;
 import com.scit.xml.common.util.*;
+import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.exception.InternalServerException;
 import com.scit.xml.model.paper.Paper;
 import com.scit.xml.rdf.RdfExtractor;
@@ -24,8 +25,8 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,8 @@ public class PaperService {
     private final DocumentConverter documentConverter;
     private final RdfRepository rdfRepository;
 
+    // ======================================= create =======================================
+
     public String createPaper(Paper paper, String creatorId) {
         // TODO: DB Validation (if necessary)
         // this.paperDatabaseValidator.validateCreateRequest(paper, creatorUsername);
@@ -48,6 +51,22 @@ public class PaperService {
         this.rdfRepository.insertTriples(rdfTriples);
 
         return id;
+    }
+
+    private List<RdfTriple> extractRdfTriples(String id, String creatorId) {
+        final String paperXml = this.paperRepository.findById(id);
+        final XmlWrapper paperWrapper = new XmlWrapper(paperXml);
+        final RdfExtractor rdfExtractor = new RdfExtractor(id, Constants.PAPER_SCHEMA_URL, Predicate.PREFIX);
+        List<RdfTriple> rdfTriples = rdfExtractor.extractRdfTriples(paperWrapper);
+
+        final String paperId = RdfExtractor.wrapId(id);
+        final String userId = RdfExtractor.wrapId(creatorId);
+        RdfTriple createdRdfTriple = new RdfTriple(userId, Predicate.CREATED, paperId);
+        RdfTriple submittedRdfTriple = new RdfTriple(userId, Predicate.SUBMITTED, paperId);
+        rdfTriples.add(createdRdfTriple);
+        rdfTriples.add(submittedRdfTriple);
+
+        return rdfTriples;
     }
 
     public Resource exportToPdf(String paperId) {
@@ -70,6 +89,60 @@ public class PaperService {
         }
     }
 
+    // ======================================= getPapers =======================================
+
+    private final String SPARQL_GET_PAPERS_OF_USER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:created ?o.\n" + "}";
+
+    public List<XmlResponse> getPapersByUserId(String currentUserId) {
+        List<String> paperIds = rdfRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_OF_USER_QUERY, currentUserId));
+
+        return paperIds.stream().map(id -> {
+            return convertToXmlResponse(this.findById(id));
+        }).collect(Collectors.toList());
+    }
+
+    public List<XmlResponse> getPublishedPapers(String userId) {
+        // TODO: Get published papers
+        return null;
+    }
+
+    private XmlResponse convertToXmlResponse(String xml) {
+        XmlWrapper xmlWrapper = new XmlWrapper(xml);
+        return new XmlResponse(XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/id"),
+                XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/title"));
+    }
+
+    // ======================================= assignReviewer =======================================
+
+    public void assignReviewer(String paperId, XmlWrapper paperWrapper, String userId) {
+        boolean reviewerIsAuthorOfPaper = XmlExtractorUtil
+                .extractSetOfAttributeValuesAndValidateNotEmpty(paperWrapper.getDocument(), "/paper/authors/*", "id")
+                .stream().anyMatch(userId::equals);
+        BadRequestUtils.throwInvalidRequestDataExceptionIf(reviewerIsAuthorOfPaper, String.format("Unable to assign the paper for review to user with ID %s", userId));
+
+        RdfTriple assignedRdfTriple = new RdfTriple(RdfExtractor.wrapId(userId), Predicate.ASSIGNED_TO, RdfExtractor.wrapId(paperId));
+        List<RdfTriple> rdfTriples = Lists.newArrayList(assignedRdfTriple);
+        this.rdfRepository.insertTriples(rdfTriples);
+    }
+
+    // ======================================= getRaw and getPdf =======================================
+
+    public String getRawPaperForDownload(String paperId) {
+        // TODO: Check if paper is published
+        // If it's not published, only the author of paper and editor can download it.
+        final boolean isPublished = true;
+        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!isPublished);
+
+        return this.findById(paperId);
+    }
+
+
+
+
+
+    // ======================================= common stuff =======================================
+
     public String findById(String paperId) {
         final String paperXml = this.paperRepository.findById(paperId);
         NotFoundUtils.throwNotFoundExceptionIf(StringUtils.isEmpty(paperXml),
@@ -81,74 +154,5 @@ public class PaperService {
         String paperXml = this.findById(paperId);
         XmlWrapper xmlWrapper = new XmlWrapper(paperXml);
         return XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/title");
-    }
-
-    private List<RdfTriple> extractRdfTriples(String id, String _creatorId) {
-        // TODO: This method can't stay like this
-
-        final String paperXml = this.paperRepository.findById(id);
-        final XmlWrapper paperWrapper = new XmlWrapper(paperXml);
-        final RdfExtractor rdfExtractor = new RdfExtractor(id, Constants.PAPER_SCHEMA_URL, Predicate.PREFIX);
-        List<RdfTriple> rdfTriples = rdfExtractor.extractRdfTriples(paperWrapper);
-
-        final String paperId = RdfExtractor.wrapId(id);
-        // TODO: Fix this - shouldn't be wrapped
-        final String creatorId = RdfExtractor.wrapId(_creatorId);
-        RdfTriple createdRdfTriple = new RdfTriple(creatorId, Predicate.CREATED, paperId);
-        RdfTriple submittedRdfTriple = new RdfTriple(creatorId, Predicate.SUBMITTED, paperId);
-        rdfTriples.add(createdRdfTriple);
-        rdfTriples.add(submittedRdfTriple);
-
-        return rdfTriples;
-    }
-
-    public String getRawPaperForDownload(String paperId) {
-        // 1. Check if paper is published
-        final boolean isPublished = this.isPaperPublished(paperId);
-        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!isPublished);
-
-        return this.findById(paperId);
-    }
-
-    public boolean isPaperPublished(String paperId) {
-        // TODO: Check if paper is published.
-        return true;
-    }
-
-    private final String SPARQL_GET_PAPERS_OF_USER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:created ?o.\n" + "}";
-
-    public String getPapersByUserId(String currentUserId) {
-        List<String> paperIds = rdfRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_OF_USER_QUERY, currentUserId));
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("<papers>\n");
-        paperIds.forEach(id -> sb.append(String.format(this.findById(id))));
-        sb.append("</papers>\n");
-
-        return sb.toString();
-    }
-
-    public String getPublishedPapers(String userId) {
-        // TODO: Get published papers
-        return "";
-    }
-
-    public void assignReviewer(String paperId, XmlWrapper paperWrapper, String username) {
-        List<String> authorUsernames = XmlExtractorUtil.extractSetOfAttributeValuesAndValidateNotEmpty(paperWrapper.getDocument(), "/paper/authors/*", "username");
-        boolean invalidAssignment = authorUsernames.stream().anyMatch(username::equals);
-        BadRequestUtils.throwInvalidRequestDataExceptionIf(invalidAssignment, String.format("Unable to assign the paper for review to user with username %s", username));
-
-        RdfTriple assignedRdfTriple = new RdfTriple(RdfExtractor.wrapId(username), Predicate.ASSIGNED_TO, RdfExtractor.wrapId(paperId));
-        List<RdfTriple> rdfTriples = Lists.newArrayList(assignedRdfTriple);
-        this.rdfRepository.insertTriples(rdfTriples);
-    }
-
-    public Paper findByIdReturnsPaper(String paperId) {
-        final Paper paper = this.paperRepository.findByIdReturnsPaper(paperId);
-        NotFoundUtils.throwNotFoundExceptionIf(paper == null,
-                RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiConstants.ID));
-        return paper;
-
     }
 }

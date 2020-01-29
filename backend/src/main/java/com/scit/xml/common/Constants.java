@@ -9,7 +9,7 @@ public final class Constants {
 
     public static final String EDITOR_USERNAME = "editor1";
 
-    public static final String PAPER_DOCUMENT_ID = "cover_letters.xml";
+    public static final String PAPER_DOCUMENT_ID = "papers.xml";
     public static final String COVER_LETTER_DOCUMENT_ID = "cover_letters.xml";
     public static final String EVALUATION_FORM_DOCUMENT_ID = "evaluation_forms.xml";
 

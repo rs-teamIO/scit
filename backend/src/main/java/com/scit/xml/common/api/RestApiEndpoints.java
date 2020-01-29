@@ -13,6 +13,7 @@ public final class RestApiEndpoints {
     public static final String PAPER = API_ROOT + "/paper";
     public static final String DOWNLOAD_RAW = "/raw/download";
     public static final String DOWNLOAD_PDF = "/pdf/download";
+    public static final String ASSIGN = "/assign";
 
     public static final String PAPERS = API_ROOT + "/papers";
 

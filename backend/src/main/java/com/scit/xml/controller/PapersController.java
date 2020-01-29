@@ -3,15 +3,11 @@ package com.scit.xml.controller;
 import com.scit.xml.common.Constants;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
-import com.scit.xml.common.util.BadRequestUtils;
-import com.scit.xml.common.util.ResourceUtils;
-import com.scit.xml.common.util.XmlResponseUtils;
-import com.scit.xml.common.util.XmlWrapper;
+import com.scit.xml.common.api.RestApiRequestParameters;
+import com.scit.xml.common.util.*;
 import com.scit.xml.dto.XmlResponse;
-import com.scit.xml.exception.BadRequestException;
 import com.scit.xml.model.paper.Paper;
 import com.scit.xml.security.JwtTokenDetailsUtil;
-import com.scit.xml.security.JwtTokenUtil;
 import com.scit.xml.service.EmailService;
 import com.scit.xml.service.PaperService;
 import com.scit.xml.service.UserService;
@@ -24,7 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(RestApiEndpoints.PAPERS)
@@ -41,46 +37,43 @@ public class PapersController {
                  produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> create(@RequestBody String xml) throws MessagingException {
         Paper paper = this.paperDtoValidator.validate(xml);
-        String creatorId = JwtTokenDetailsUtil.getCurrentUserId();
-        String id = this.paperService.createPaper(paper, creatorId);
+        String paperId = this.paperService.createPaper(paper, JwtTokenDetailsUtil.getCurrentUserId());
 
         String editorEmail = this.userService.getUserEmail(Constants.EDITOR_USERNAME);
-        byte[] pdf = ResourceUtils.convertResourceToByteArray(this.paperService.exportToPdf(id));
-        String html = ResourceUtils.convertResourceToString(this.paperService.exportToHtml(id));
+        byte[] pdf = ResourceUtils.convertResourceToByteArray(this.paperService.exportToPdf(paperId));
+        String html = ResourceUtils.convertResourceToString(this.paperService.exportToHtml(paperId));
         this.emailService.sendPaperSubmissionNotificationEmail(editorEmail, paper, pdf, html);
 
-        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, id));
+        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, paperId));
         return ResponseEntity.ok(responseBody);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE )
-    public ResponseEntity<String> getPapers(@RequestParam(required = false) Boolean ofCurrentUser) {
+    public ResponseEntity getPapers(@RequestParam(name = RestApiRequestParameters.CURRENT_USER, required = false) Boolean ofCurrentUser) {
         String userId = JwtTokenDetailsUtil.getCurrentUserId();
         if(userId != null && ofCurrentUser) {
-            String papersXml = this.paperService.getPapersByUserId(userId);
-            return ResponseEntity.ok(papersXml);
+            List<XmlResponse> papers = this.paperService.getPapersByUserId(userId);
+            return ResponseEntity.ok(papers);
         }
-        String papersXml = this.paperService.getPublishedPapers(userId);
-        return ResponseEntity.ok(papersXml);
+        List<XmlResponse> papers = this.paperService.getPublishedPapers(userId);
+        return ResponseEntity.ok(papers);
     }
 
     @PreAuthorize("hasAuthority('editor')")
-    @PutMapping(value = "/assign")
-    public ResponseEntity assignReviewer(@RequestParam("paper_id") String paperId, @RequestParam("username") String username) throws MessagingException {
-
-        // TODO: Check if it works without this shit
-        //this.userService.findById(username);
-
-        BadRequestUtils.throwInvalidRequestDataExceptionIf(username.equals(JwtTokenDetailsUtil.getCurrentUserUsername()),
-                String.format("Unable to assign the paper for review to user with username %s", username));
+    @PutMapping(value = RestApiEndpoints.ASSIGN)
+    public ResponseEntity assignReviewer(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId,
+                                         @RequestParam(RestApiRequestParameters.USER_ID) String userId) throws MessagingException {
+        BadRequestUtils.throwInvalidRequestDataExceptionIf(userId.equals(JwtTokenDetailsUtil.getCurrentUserId()),
+                String.format("Unable to assign the paper for review to user with ID %s", userId));
 
         final XmlWrapper paperWrapper = new XmlWrapper(paperService.findById(paperId));
-        this.paperService.assignReviewer(paperId, paperWrapper, username);
+        final XmlWrapper userWrapper = new XmlWrapper(userService.findById(userId));
+        this.paperService.assignReviewer(paperId, paperWrapper, userId);
 
-        String paperTitle = this.paperService.findByIdReturnsPaper(paperId).getTitle();
-        this.emailService.sendPaperAssignmentNotificationEmail("f.ivkovic16@gmail.com", paperTitle);
+        String paperTitle = XmlExtractorUtil.extractStringAndValidateNotBlank(paperWrapper.getDocument(), "/paper/title");
+        String reviewerEmail = XmlExtractorUtil.extractStringAndValidateNotBlank(userWrapper.getDocument(), "/user/email");
+        this.emailService.sendPaperAssignmentNotificationEmail(reviewerEmail, paperTitle);
 
         return new ResponseEntity(HttpStatus.OK);
     }
-
 }

@@ -52,7 +52,14 @@ public class EmailService {
         this.sendEmailWithAttachments(recipient, subject, text, paper.getTitle(), pdf, html);
     }
 
-    // TODO: Doc
+    /**
+     * Sends a paper assignment notiication e-mail to the recipient.
+     * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
+     *
+     * @param recipient e-mail address of the recipient
+     * @param paperTitle title of the paper that was assigned
+     * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
+     */
     @Async
     public void sendPaperAssignmentNotificationEmail(String recipient, String paperTitle) throws MessagingException {
         final String subject = String.format("Paper \"%s\" has been assigned to you for review", paperTitle);
