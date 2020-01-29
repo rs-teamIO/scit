@@ -18,7 +18,7 @@ public class EvaluationFormDatabaseValidator {
     private final EvaluationFormRepository evaluationFormRepository;
     private final PaperRepository paperRepository;
 
-    public void validateCreateRequest(EvaluationForm coverLetter, String paperId) {
+    public void validateCreateRequest(EvaluationForm evaluationForm, String paperId) {
         // TODO: validateCreateRequest for EvaluationForm
         this.validateThatPaperExists(paperId);
     }

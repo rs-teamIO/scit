@@ -53,10 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                     .disable()
                 .authorizeRequests()
-                    .antMatchers("/login").permitAll()
-                    .antMatchers(HttpMethod.POST, RestApiEndpoints.USERS).permitAll()
-                    .anyRequest()
-                    .authenticated()
+                    .antMatchers("/**").permitAll()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -65,15 +62,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
-//        httpSecurity
-//                .csrf()
-//                .disable()
-//                .exceptionHandling()
-//                    .and()
-//                .authorizeRequests()
-//                    .antMatchers("/**")
-//                    .permitAll();
     }
 }
 

@@ -1,28 +1,20 @@
 package com.scit.xml.repository;
 
+import com.scit.xml.common.Constants;
 import com.scit.xml.common.util.ResourceSetUtils;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
-import com.scit.xml.exception.InternalServerException;
 import com.scit.xml.model.cover_letter.CoverLetter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.xmldb.api.base.ResourceSet;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import static java.util.UUID.randomUUID;
 
 @Component
 public class CoverLetterRepository extends BaseRepository {
 
-    private final String DOCUMENT_ID = "cover_letters.xml";
     private final String COVER_LETTER_NAMESPACE_ALIAS = "cover_letter";
     private final String COVER_LETTER_NAMESPACE = "http://www.scit.org/schema/cover_letter";
     private final String COVER_LETTERS_COLLECTION = "/cover_letters:cover_letters";
@@ -44,35 +36,25 @@ public class CoverLetterRepository extends BaseRepository {
         String id = String.format(COVER_LETTERS_NAMESPACE_FORMAT, randomUUID().toString());
         coverLetter.setId(id);
 
-        try {
-            GregorianCalendar gregorianCalendar = new GregorianCalendar();
-            gregorianCalendar.setTime(new Date());
-            XMLGregorianCalendar currentDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
-            coverLetter.setDate(currentDate);
-        } catch (DatatypeConfigurationException e) {
-            throw new InternalServerException(e);
-        }
-
-
         String xml = this.marshal(CoverLetter.class, coverLetter);
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, COVER_LETTER_NAMESPACE_ALIAS,
                 COVER_LETTER_NAMESPACE, COVER_LETTERS_COLLECTION, xml, COVER_LETTERS_NAMESPACE);
 
-        this.xQueryExecutor.updateResource(DOCUMENT_ID, query);
+        this.xQueryExecutor.updateResource(Constants.COVER_LETTER_DOCUMENT_ID, query);
 
         return id;
     }
 
     public String findById(String id) {
         String query = xQueryBuilder.buildQuery(findByIdQuery, id);
-        ResourceSet resourceSet = xQueryExecutor.execute(DOCUMENT_ID, query);
+        ResourceSet resourceSet = xQueryExecutor.execute(Constants.COVER_LETTER_DOCUMENT_ID, query);
 
         return ResourceSetUtils.toXml(resourceSet);
     }
 
     public String findByPaperId(String paperId) {
         String query = xQueryBuilder.buildQuery(findByPaperIdQuery, paperId);
-        ResourceSet resourceSet = xQueryExecutor.execute(DOCUMENT_ID, query);
+        ResourceSet resourceSet = xQueryExecutor.execute(Constants.COVER_LETTER_DOCUMENT_ID, query);
 
         return ResourceSetUtils.toXml(resourceSet);
     }

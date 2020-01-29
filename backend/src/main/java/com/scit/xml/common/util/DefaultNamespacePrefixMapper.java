@@ -28,6 +28,8 @@ public class DefaultNamespacePrefixMapper extends NamespacePrefixMapper {
      */
     protected void setDefaultMappings() {
         this.mappings.clear();
+        this.addMapping("http://www.scit.org/schema/users", "users");
+        this.addMapping("http://www.scit.org/schema/user", "user");
         this.addMapping("http://www.scit.org/schema/papers", "papers");
         this.addMapping("http://www.scit.org/schema/paper", "paper");
         this.addMapping("http://www.scit.org/schema/cover_letters", "cover_letters");

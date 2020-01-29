@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(RestApiEndpoints.USER)
@@ -21,14 +20,16 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping(produces = { APPLICATION_XML_VALUE, APPLICATION_JSON_VALUE }, params = { RestApiRequestParameters.ID })
+    @GetMapping(params = { RestApiRequestParameters.ID },
+                produces = { APPLICATION_XML_VALUE })
     public ResponseEntity<String> findById(@RequestParam(RestApiRequestParameters.ID) String id) {
         String userXml = this.userService.findById(id);
         return ResponseEntity.ok(userXml);
     }
 
-    @GetMapping(value = "/me", produces = { APPLICATION_XML_VALUE })
-    public ResponseEntity<String> me() {
+    @GetMapping(value = RestApiEndpoints.CURRENT_USER,
+            produces = { APPLICATION_XML_VALUE })
+    public ResponseEntity<String> getCurrentUser() {
         String userXml = userService.findById(JwtTokenDetailsUtil.getCurrentUserId());
         return ResponseEntity.ok(userXml);
     }

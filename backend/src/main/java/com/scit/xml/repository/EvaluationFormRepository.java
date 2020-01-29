@@ -1,5 +1,6 @@
 package com.scit.xml.repository;
 
+import com.scit.xml.common.Constants;
 import com.scit.xml.common.util.ResourceSetUtils;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
@@ -14,7 +15,6 @@ import static java.util.UUID.randomUUID;
 @Component
 public class EvaluationFormRepository extends BaseRepository {
 
-    private final String DOCUMENT_ID = "evaluation_forms.xml";
     private final String EVALUATION_FORM_NAMESPACE_ALIAS = "evaluation_form";
     private final String EVALUATION_FORM_NAMESPACE = "http://www.scit.org/schema/evaluation_form";
     private final String EVALUATION_FORMS_COLLECTION = "/evaluation_forms:evaluation_forms";
@@ -37,14 +37,14 @@ public class EvaluationFormRepository extends BaseRepository {
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, EVALUATION_FORM_NAMESPACE_ALIAS,
                 EVALUATION_FORM_NAMESPACE, EVALUATION_FORMS_COLLECTION, xml, EVALUATION_FORMS_NAMESPACE);
 
-        this.xQueryExecutor.updateResource(DOCUMENT_ID, query);
+        this.xQueryExecutor.updateResource(Constants.EVALUATION_FORM_DOCUMENT_ID, query);
 
         return id;
     }
 
     public String findById(String id) {
         String query = xQueryBuilder.buildQuery(findByIdQuery, id);
-        ResourceSet resourceSet = xQueryExecutor.execute(DOCUMENT_ID, query);
+        ResourceSet resourceSet = xQueryExecutor.execute(Constants.EVALUATION_FORM_DOCUMENT_ID, query);
 
         return ResourceSetUtils.toXml(resourceSet);
     }

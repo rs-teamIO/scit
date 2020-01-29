@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-           targetNamespace="http://www.scit.org/schema/login" vc:minVersion="1.1"
-           xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning">
+           targetNamespace="http://www.scit.org/schema/login"
+           xmlns="http://www.scit.org/schema/login">
     <xs:element name="login">
         <xs:complexType>
             <xs:sequence>

@@ -1,8 +1,9 @@
 package com.scit.xml.config;
 
 import com.scit.xml.exception.InternalServerException;
-import org.exist.interpreter.Compiled;
 import org.exist.xmldb.EXistResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.xmldb.api.DatabaseManager;
@@ -15,6 +16,8 @@ import javax.xml.transform.OutputKeys;
 
 @Configuration
 public class XQueryExecutor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XQueryExecutor.class);
 
     private final String COLLECTION_ID = "/db/apps/scit";
 
@@ -47,7 +50,7 @@ public class XQueryExecutor {
 
         try {
             // initialize database driver
-            System.out.println("[INFO] Loading driver class: " + this.driver);
+            LOGGER.info(String.format("Loading driver class %s", this.driver));
             Class<?> cl = Class.forName(this.driver);
 
             Database database = (Database) cl.newInstance();
@@ -56,7 +59,7 @@ public class XQueryExecutor {
             DatabaseManager.registerDatabase(database);
 
             // get the collection
-            System.out.println("[INFO] Retrieving the collection: " + COLLECTION_ID);
+            LOGGER.info(String.format("Retrieving the collection %s", COLLECTION_ID));
             collection = DatabaseManager.getCollection(getCollectionUri());
             collection.setProperty(OutputKeys.INDENT, "yes");
 

@@ -69,6 +69,7 @@
             <xs:element name="affilliation" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="username" type="xs:string"/>
+        <xs:attribute name="id" type="xs:string"/>
     </xs:complexType>
     <xs:element name="paper_info">
         <xs:complexType>

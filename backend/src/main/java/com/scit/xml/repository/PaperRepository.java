@@ -1,7 +1,6 @@
 package com.scit.xml.repository;
 
-import static java.util.UUID.randomUUID;
-
+import com.scit.xml.common.Constants;
 import com.scit.xml.common.util.ResourceSetUtils;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
@@ -11,10 +10,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.xmldb.api.base.ResourceSet;
 
+import static java.util.UUID.randomUUID;
+
 @Component
 public class PaperRepository extends BaseRepository {
 
-    private final String DOCUMENT_ID = "papers.xml";
     private final String PAPER_NAMESPACE_ALIAS = "paper";
     private final String PAPER_NAMESPACE = "http://www.scit.org/schema/paper";
     private final String PAPERS_COLLECTION = "/papers:papers";
@@ -35,14 +35,14 @@ public class PaperRepository extends BaseRepository {
         String xml = this.marshal(Paper.class, paper);
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, PAPER_NAMESPACE_ALIAS, PAPER_NAMESPACE, PAPERS_COLLECTION, xml, PAPERS_NAMESPACE);
 
-        this.xQueryExecutor.updateResource(DOCUMENT_ID, query);
+        this.xQueryExecutor.updateResource(Constants.PAPER_DOCUMENT_ID, query);
 
         return id;
     }
 
     public String findById(String id) {
         String query = xQueryBuilder.buildQuery(findByIdQuery, id);
-        ResourceSet resourceSet = xQueryExecutor.execute(DOCUMENT_ID, query);
+        ResourceSet resourceSet = xQueryExecutor.execute(Constants.PAPER_DOCUMENT_ID, query);
 
         return ResourceSetUtils.toXml(resourceSet);
     }

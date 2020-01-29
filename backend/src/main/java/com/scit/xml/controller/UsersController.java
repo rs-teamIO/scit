@@ -3,7 +3,7 @@ package com.scit.xml.controller;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
 import com.scit.xml.common.util.XmlResponseUtils;
-import com.scit.xml.dto.RegisterDto;
+import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.service.UserService;
 import com.scit.xml.service.validator.dto.RegisterDtoValidator;
@@ -23,10 +23,14 @@ public class UsersController {
     private final UserService userService;
     private final RegisterDtoValidator registerDtoValidator;
 
-    @PostMapping(consumes = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_XML_VALUE,
+                 produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> register(@RequestBody String xml) {
-        RegisterDto registerDto = registerDtoValidator.validate(xml);
-        String id = userService.register(registerDto);
+        this.registerDtoValidator.validate(xml);
+
+        final XmlWrapper registerXmlWrapper = new XmlWrapper(xml);
+        String id = this.userService.register(registerXmlWrapper);
+
         String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, id));
         return ResponseEntity.ok(responseBody);
     }
