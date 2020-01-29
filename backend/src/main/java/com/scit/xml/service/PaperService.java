@@ -94,23 +94,46 @@ public class PaperService {
     private final String SPARQL_GET_PAPERS_OF_USER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
             "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:created ?o.\n" + "}";
 
-    public List<XmlResponse> getPapersByUserId(String currentUserId) {
+    public String getPapersByUserId(String currentUserId) {
         List<String> paperIds = rdfRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_OF_USER_QUERY, currentUserId));
 
-        return paperIds.stream().map(id -> {
-            return convertToXmlResponse(this.findById(id));
+        List<String> papers = paperIds.stream().map(id -> {
+            return convertToXmlResponseString(this.findById(id));
         }).collect(Collectors.toList());
+
+        // TODO: Refactor
+        StringBuilder sb = new StringBuilder();
+        for(String p : papers) {
+            sb.append(p);
+        }
+
+        return sb.toString();
     }
 
-    public List<XmlResponse> getPublishedPapers(String userId) {
+    public List<String> getPublishedPapers(String userId) {
         // TODO: Get published papers
         return null;
     }
 
-    private XmlResponse convertToXmlResponse(String xml) {
+    private String convertToXmlResponseString(String xml) {
         XmlWrapper xmlWrapper = new XmlWrapper(xml);
-        return new XmlResponse(XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/id"),
-                XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/title"));
+        String id = XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/@id");
+        String title = XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/title");
+
+        // TODO: Refactor
+        StringBuilder sb = new StringBuilder();
+        String indent = "  ";
+
+        sb.append("<paper>\n");
+        sb.append(indent).append("<id>");
+        sb.append(id);
+        sb.append(indent).append("</id>");
+        sb.append(indent).append("<title>");
+        sb.append(title);
+        sb.append(indent).append("</title>");
+        sb.append("</paper>");
+
+        return sb.toString();
     }
 
     // ======================================= assignReviewer =======================================

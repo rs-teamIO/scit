@@ -51,12 +51,12 @@ public class PapersController {
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE )
     public ResponseEntity getPapers(@RequestParam(name = RestApiRequestParameters.CURRENT_USER, required = false) Boolean ofCurrentUser) {
         String userId = JwtTokenDetailsUtil.getCurrentUserId();
-        if(userId != null && ofCurrentUser) {
-            List<XmlResponse> papers = this.paperService.getPapersByUserId(userId);
-            return ResponseEntity.ok(papers);
+        if(userId != null && ofCurrentUser != null && ofCurrentUser) {
+            String papers = this.paperService.getPapersByUserId(userId);
+            return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
         }
-        List<XmlResponse> papers = this.paperService.getPublishedPapers(userId);
-        return ResponseEntity.ok(papers);
+        List<String> papers = this.paperService.getPublishedPapers(userId);
+        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
     }
 
     @PreAuthorize("hasAuthority('editor')")
