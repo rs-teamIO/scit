@@ -91,7 +91,8 @@ public class EmailService {
      * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
      *
      * @param recipient e-mail address of the recipient
-     * @param paper {@link EvaluationForm} instance to be attached in PDF and HTML format in the e-mail
+     * @param evaluationForm {@link EvaluationForm} instance to be attached in PDF and HTML format in the e-mail
+     * @param paperTitle title of the {@link Paper} being evaluated
      * @param html HTML representation of the {@link EvaluationForm} instance
      * @param pdf PDF representation of the {@link EvaluationForm} instance
      * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
@@ -102,6 +103,40 @@ public class EmailService {
         final String text = String.format("A new evaluation form for paper with title \"<b>%s</b>\" has been submitted.<br><br>The files can be found in the attachment.", paperTitle);
 
         this.sendEmailWithAttachments(recipient, subject, text, paperTitle, pdf, html);
+    }
+
+    /**
+     * Sends a review accepted notiication e-mail to the recipient.
+     * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
+     *
+     * @param recipient e-mail address of the recipient
+     * @param username username of the {@link User} who accepted the review
+     * @param paperTitle title of the {@link Paper} being evaluated
+     * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
+     */
+    @Async
+    public void sendReviewAcceptedNotificationEmail(String recipient, String username, String paperTitle) throws MessagingException {
+        final String subject = "Review request accepted";
+        final String text = String.format("User <b>%s</b> has accepted to review the paper titled \"<b>%s</b>\".", username, paperTitle);
+
+        this.sendEmail(recipient, subject, text);
+    }
+
+    /**
+     * Sends a review declined notiication e-mail to the recipient.
+     * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
+     *
+     * @param recipient e-mail address of the recipient
+     * @param username username of the {@link User} who declined the review
+     * @param paperTitle title of the {@link Paper} being evaluated
+     * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
+     */
+    @Async
+    public void sendReviewDeclinedNotificationEmail(String recipient, String username, String paperTitle) throws MessagingException {
+        final String subject = "Review request declined";
+        final String text = String.format("User <b>%s</b> has declined to review the paper titled \"<b>%s</b>\".", username, paperTitle);
+
+        this.sendEmail(recipient, subject, text);
     }
 
     /**

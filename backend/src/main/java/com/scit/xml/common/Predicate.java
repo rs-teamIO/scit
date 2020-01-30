@@ -14,4 +14,6 @@ public final class Predicate {
     public static final String EVALUATES = PREFIX + ":evaluates";
     public static final String ACCOMPANIES = PREFIX + ":accompanies";
     public static final String ASSIGNED_TO = PREFIX + ":assigned_to";
+    public static final String CURRENTLY_REVIEWING = PREFIX + ":currently_reviewing";
+
 }

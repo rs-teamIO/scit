@@ -23,6 +23,7 @@ public class RdfRepository {
     private static final String INSERT_INTO_DEFAULT_GRAPH = PREFIX + "INSERT DATA { %s }";
     private static final String INSERT_INTO_GRAPH = PREFIX + "INSERT DATA { GRAPH <%s> { %s } }";
     private static final String DELETE_AND_INSERT = PREFIX + "DELETE { <%1$s> ?p ?o } WHERE { <%1$s> ?p ?o } ; INSERT DATA { %2$s }";
+    private static final String DELETE_FROM_GRAPH = PREFIX + "DELETE WHERE { <%1$s> %2$s <%3$s> }";
 
     private final RdfQueryExecutor rdfQueryExecutor;
 
@@ -49,6 +50,10 @@ public class RdfRepository {
         queryExecution.close();
 
         return subjectIds;
+    }
+
+    public boolean ask(String query) {
+        return this.rdfQueryExecutor.ask(query);
     }
 
     /**
@@ -85,6 +90,7 @@ public class RdfRepository {
         this.rdfQueryExecutor.update(query);
     }
 
+
     /**
      * Converts given {@link RdfTriple} instances into string representation.
      *
@@ -97,5 +103,11 @@ public class RdfRepository {
             rdfTriplesStrings.append(rdfTriple.toString());
         });
         return rdfTriplesStrings.toString();
+    }
+
+    // TODO: Review implementation
+    public void deleteTriple(String s, String p, String o) {
+        String query = String.format(DELETE_FROM_GRAPH, s, p, o);
+        this.rdfQueryExecutor.update(query);
     }
 }
