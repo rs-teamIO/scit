@@ -111,4 +111,12 @@ public class PapersController {
         String papers = this.paperService.getAssignedPapers(JwtTokenDetailsUtil.getCurrentUserId());
         return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
     }
+
+    @PreAuthorize("hasAuthority('editor')")
+    @GetMapping(value = RestApiEndpoints.SUBMITTED,
+            produces = { MediaType.APPLICATION_XML_VALUE } )
+    public ResponseEntity getSubmittedPapers() {
+        String papers = this.paperService.getSubmittedPapers();
+        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
+    }
 }

@@ -17,6 +17,7 @@ public final class RestApiEndpoints {
     public static final String ANONYMOUS =  "/anonymous";
     public static final String AUTHOR =  "/author";
     public static final String ASSIGNED =  "/assigned";
+    public static final String SUBMITTED =  "/submitted";
 
     public static final String PAPERS = API_ROOT + "/papers";
 

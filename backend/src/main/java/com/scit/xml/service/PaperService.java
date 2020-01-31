@@ -223,6 +223,26 @@ public class PaperService {
 
     }
 
+    // ======================================= getSubmittedPapers =======================================
+
+    private final String SPARQL_GET_SUBMITTED_PAPERS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t?s rv:submitted ?o.\n" + "}";
+
+    public String getSubmittedPapers() {
+        List<String> paperIds = rdfRepository.selectSubjects(SPARQL_GET_SUBMITTED_PAPERS_QUERY);
+
+        List<String> papers = paperIds.stream().map(id -> {
+            return convertToXmlResponseString(this.findById(id));
+        }).collect(Collectors.toList());
+
+        // TODO: Refactor
+        StringBuilder sb = new StringBuilder();
+        for(String p : papers) {
+            sb.append(p);
+        }
+
+        return sb.toString();
+    }
 
     // ======================================= common stuff =======================================
 
