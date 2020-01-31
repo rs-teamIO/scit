@@ -1,8 +1,11 @@
 package com.scit.xml.controller;
 
+import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
 import com.scit.xml.common.api.RestApiRequestParameters;
 import com.scit.xml.common.util.ResourceUtils;
+import com.scit.xml.common.util.XmlResponseUtils;
+import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.service.PaperService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -45,5 +48,13 @@ public class PaperController {
         byte[] paperPdf = ResourceUtils.convertResourceToByteArray(this.paperService.exportToPdf(paperId));
 
         return new ResponseEntity<>(new ByteArrayResource(paperPdf), httpHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping(value = RestApiEndpoints.AUTHOR,
+            produces = { MediaType.APPLICATION_XML_VALUE } )
+    public ResponseEntity getAuthorOfPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
+        String authorId = this.paperService.getAuthorOfPaper(paperId);
+        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, authorId));
+        return ResponseEntity.ok(responseBody);
     }
 }

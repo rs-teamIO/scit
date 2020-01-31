@@ -75,7 +75,7 @@ public class PapersController {
         String reviewerEmail = XmlExtractorUtil.extractStringAndValidateNotBlank(userWrapper.getDocument(), "/user/email");
         this.emailService.sendPaperAssignmentNotificationEmail(reviewerEmail, paperTitle);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(produces = { MediaType.APPLICATION_XHTML_XML_VALUE } )
@@ -89,18 +89,26 @@ public class PapersController {
 
         this.paperService.checkCurrentUserAccess(userId, userRole, paperId);
 
-        return new ResponseEntity<>(html, HttpStatus.OK);
+        return ResponseEntity.ok(html);
     }
 
     @PreAuthorize("hasAuthority('author')")
     @GetMapping(value = RestApiEndpoints.ANONYMOUS,
-                produces = { MediaType.APPLICATION_XHTML_XML_VALUE } )
+                produces = { MediaType.APPLICATION_XML_VALUE } )
     public ResponseEntity getAnonymousPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
         String paperXml = this.paperService.findById(paperId);
         XmlWrapper paperWrapper = new XmlWrapper(paperXml);
         this.paperService.anonymizePaper(paperWrapper, paperId, JwtTokenDetailsUtil.getCurrentUserId());
         String xml = paperWrapper.getXml();
 
-        return new ResponseEntity<>(xml, HttpStatus.OK);
+        return ResponseEntity.ok(xml);
+    }
+
+    @PreAuthorize("hasAuthority('author')")
+    @GetMapping(value = RestApiEndpoints.ASSIGNED,
+            produces = { MediaType.APPLICATION_XML_VALUE } )
+    public ResponseEntity getAssignedPapers() {
+        String papers = this.paperService.getAssignedPapers(JwtTokenDetailsUtil.getCurrentUserId());
+        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
     }
 }
