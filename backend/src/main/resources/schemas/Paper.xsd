@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.ftn.uns.ac.rs/publishing/paper" elementFormDefault="qualified"
+    xmlns:paper="http://www.ftn.uns.ac.rs/publishing/paper">
+
+    <xs:element name="paper">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="title" type="xs:string"/>
+                <xs:element maxOccurs="1" minOccurs="1" name="authors">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="author"
+                                type="paper:author"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="abstract">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="content">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:maxLength value="300"/>
+                                        <xs:minLength value="10"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element maxOccurs="unbounded" name="keywords">
+                                <xs:simpleType>
+                                    <xs:list itemType="xs:string"/>
+                                </xs:simpleType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" ref="paper:section"/>
+                <xs:element name="references">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" ref="paper:reference"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="author">
+        <xs:sequence>
+            <xs:element name="name">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="2"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="affiliation" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="username" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Potrebno da bi korisnik mogao da pronadje neobjavljene radove u kojima je on jedan od autora
+</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:element name="section">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="heading" type="xs:string"/>
+                <xs:element ref="paper:content"/>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="paper:section"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="content">
+        <xs:annotation>
+            <xs:documentation>Kako da napravim da content ne sme da bude prazan
+</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true">
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+                <xs:element ref="paper:image"/>
+                <xs:element ref="paper:reference"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="image">
+        <xs:complexType>
+            <xs:attribute name="link" use="required"/>
+            <xs:attribute name="img_title" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="reference">
+        <xs:complexType mixed="false">
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute ref="paper:referenceId"/>
+                    <xs:attribute ref="paper:crossReferenceId"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:attribute name="referenceId" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>Ovo je okej za reference unutar rada, da li je potrebno na neki nacin omoguciti da se stavi link
+</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="crossReferenceId" type="xs:string"/>
+</xs:schema>

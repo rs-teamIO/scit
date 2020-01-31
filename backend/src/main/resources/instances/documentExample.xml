@@ -1,0 +1,100 @@
+<document role="PROF" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.ftn.uns.ac.rs/scit/xml/document">
+	
+	<username>test</username>
+	<password>test</password>
+	<email>test@email.com</email>
+	
+	<papers>
+		<paper id="66aa2262-10ed-42ae-bd52-ad713041f0c2">
+    		<title>Some long paper title</title>
+    		<authors>
+        		<author>
+            		<name>Katarina Tukelic</name>
+           			<affiliation>Fakultet tehnickih nauka</affiliation>
+        		</author>
+    		</authors>
+    		<abstract>
+        		<content>Minimal character count for abstract is 10</content>
+        		<keywords></keywords>
+    		</abstract>
+    		<section>
+        		<heading>First section heading</heading>
+        		<content>
+            		Content can also be an image <image link="www.kaca.com"/>
+            		After image you can continue with writing whatever you want. 
+            		You can also put another picture:
+            		<image link="www.drugaslika.com"/> 
+            		You can also put a reference to literature down below:
+            		<!--<reference paper:id="1"></reference>-->
+            		You can add section in this section, but it most be after content
+        		</content>
+        		<section>
+            		<heading>Second smaller section with smaller heading</heading>
+           		<content></content>
+        		</section>
+    		</section>
+    		<references>
+        		<!--<reference paper:referenceId="1" paper:crossReferenceId="someOtherPaperId">Some book title and some other stuff</reference>-->
+    		</references>
+		</paper>
+		<paper id="dea1082c-dafc-450a-9794-e0580f514bba">
+    		<title>Some long paper title</title>
+    		<authors>
+        		<author>
+            		<name>Katarina Tukelic</name>
+           			<affiliation>Fakultet tehnickih nauka</affiliation>
+        		</author>
+    		</authors>
+    		<abstract>
+        		<content>Minimal character count for abstract is 10</content>
+        		<keywords></keywords>
+    		</abstract>
+    		<section>
+        		<heading>First section heading</heading>
+        		<content>
+            		Content can also be an image <image link="www.kaca.com"/>
+            		After image you can continue with writing whatever you want. 
+            		You can also put another picture:
+            		<image link="www.drugaslika.com"/> 
+            		You can also put a reference to literature down below:
+            		<!--<reference paper:referenceId="1"></reference>-->
+            		You can add section in this section, but it most be after content
+        		</content>
+        		<section>
+            		<heading>Second smaller section with smaller heading</heading>
+           		<content></content>
+        		</section>
+    		</section>
+    		<references>
+        		<!--<reference paper:referenceId="1" paper:crossReferenceId="someOtherPaperId">Some book title and some other stuff</reference>-->
+    		</references>
+		</paper>
+	</papers>
+	
+	<cover_letters>
+		<cover_letter id="8d90cc23-b9b2-4ca4-8659-96d3307075ff" paperId="66aa2262-10ed-42ae-bd52-ad713041f0c2">
+		</cover_letter>
+		<cover_letter id="90beb478-6487-4eec-b245-7c5c50162539" paperId="dea1082c-dafc-450a-9794-e0580f514bba">
+		</cover_letter>
+	</cover_letters>
+	
+	<reviews>
+		<!-- Ako treba referenca na jos neki dokument ili recenzenta? -->
+		<review id="95970644-3f54-4916-8a88-a90009f9bf19" paperId="66aa2262-10ed-42ae-bd52-ad713041f0c2">
+    		<title>
+       			Comments about the title (optional)
+    		</title>
+    		<abstract>
+        		Comments about abstract (optional)
+    		</abstract>
+    		<section heading="heading of the section you're commenting on">
+        		<!-- Bilo bi dobro da moze da se izabere heading iz svih headinga rada koji se recenzira -->
+        		Comments about the section (optional)
+    		</section>
+    		<general>
+       			General comments about the paper
+    		</general>
+		</review>
+	</reviews>
+	
+</document>

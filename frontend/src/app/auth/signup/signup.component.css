@@ -1,0 +1,47 @@
+.wrapper h1{
+    font-family: 'Indonesia';
+    margin-bottom: 10vh;
+}
+
+.wrapper{
+    text-align: center;
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+p{
+    text-align: left;
+    margin-right:auto;
+    margin-left:auto;
+}
+
+.btn{
+    float: right;
+}
+
+.text-input, .text-email{
+    border-style: none none solid none;
+    background-color: black;
+    color: white;
+    height: 18px;
+    outline: none;
+    margin: 5px 5px 10px 5px;
+    text-align: center;
+}
+
+.text-input{
+    width: 140px;
+}
+.text-email{
+    width: 180px;
+}
+
+input, button, div, p, h1 {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* supported by Chrome, Opera and Firefox */
+}
