@@ -51,6 +51,4 @@ public class CoverLettersController {
         String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, id));
         return ResponseEntity.ok(responseBody);
     }
-
-
 }

@@ -41,7 +41,7 @@ public class CoverLetterService {
 
     public String createCoverLetter(CoverLetter coverLetter, String paperId) {
         this.coverLetterDatabaseValidator.validateCreateRequest(coverLetter, paperId);
-        coverLetter.setDate(this.getCurrDate());
+        coverLetter.setDate(this.getCurrentDate());
         String id = this.coverLetterRepository.save(coverLetter);
 
         List<RdfTriple> rdfTriples = this.extractRdfTriples(id, paperId);
@@ -84,7 +84,7 @@ public class CoverLetterService {
         return rdfTriples;
     }
 
-    private XMLGregorianCalendar getCurrDate() {
+    private XMLGregorianCalendar getCurrentDate() {
         try {
             GregorianCalendar gregorianCalendar = new GregorianCalendar();
             gregorianCalendar.setTime(new Date());
