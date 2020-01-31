@@ -91,4 +91,16 @@ public class PapersController {
 
         return new ResponseEntity<>(html, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasAuthority('author')")
+    @GetMapping(value = RestApiEndpoints.ANONYMOUS,
+                produces = { MediaType.APPLICATION_XHTML_XML_VALUE } )
+    public ResponseEntity getAnonymousPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
+        String paperXml = this.paperService.findById(paperId);
+        XmlWrapper paperWrapper = new XmlWrapper(paperXml);
+        this.paperService.anonymizePaper(paperWrapper, paperId, JwtTokenDetailsUtil.getCurrentUserId());
+        String xml = paperWrapper.getXml();
+
+        return new ResponseEntity<>(xml, HttpStatus.OK);
+    }
 }

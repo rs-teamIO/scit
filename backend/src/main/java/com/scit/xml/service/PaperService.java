@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Element;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -175,6 +176,16 @@ public class PaperService {
         boolean userIsAuthor = rdfRepository.ask(String.format(SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
         boolean userIsEditor = Role.EDITOR.getName().equals(userRole);
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!userIsAuthor && !userIsEditor && !paperPublished);
+    }
+
+
+    public void anonymizePaper(XmlWrapper paperWrapper, String paperId, String userId) {
+        boolean userIsAuthor = rdfRepository.ask(String.format(SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
+        if(!userIsAuthor) {
+            final Element element = paperWrapper.getDocument().getDocumentElement();
+            element.removeChild(element.getElementsByTagName("paper:authors").item(0));
+            paperWrapper.updateXml();
+        }
     }
 
     // ======================================= common stuff =======================================
