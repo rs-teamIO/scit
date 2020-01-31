@@ -8,6 +8,7 @@ import com.scit.xml.common.util.ResourceUtils;
 import com.scit.xml.common.util.XmlResponseUtils;
 import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.model.evaluation_form.EvaluationForm;
+import com.scit.xml.model.paper.Paper;
 import com.scit.xml.service.EmailService;
 import com.scit.xml.service.EvaluationFormService;
 import com.scit.xml.service.PaperService;
@@ -32,6 +33,14 @@ public class EvaluationFormsController {
     private final UserService userService;
     private final PaperService paperService;
 
+    /**
+     * POST api/v1/evaluation-forms
+     * AUTHORIZATION: Only authenticated users
+     *
+     * Creates an {@link EvaluationForm} for a {@link Paper} instance
+     * @param xml XML string representation of the {@link EvaluationForm}
+     * @param paperId unique identifier of the {@link Paper} instance
+     */
     @PreAuthorize("isAuthenticated()")
     @PostMapping(params = { RestApiRequestParameters.PAPER_ID },
                  consumes = MediaType.APPLICATION_XML_VALUE,

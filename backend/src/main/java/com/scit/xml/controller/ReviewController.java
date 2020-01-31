@@ -31,6 +31,12 @@ public class ReviewController {
     private final UserService userService;
     private final PaperService paperService;
 
+    /**
+     * PUT api/v1/review/accept
+     *
+     * Endpoint for accepting a review request for {@link Paper} with given ID
+     * @param paperId unique identifier of the {@link Paper}
+     */
     @PreAuthorize("isAuthenticated()")
     @PutMapping(value = RestApiEndpoints.ACCEPT,
                 produces = MediaType.APPLICATION_XML_VALUE)
@@ -43,9 +49,15 @@ public class ReviewController {
         String paperTitle = this.paperService.getPaperTitle(paperId);
         this.emailService.sendReviewAcceptedNotificationEmail(editorEmail, JwtTokenDetailsUtil.getCurrentUserUsername(), paperTitle);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
+    /**
+     * PUT api/v1/review/decline
+     *
+     * Endpoint for declining a review request for {@link Paper} with given ID
+     * @param paperId unique identifier of the {@link Paper}
+     */
     @PreAuthorize("isAuthenticated()")
     @PutMapping(value = RestApiEndpoints.DECLINE,
                 produces = MediaType.APPLICATION_XML_VALUE)
@@ -58,6 +70,6 @@ public class ReviewController {
         String paperTitle = this.paperService.getPaperTitle(paperId);
         this.emailService.sendReviewDeclinedNotificationEmail(editorEmail, JwtTokenDetailsUtil.getCurrentUserUsername(), paperTitle);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }
