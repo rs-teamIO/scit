@@ -10,44 +10,16 @@ export class HttpService {
 
   }
 
-  getToken() {
-    return `Bearer `; // TODO
+  public getToken(): string {
+    return localStorage.getItem('token');
   }
 
-  createHeaders() {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/xml',
-      'Authorization': `Bearer `
-    });
-    return {headers};
+  public isAuthenticated(): boolean {
+    // get the token
+    const token = this.getToken();
+    // return a boolean reflecting
+    // whether or not the token is expired
+    return false; // tokenNotExpired(null, token); -> npm i --save angular2-jwt
   }
 
-  get(url: string) {
-    return this.http.get(url, this.createHeaders());
-  }
-
-  post(url: string, data: Document) {
-    return this.http.post(url, data, this.createHeaders());
-  }
-
-  put(url: string, data: Document) {
-    return this.http.put(url, data, this.createHeaders());
-  }
-
-  delete(url: string) {
-    return this.http.delete(url, this.createHeaders());
-  }
-
-  handleError(response: any) {
-    console.error(response); // TODO: remove
-    if (response.error) {
-      console.log(response.error); // TODO: add sweetalert
-    } else {
-      console.log('Client side error!'); // TODO: add sweetalert
-    }
-  }
-
-  handleSuccess(response: any) {
-    console.log(response.data); // TODO sweetalert
-  }
 }

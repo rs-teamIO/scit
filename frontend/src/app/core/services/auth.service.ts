@@ -12,7 +12,7 @@ const url = '/api/v1/users';
 export class AuthService {
 
   constructor(
-    protected httpService: HttpService,
+    protected http: HttpClient,
     private router: Router
     ) {}
 
@@ -23,31 +23,42 @@ export class AuthService {
     const emailXml =    `<user:email>${email}</user:email>`;
     const firstNameXml = `<user:first_name>${firstName}</user:first_name>`;
     const lastNameXml = `<user:last_name>${lastName}</user:last_name>`;
-    const user =  `<?xml version="1.0" encoding="UTF-8"?>` +
-    `<user:user xmlns:user="http://www.scit.org/schema/user">` +
+    const user = `<user:user xmlns:user="http://www.scit.org/schema/user">` +
     usernameXml +
     passwordXml +
     emailXml +
     firstNameXml +
     lastNameXml +
     `</user:user>`;
-    const parser = new DOMParser();
-    const userXml = parser.parseFromString(user, 'application/xml');
-    // console.log(userXml);
-    return userXml;
+    return user;
   }
 
   signup(firstName: string, lastName: string, username: string, password: string, email: string) {
     const user = this.userToXml(firstName, lastName, username, password, email);
 
-    this.httpService.post(`${url}`, user).toPromise()
+    this.http.post(`${url}`, user).toPromise()
     .then( response => {
-      // this.httpService.handleSuccess(response);
+      // this.handleSuccess(response);
       this.router.navigateByUrl('signin');
     })
     .catch( response => {
-      this.httpService.handleError(response);
+      this.handleError(response);
     });
+
+  }
+
+
+  handleError(response: any) {
+    console.error(response); // TODO: remove
+    if (response.error) {
+      console.log(response.error); // TODO: add sweetalert
+    } else {
+      console.log('Client side error!'); // TODO: add sweetalert
+    }
+  }
+
+  handleSuccess(response: any) {
+    console.log(response.data); // TODO sweetalert
   }
 
 
