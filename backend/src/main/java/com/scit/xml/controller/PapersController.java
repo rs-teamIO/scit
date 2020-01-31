@@ -7,6 +7,7 @@ import com.scit.xml.common.api.RestApiRequestParameters;
 import com.scit.xml.common.util.*;
 import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.model.paper.Paper;
+import com.scit.xml.model.user.User;
 import com.scit.xml.security.JwtTokenDetailsUtil;
 import com.scit.xml.service.EmailService;
 import com.scit.xml.service.PaperService;
@@ -75,5 +76,19 @@ public class PapersController {
         this.emailService.sendPaperAssignmentNotificationEmail(reviewerEmail, paperTitle);
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping(produces = { MediaType.APPLICATION_XHTML_XML_VALUE } )
+    public ResponseEntity findById(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
+        String html = ResourceUtils.convertResourceToString(this.paperService.exportToHtml(paperId));
+
+        String xml = this.userService.findById(JwtTokenDetailsUtil.getCurrentUserId());
+        XmlWrapper userWrapper = new XmlWrapper(xml);
+        String userId = XmlExtractorUtil.extractString(userWrapper.getDocument(), "/user/@id");
+        String userRole = XmlExtractorUtil.extractString(userWrapper.getDocument(), "/user/role");
+
+        this.paperService.checkCurrentUserAccess(userId, userRole, paperId);
+
+        return new ResponseEntity<>(html, HttpStatus.OK);
     }
 }

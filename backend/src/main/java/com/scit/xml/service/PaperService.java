@@ -6,9 +6,10 @@ import com.scit.xml.common.Predicate;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiErrors;
 import com.scit.xml.common.util.*;
-import com.scit.xml.dto.XmlResponse;
+import com.scit.xml.exception.InsufficientPrivilegesException;
 import com.scit.xml.exception.InternalServerException;
 import com.scit.xml.model.paper.Paper;
+import com.scit.xml.model.user.Role;
 import com.scit.xml.rdf.RdfExtractor;
 import com.scit.xml.rdf.RdfTriple;
 import com.scit.xml.repository.PaperRepository;
@@ -160,9 +161,21 @@ public class PaperService {
         return this.findById(paperId);
     }
 
+    // ======================================= findById =======================================
 
+    private final String SPARQL_ASK_IS_PAPER_PUBLISHED_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "ASK\n" + "WHERE {\n" + "\t?s rv:published <%s>.\n" + "}";
 
+    private final String SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "ASK\n" + "WHERE {\n" + "\t<%s> rv:submitted <%s>.\n" + "}";
 
+    public void checkCurrentUserAccess(String userId, String userRole, String paperId) {
+        boolean paperPublished = rdfRepository.ask(String.format(SPARQL_ASK_IS_PAPER_PUBLISHED_QUERY, paperId));
+        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(userId == null && !paperPublished);
+        boolean userIsAuthor = rdfRepository.ask(String.format(SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
+        boolean userIsEditor = Role.EDITOR.getName().equals(userRole);
+        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!userIsAuthor && !userIsEditor && !paperPublished);
+    }
 
     // ======================================= common stuff =======================================
 

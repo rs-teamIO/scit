@@ -25,6 +25,12 @@ public class XmlExtractorUtil {
         return field;
     }
 
+    public static String extractString(Document document, String xPathExpression) {
+        final Node node = ((Node) XPathUtils.evaluate(xPathExpression, document, XPathConstants.NODE));
+
+        return node != null ? node.getTextContent() : null;
+    }
+
     public static List<String> extractSetOfAttributeValuesAndValidateNotEmpty(Document document, String xPathExpression, String attributeName) {
         final NodeList nodeList = (NodeList) XPathUtils.evaluate(xPathExpression, document, XPathConstants.NODESET);
         final List<String> attributeValues = XmlExtractorUtil.extractAttributeValuesFromNodeListElements(nodeList, attributeName);
