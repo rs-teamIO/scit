@@ -18,6 +18,7 @@ public final class RestApiEndpoints {
     public static final String AUTHOR =  "/author";
     public static final String ASSIGNED =  "/assigned";
     public static final String SUBMITTED =  "/submitted";
+    public static final String IN_REVIEW = "/in_review";
 
     public static final String PAPERS = API_ROOT + "/papers";
 

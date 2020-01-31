@@ -112,6 +112,14 @@ public class PapersController {
         return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
     }
 
+    @PreAuthorize("hasAuthority('author')")
+    @GetMapping(value = RestApiEndpoints.IN_REVIEW,
+            produces = { MediaType.APPLICATION_XML_VALUE } )
+    public ResponseEntity getPapersInReview() {
+        String papers = this.paperService.getPapersInReview(JwtTokenDetailsUtil.getCurrentUserId());
+        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
+    }
+
     @PreAuthorize("hasAuthority('editor')")
     @GetMapping(value = RestApiEndpoints.SUBMITTED,
             produces = { MediaType.APPLICATION_XML_VALUE } )

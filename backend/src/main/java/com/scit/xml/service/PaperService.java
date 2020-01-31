@@ -244,6 +244,27 @@ public class PaperService {
         return sb.toString();
     }
 
+    // ======================================= getPapersInReview =======================================
+
+    private final String SPARQL_GET_PAPERS_IN_REVIEW_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:currently_reviewing ?o.\n" + "}";
+
+    public String getPapersInReview(String currentUserId) {
+        List<String> paperIds = rdfRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_IN_REVIEW_QUERY, currentUserId));
+
+        List<String> papers = paperIds.stream().map(id -> {
+            return convertToXmlResponseString(this.findById(id));
+        }).collect(Collectors.toList());
+
+        // TODO: Refactor
+        StringBuilder sb = new StringBuilder();
+        for(String p : papers) {
+            sb.append(p);
+        }
+
+        return sb.toString();
+    }
+
     // ======================================= common stuff =======================================
 
     public String findById(String paperId) {
