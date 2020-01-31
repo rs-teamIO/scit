@@ -11,7 +11,7 @@ import { AuthorPapersComponent } from '../papers/author-papers/author-papers.com
 const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'signin', component: SigninComponent },
-  
+
   { path: 'new-paper', component: NewPaperComponent},
   { path: 'papers', component: AuthorPapersComponent},
 

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { DocumentResponse } from '../../shared/model/document-response';
-import { PaperService } from '../../core/http/paper.service';
+import { PaperService } from '../../core/services/paper.service';
 
 
 @Component({

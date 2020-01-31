@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AuthService } from '../../core/http/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { SignInRequest } from 'src/app/shared/model/signin-request';
 
 @Component({
@@ -21,12 +21,12 @@ export class SigninComponent implements OnInit {
   }
 
   signin() {
-    this.authService.signin(new SignInRequest(this.username, this.password)).subscribe(
-      res => {
-        console.log(`Welcome ${this.username}!`);
-        this.router.navigateByUrl('papers');
-      },
-      err => { });
+    // this.authService.signin(new SignInRequest(this.username, this.password)).subscribe(
+    //   res => {
+    //     console.log(`Welcome ${this.username}!`);
+    //     this.router.navigateByUrl('papers');
+    //   },
+    //   err => { });
   }
 
 }

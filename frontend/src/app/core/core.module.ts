@@ -6,10 +6,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { AuthService } from './http/auth.service';
+import { AuthService } from './services/auth.service';
 import { HttpClientModule } from '@angular/common/http';
-import { PaperService } from './http/paper.service';
+import { PaperService } from './services/paper.service';
 import { SharedModule } from '../shared/shared.module';
+import { HttpService } from './services/http/http.service';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { SharedModule } from '../shared/shared.module';
   ],
   providers: [
     AuthService,
-    PaperService
+    PaperService,
+    HttpService
   ]
 })
 export class CoreModule { }

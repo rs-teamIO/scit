@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../http/auth.service';
+import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -21,11 +21,11 @@ export class NavBarComponent implements OnInit {
     return this.authService.isAuthenticated();
   }
 
-  
+
   signout() {
-    this.authService.signout().subscribe(
-      res => {
-        this.router.navigateByUrl('signin');
-      }, err => { });
+    // this.authService.signout().subscribe(
+    //   res => {
+    //     this.router.navigateByUrl('signin');
+    //   }, err => { });
   }
 }

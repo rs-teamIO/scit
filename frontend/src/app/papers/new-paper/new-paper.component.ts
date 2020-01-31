@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { PaperService } from 'src/app/core/http/paper.service';
+import { PaperService } from 'src/app/core/services/paper.service';
 
 @Component({
   selector: 'papers-new-paper',
