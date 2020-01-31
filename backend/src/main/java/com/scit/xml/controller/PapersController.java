@@ -122,21 +122,21 @@ public class PapersController {
      */
     @PreAuthorize("hasAuthority('author')")
     @GetMapping(value = RestApiEndpoints.ASSIGNED,
-            produces = { MediaType.APPLICATION_XML_VALUE } )
+                produces = { MediaType.APPLICATION_XML_VALUE } )
     public ResponseEntity getAssignedPapers() {
         String papers = this.paperService.getAssignedPapers(JwtTokenDetailsUtil.getCurrentUserId());
         return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
     }
 
     /**
-     * GET api/v1/papers/in_review
+     * GET api/v1/papers/in-review
      * AUTHORIZATION: Author only
      *
      * Returns the IDs and titles of {@link Paper}s the current user is currently reviewing
      */
     @PreAuthorize("hasAuthority('author')")
     @GetMapping(value = RestApiEndpoints.IN_REVIEW,
-            produces = { MediaType.APPLICATION_XML_VALUE } )
+                produces = { MediaType.APPLICATION_XML_VALUE } )
     public ResponseEntity getPapersInReview() {
         String papers = this.paperService.getPapersInReview(JwtTokenDetailsUtil.getCurrentUserId());
         return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
@@ -150,7 +150,7 @@ public class PapersController {
      */
     @PreAuthorize("hasAuthority('editor')")
     @GetMapping(value = RestApiEndpoints.SUBMITTED,
-            produces = { MediaType.APPLICATION_XML_VALUE } )
+                produces = { MediaType.APPLICATION_XML_VALUE } )
     public ResponseEntity getSubmittedPapers() {
         String papers = this.paperService.getSubmittedPapers();
         return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));

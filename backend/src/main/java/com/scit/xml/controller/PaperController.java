@@ -84,7 +84,7 @@ public class PaperController {
     }
 
     /**
-     * GET api/v1/paper/uthor onlyanonymous
+     * GET api/v1/paper/anonymous
      * AUTHORIZATION: Author only
      *
      * Returns the {@link Paper} in an anonymous form where the authors have been removed from the document.
