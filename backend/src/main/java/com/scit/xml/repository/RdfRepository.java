@@ -25,6 +25,9 @@ public class RdfRepository {
     private static final String DELETE_AND_INSERT = PREFIX + "DELETE { <%1$s> ?p ?o } WHERE { <%1$s> ?p ?o } ; INSERT DATA { %2$s }";
     private static final String DELETE_FROM_GRAPH = PREFIX + "DELETE WHERE { <%1$s> %2$s <%3$s> }";
 
+    private static final String DELETE_BY_SUBJECT = PREFIX + "DELETE WHERE { <%1$s> ?p ?o }";
+    private static final String DELETE_BY_OBJECT = PREFIX + "DELETE WHERE { ?s ?p <%1$s> }";
+
     private final RdfQueryExecutor rdfQueryExecutor;
 
     private RegexExtractor regexExtractor = new RegexExtractor("(http:\\/\\/www\\.scit\\.org\\/.*\\/[0-9a-z-]+)");
@@ -109,5 +112,12 @@ public class RdfRepository {
     public void deleteTriple(String s, String p, String o) {
         String query = String.format(DELETE_FROM_GRAPH, s, p, o);
         this.rdfQueryExecutor.update(query);
+    }
+
+    public void deleteAllMetadata(String entityId) {
+        String subjectQuery = String.format(DELETE_BY_SUBJECT, entityId);
+        this.rdfQueryExecutor.delete(subjectQuery);
+        String objectQuery = String.format(DELETE_BY_OBJECT, entityId);
+        this.rdfQueryExecutor.delete(objectQuery);
     }
 }

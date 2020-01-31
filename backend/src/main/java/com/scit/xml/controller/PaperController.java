@@ -3,6 +3,7 @@ package com.scit.xml.controller;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
 import com.scit.xml.common.api.RestApiRequestParameters;
+import com.scit.xml.common.util.ForbiddenUtils;
 import com.scit.xml.common.util.ResourceUtils;
 import com.scit.xml.common.util.XmlResponseUtils;
 import com.scit.xml.common.util.XmlWrapper;
@@ -17,10 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(RestApiEndpoints.PAPER)
@@ -76,7 +74,7 @@ public class PaperController {
      * @param paperId unique identifier of the {@link Paper}
      */
     @GetMapping(value = RestApiEndpoints.AUTHOR,
-            produces = { MediaType.APPLICATION_XML_VALUE } )
+                produces = { MediaType.APPLICATION_XML_VALUE } )
     public ResponseEntity getAuthorOfPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
         String authorId = this.paperService.getAuthorOfPaper(paperId);
         String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, authorId));
@@ -92,7 +90,7 @@ public class PaperController {
      */
     @PreAuthorize("hasAuthority('author')")
     @GetMapping(value = RestApiEndpoints.ANONYMOUS,
-            produces = { MediaType.APPLICATION_XML_VALUE } )
+                produces = { MediaType.APPLICATION_XML_VALUE } )
     public ResponseEntity getAnonymousPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
         String paperXml = this.paperService.findById(paperId);
         XmlWrapper paperWrapper = new XmlWrapper(paperXml);
@@ -100,5 +98,23 @@ public class PaperController {
         String xml = paperWrapper.getXml();
 
         return ResponseEntity.ok(xml);
+    }
+
+    /**
+     * DELETE api/v1/paper/
+     * AUTHORIZATION: Author only
+     *
+     * Revokes the {@link Paper} instance from the system.
+     * @param paperId unique identifier of the {@link Paper} to be revoked.
+     */
+    @PreAuthorize("hasAuthority('author')")
+    @DeleteMapping
+    public ResponseEntity revokePaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
+        String authorId = this.paperService.getAuthorOfPaper(paperId);
+        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!authorId.equals(JwtTokenDetailsUtil.getCurrentUserId()));
+
+        this.paperService.revokePaper(paperId);
+
+        return ResponseEntity.ok().build();
     }
 }

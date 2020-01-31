@@ -37,6 +37,9 @@ public abstract class BaseRepository {
     @Value("classpath:xq/common/append.xml")
     protected Resource appendTemplate;
 
+    @Value("classpath:xq/common/remove.xml")
+    protected Resource removeTemplate;
+
     protected final XQueryBuilder xQueryBuilder;
     protected final XQueryExecutor xQueryExecutor;
 

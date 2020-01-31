@@ -279,4 +279,10 @@ public class PaperService {
         XmlWrapper xmlWrapper = new XmlWrapper(paperXml);
         return XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/title");
     }
+
+    public void revokePaper(String paperId) {
+        this.paperDatabaseValidator.validateExportRequest(paperId);
+        this.paperRepository.remove(paperId);
+        this.rdfRepository.deleteAllMetadata(paperId);
+    }
 }

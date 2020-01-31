@@ -18,6 +18,8 @@ public class PaperRepository extends BaseRepository {
     private final String PAPER_NAMESPACE_ALIAS = "paper";
     private final String PAPER_NAMESPACE = "http://www.scit.org/schema/paper";
     private final String PAPERS_COLLECTION = "/papers:papers";
+    private final String PAPER_INSTANCE = "/papers:papers/paper:paper";
+    private final String PAPER_PREFIX = "paper:";
     private final String PAPERS_NAMESPACE = "xmlns:papers=\"http://www.scit.org/schema/papers\"";
 
     private final String PAPERS_NAMESPACE_FORMAT = "http://www.scit.org/papers/%s";
@@ -34,6 +36,15 @@ public class PaperRepository extends BaseRepository {
         paper.setId(id);
         String xml = this.marshal(Paper.class, paper);
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, PAPER_NAMESPACE_ALIAS, PAPER_NAMESPACE, PAPERS_COLLECTION, xml, PAPERS_NAMESPACE);
+
+        this.xQueryExecutor.updateResource(Constants.PAPER_DOCUMENT_ID, query);
+
+        return id;
+    }
+
+    public String remove(String paperId) {
+        String id = String.format(PAPERS_NAMESPACE_FORMAT, randomUUID().toString());
+        String query = this.xQueryBuilder.buildQuery(this.removeTemplate, PAPER_NAMESPACE_ALIAS, PAPER_NAMESPACE, PAPER_INSTANCE, PAPER_PREFIX, paperId, PAPERS_NAMESPACE);
 
         this.xQueryExecutor.updateResource(Constants.PAPER_DOCUMENT_ID, query);
 
