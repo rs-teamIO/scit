@@ -20,7 +20,7 @@ public class JwtAuthenticationController {
     private final JwtUserDetailsService userDetailsService;
     private final JwtRequestValidator jwtRequestValidator;
 
-    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(value = "/api/login", consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody String xml) {
         JwtRequest authenticationRequest = jwtRequestValidator.validate(xml);
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
