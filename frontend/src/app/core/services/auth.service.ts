@@ -1,7 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpService } from './http/http.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
+
 
 const authenticatedUserKey = 'authenticatedUser';
 const url = '/api/v1/users';
@@ -36,10 +38,17 @@ export class AuthService {
   signup(firstName: string, lastName: string, username: string, password: string, email: string) {
     const user = this.userToXml(firstName, lastName, username, password, email);
 
-    this.http.post(`${url}`, user).toPromise()
+    this.http.post(`${url}`, user, {observe: 'response'}).toPromise()
     .then( response => {
-      // this.handleSuccess(response);
-      this.router.navigateByUrl('signin');
+      response.headers.get('Location');
+      Swal.fire(
+        'Welcome!',
+        'You have signed up successfully.',
+        'success'
+      )
+      .then(
+        () => this.router.navigateByUrl('signin')
+      );
     })
     .catch( response => {
       this.handleError(response);
@@ -49,17 +58,21 @@ export class AuthService {
 
 
   handleError(response: any) {
-    console.error(response); // TODO: remove
     if (response.error) {
-      console.log(response.error); // TODO: add sweetalert
+      Swal.fire(
+        'Oops...',
+        response.error.body.message,
+        'error'
+      );
     } else {
-      console.log('Client side error!'); // TODO: add sweetalert
+      Swal.fire(
+        'Oops...',
+        'Client side error!',
+        'error'
+      );
     }
   }
 
-  handleSuccess(response: any) {
-    console.log(response.data); // TODO sweetalert
-  }
 
 
   // signin(user: SignInRequest): Observable<SignInResponse> {
