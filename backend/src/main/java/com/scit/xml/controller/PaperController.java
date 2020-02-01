@@ -11,6 +11,7 @@ import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.model.paper.Paper;
 import com.scit.xml.security.JwtTokenDetailsUtil;
 import com.scit.xml.service.PaperService;
+import com.scit.xml.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class PaperController {
 
     private final PaperService paperService;
+    private final UserService userService;
 
     /**
      * GET api/v1/paper/raw/download/
@@ -116,5 +118,21 @@ public class PaperController {
         this.paperService.revokePaper(paperId);
 
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * GET api/v1/paper/reviewers/
+     * AUTHORIZATION: Anyone
+     *
+     * Returns the reviewers of the {@link Paper}.
+     * @param paperId unique identifier of the {@link Paper}
+     */
+    @PreAuthorize("hasAuthority('editor')")
+    @GetMapping(value = RestApiEndpoints.REVIEWERS,
+            produces = { MediaType.APPLICATION_XML_VALUE } )
+    public ResponseEntity getReviewersOfPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
+        String reviewers = this.userService.getReviewersOfPaper(paperId);
+        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse("users", reviewers));
+        return ResponseEntity.ok(responseBody);
     }
 }
