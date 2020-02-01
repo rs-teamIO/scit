@@ -2,6 +2,8 @@ package com.scit.xml.repository;
 
 import com.scit.xml.common.Constants;
 import com.scit.xml.common.util.ResourceSetUtils;
+import com.scit.xml.config.RdfQueryBuilder;
+import com.scit.xml.config.RdfQueryExecutor;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
 import com.scit.xml.model.evaluation_form.EvaluationForm;
@@ -25,8 +27,8 @@ public class EvaluationFormRepository extends BaseRepository {
     @Value("classpath:xq/evaluation_form/findById.xq")
     private Resource findByIdQuery;
 
-    public EvaluationFormRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor) {
-        super(xQueryBuilder, xQueryExecutor, Constants.EVALUATION_FORM_DOCUMENT_ID);
+    public EvaluationFormRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor, RdfQueryBuilder rdfQueryBuilder, RdfQueryExecutor rdfQueryExecutor) {
+        super(xQueryBuilder, xQueryExecutor, Constants.EVALUATION_FORM_DOCUMENT_ID, rdfQueryBuilder, rdfQueryExecutor);
     }
 
     public String save(EvaluationForm evaluationForm) {

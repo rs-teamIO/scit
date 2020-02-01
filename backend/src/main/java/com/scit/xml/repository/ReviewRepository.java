@@ -2,6 +2,8 @@ package com.scit.xml.repository;
 
 import com.scit.xml.common.Constants;
 import com.scit.xml.common.util.XmlWrapper;
+import com.scit.xml.config.RdfQueryBuilder;
+import com.scit.xml.config.RdfQueryExecutor;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
 import org.springframework.stereotype.Component;
@@ -18,8 +20,8 @@ public class ReviewRepository extends BaseRepository {
 
     private final String REVIEWS_NAMESPACE_FORMAT = "http://www.scit.org/review/%s";
 
-    public ReviewRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor) {
-        super(xQueryBuilder, xQueryExecutor, Constants.REVIEW_DOCUMENT_ID);
+    public ReviewRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor, RdfQueryBuilder rdfQueryBuilder, RdfQueryExecutor rdfQueryExecutor) {
+        super(xQueryBuilder, xQueryExecutor, Constants.REVIEW_DOCUMENT_ID, rdfQueryBuilder, rdfQueryExecutor);
     }
 
     public String save(XmlWrapper reviewWrapper) {

@@ -8,7 +8,6 @@ import com.scit.xml.model.evaluation_form.EvaluationForm;
 import com.scit.xml.rdf.RdfExtractor;
 import com.scit.xml.rdf.RdfTriple;
 import com.scit.xml.repository.EvaluationFormRepository;
-import com.scit.xml.repository.RdfRepository;
 import com.scit.xml.service.converter.DocumentConverter;
 import com.scit.xml.service.validator.database.EvaluationFormDatabaseValidator;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +31,13 @@ public class EvaluationFormService {
     private final EvaluationFormDatabaseValidator evaluationFormDatabaseValidator;
     private final EvaluationFormRepository evaluationFormRepository;
     private final DocumentConverter documentConverter;
-    private final RdfRepository rdfRepository;
 
     public String createEvaluationForm(EvaluationForm evaluationForm, String paperId) {
         this.evaluationFormDatabaseValidator.validateCreateRequest(evaluationForm, paperId);
         String id = this.evaluationFormRepository.save(evaluationForm);
 
         List<RdfTriple> rdfTriples = this.extractRdfTriples(id, paperId);
-        this.rdfRepository.insertTriples(rdfTriples);
+        this.evaluationFormRepository.insertTriples(rdfTriples);
 
         return id;
     }

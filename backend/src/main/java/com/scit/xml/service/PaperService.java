@@ -6,19 +6,16 @@ import com.scit.xml.common.Predicate;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiErrors;
 import com.scit.xml.common.util.*;
-import com.scit.xml.exception.InsufficientPrivilegesException;
 import com.scit.xml.exception.InternalServerException;
 import com.scit.xml.model.paper.Paper;
 import com.scit.xml.model.user.Role;
 import com.scit.xml.rdf.RdfExtractor;
 import com.scit.xml.rdf.RdfTriple;
 import com.scit.xml.repository.PaperRepository;
-import com.scit.xml.repository.RdfRepository;
 import com.scit.xml.service.converter.DocumentConverter;
 import com.scit.xml.service.validator.database.PaperDatabaseValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tools.ant.taskdefs.condition.Not;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -29,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +39,6 @@ public class PaperService {
     private final PaperRepository paperRepository;
     private final PaperDatabaseValidator paperDatabaseValidator;
     private final DocumentConverter documentConverter;
-    private final RdfRepository rdfRepository;
     private final UserService userService;
 
     // ======================================= create =======================================
@@ -54,7 +49,7 @@ public class PaperService {
         String id = this.paperRepository.save(paper);
 
         List<RdfTriple> rdfTriples = this.extractRdfTriples(id, creatorId);
-        this.rdfRepository.insertTriples(rdfTriples);
+        this.paperRepository.insertTriples(rdfTriples);
 
         return id;
     }
@@ -117,7 +112,7 @@ public class PaperService {
             "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:created ?o.\n" + "}";
 
     public String getPapersByUserId(String currentUserId) {
-        List<String> paperIds = rdfRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_OF_USER_QUERY, currentUserId));
+        List<String> paperIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_OF_USER_QUERY, currentUserId));
 
         List<String> papers = paperIds.stream().map(id -> {
             return convertToXmlResponseString(this.findById(id));
@@ -169,7 +164,7 @@ public class PaperService {
 
         RdfTriple assignedRdfTriple = new RdfTriple(userId, Predicate.ASSIGNED_TO, paperId);
         List<RdfTriple> rdfTriples = Lists.newArrayList(assignedRdfTriple);
-        this.rdfRepository.insertTriples(rdfTriples);
+        this.paperRepository.insertTriples(rdfTriples);
     }
 
     // ======================================= getRaw and getPdf =======================================
@@ -192,9 +187,9 @@ public class PaperService {
             "\n" + "ASK\n" + "WHERE {\n" + "\t<%s> rv:submitted <%s>.\n" + "}";
 
     public void checkCurrentUserAccess(String userId, String userRole, String paperId) {
-        boolean paperPublished = rdfRepository.ask(String.format(SPARQL_ASK_IS_PAPER_PUBLISHED_QUERY, paperId));
+        boolean paperPublished = this.paperRepository.ask(String.format(SPARQL_ASK_IS_PAPER_PUBLISHED_QUERY, paperId));
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(userId == null && !paperPublished);
-        boolean userIsAuthor = rdfRepository.ask(String.format(SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
+        boolean userIsAuthor = this.paperRepository.ask(String.format(SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
         boolean userIsEditor = Role.EDITOR.getName().equals(userRole);
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!userIsAuthor && !userIsEditor && !paperPublished);
     }
@@ -202,7 +197,7 @@ public class PaperService {
     // ======================================= getAnonymousPaper =======================================
 
     public void anonymizePaper(XmlWrapper paperWrapper, String paperId, String userId) {
-        boolean userIsAuthor = rdfRepository.ask(String.format(SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
+        boolean userIsAuthor = this.paperRepository.ask(String.format(SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
         if(!userIsAuthor) {
             final Element element = paperWrapper.getDocument().getDocumentElement();
             element.removeChild(element.getElementsByTagName("paper:authors").item(0));
@@ -215,7 +210,7 @@ public class PaperService {
             "\n" + "SELECT ?s\n" + "WHERE {\n" + "\t?s rv:submitted <%s>.\n" + "}";
 
     public String getAuthorOfPaper(String paperId) {
-        List<String> userIds = rdfRepository.selectSubjects(String.format(SPARQL_GET_AUTHOR_OF_PAPER_QUERY, paperId));
+        List<String> userIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_AUTHOR_OF_PAPER_QUERY, paperId));
         NotFoundUtils.throwNotFoundExceptionIf(userIds.isEmpty(),
                 RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiConstants.ID));
         return userIds.get(0);
@@ -227,7 +222,7 @@ public class PaperService {
             "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:assigned_to ?o.\n" + "}";
 
     public String getAssignedPapers(String currentUserId) {
-        List<String> paperIds = rdfRepository.selectSubjects(String.format(SPARQL_GET_ASSIGNED_PAPERS_QUERY, currentUserId));
+        List<String> paperIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_ASSIGNED_PAPERS_QUERY, currentUserId));
 
         List<String> papers = paperIds.stream().map(id -> {
             return convertToXmlResponseString(this.findById(id));
@@ -249,7 +244,7 @@ public class PaperService {
             "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t?s rv:submitted ?o.\n" + "}";
 
     public String getSubmittedPapers() {
-        List<String> paperIds = rdfRepository.selectSubjects(SPARQL_GET_SUBMITTED_PAPERS_QUERY);
+        List<String> paperIds = this.paperRepository.selectSubjects(SPARQL_GET_SUBMITTED_PAPERS_QUERY);
 
         List<String> papers = paperIds.stream().map(id -> {
             return convertToXmlResponseString(this.findById(id));
@@ -270,7 +265,7 @@ public class PaperService {
             "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:currently_reviewing ?o.\n" + "}";
 
     public String getPapersInReview(String currentUserId) {
-        List<String> paperIds = rdfRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_IN_REVIEW_QUERY, currentUserId));
+        List<String> paperIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_IN_REVIEW_QUERY, currentUserId));
 
         List<String> papers = paperIds.stream().map(id -> {
             return convertToXmlResponseString(this.findById(id));
@@ -303,14 +298,14 @@ public class PaperService {
     public void revokePaper(String paperId) {
         this.paperDatabaseValidator.validateExportRequest(paperId);
         this.paperRepository.remove(paperId);
-        this.rdfRepository.deleteAllMetadata(paperId);
+        this.paperRepository.deleteAllMetadata(paperId);
     }
 
     private final String SPARQL_ASK_IS_USER_REVIEWING_PAPER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
             "\n" + "ASK\n" + "WHERE {\n" + "\t<%s> rv:currently_reviewing <%s>.\n" + "}";
 
     public void checkIsUserReviewingPaper(String userId, String paperId) {
-        boolean userIsReviewing = rdfRepository.ask(String.format(SPARQL_ASK_IS_USER_REVIEWING_PAPER_QUERY, userId, paperId));
+        boolean userIsReviewing = this.paperRepository.ask(String.format(SPARQL_ASK_IS_USER_REVIEWING_PAPER_QUERY, userId, paperId));
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!userIsReviewing);
     }
 
@@ -318,7 +313,7 @@ public class PaperService {
 
     public void publishPaper(String paperId) {
 
-        this.rdfRepository.deleteMetadataByObject(paperId);
+        this.paperRepository.deleteMetadataByObject(paperId);
 
         String paperXml = this.paperRepository.findById(paperId);
         XmlWrapper paperWrapper = new XmlWrapper(paperXml);
@@ -337,11 +332,11 @@ public class PaperService {
             rdfTriples.addAll(Lists.newArrayList(createdTriple, publishedTriple, wasPublishedByTriple));
         });
 
-        this.rdfRepository.insertTriples(rdfTriples);
+        this.paperRepository.insertTriples(rdfTriples);
     }
 
     public void rejectPaper(String paperId) {
 
-        this.rdfRepository.deleteMetadataByObject(paperId);
+        this.paperRepository.deleteMetadataByObject(paperId);
     }
 }

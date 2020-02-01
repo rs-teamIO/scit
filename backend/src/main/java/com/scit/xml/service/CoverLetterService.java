@@ -8,7 +8,6 @@ import com.scit.xml.model.cover_letter.CoverLetter;
 import com.scit.xml.rdf.RdfExtractor;
 import com.scit.xml.rdf.RdfTriple;
 import com.scit.xml.repository.CoverLetterRepository;
-import com.scit.xml.repository.RdfRepository;
 import com.scit.xml.service.converter.DocumentConverter;
 import com.scit.xml.service.validator.database.CoverLetterDatabaseValidator;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,6 @@ public class CoverLetterService {
     private final CoverLetterDatabaseValidator coverLetterDatabaseValidator;
     private final CoverLetterRepository coverLetterRepository;
     private final DocumentConverter documentConverter;
-    private final RdfRepository rdfRepository;
 
     public String createCoverLetter(CoverLetter coverLetter, String paperId) {
         this.coverLetterDatabaseValidator.validateCreateRequest(coverLetter, paperId);
@@ -45,7 +43,7 @@ public class CoverLetterService {
         String id = this.coverLetterRepository.save(coverLetter);
 
         List<RdfTriple> rdfTriples = this.extractRdfTriples(id, paperId);
-        this.rdfRepository.insertTriples(rdfTriples);
+        this.coverLetterRepository.insertTriples(rdfTriples);
 
         return id;
     }

@@ -3,6 +3,8 @@ package com.scit.xml.repository;
 import com.scit.xml.common.Constants;
 import com.scit.xml.common.util.ResourceSetUtils;
 import com.scit.xml.common.util.XmlWrapper;
+import com.scit.xml.config.RdfQueryBuilder;
+import com.scit.xml.config.RdfQueryExecutor;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,8 +37,8 @@ public class UserRepository extends BaseRepository {
     @Value("classpath:xq/user/findAllByRole.xq")
     private Resource findAllByRoleQuery;
 
-    public UserRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor) {
-        super(xQueryBuilder, xQueryExecutor, Constants.USERS_DOCUMENT_ID);
+    public UserRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor, RdfQueryBuilder rdfQueryBuilder, RdfQueryExecutor rdfQueryExecutor) {
+        super(xQueryBuilder, xQueryExecutor, Constants.USERS_DOCUMENT_ID, rdfQueryBuilder, rdfQueryExecutor);
     }
 
     public String save(XmlWrapper xmlWrapper) {

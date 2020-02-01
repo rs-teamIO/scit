@@ -7,7 +7,6 @@ import com.scit.xml.common.util.XmlExtractorUtil;
 import com.scit.xml.common.util.XmlResponseUtils;
 import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.model.user.Role;
-import com.scit.xml.repository.RdfRepository;
 import com.scit.xml.repository.UserRepository;
 import com.scit.xml.service.validator.database.RegisterDatabaseValidator;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RegisterDatabaseValidator registerDatabaseValidator;
-    private final RdfRepository rdfRepository;
 
     /**
      * Performs registration of an {@link User} with {@link Role.AUTHOR} role
@@ -123,7 +121,7 @@ public class UserService {
             "\n" + "SELECT DISTINCT ?s\n" + "WHERE {\n" + "\t?s rv:assigned_to|rv:currently_reviewing|rv:reviewed <%s>.\n" + "}";
 
     public String getReviewersOfPaper(String paperId) {
-        List<String> userIds = rdfRepository.selectSubjects(String.format(SPARQL_GET_REVIEWERS_OF_PAPER_QUERY, paperId));
+        List<String> userIds = this.userRepository.selectSubjects(String.format(SPARQL_GET_REVIEWERS_OF_PAPER_QUERY, paperId));
 
         StringBuilder sb = new StringBuilder();
         userIds.stream().map(s -> {
