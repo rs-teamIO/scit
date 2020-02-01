@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { Validators, FormControl, FormGroup } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-signup',
@@ -9,11 +9,6 @@ import { Validators, FormControl, FormGroup } from '@angular/forms';
 })
 export class SignupComponent implements OnInit {
 
-  firstName: string;
-  lastName: string;
-  username: string;
-  password: string;
-  email: string;
   userForm: FormGroup;
 
   constructor(
@@ -23,25 +18,25 @@ export class SignupComponent implements OnInit {
   ngOnInit() {
 
     this.userForm = new FormGroup({
-      firstName: new FormControl(this.firstName, [
+      firstName: new FormControl('', [
           Validators.required,
           Validators.maxLength(255)
       ]),
-      lastName: new FormControl(this.lastName, [
+      lastName: new FormControl('', [
         Validators.required,
         Validators.maxLength(255)
       ]),
-      username: new FormControl(this.username, [
+      username: new FormControl('', [
         Validators.required,
         Validators.minLength(5),
         Validators.maxLength(255)
       ]),
-      password: new FormControl(this.password, [
+      password: new FormControl('', [
         Validators.required,
         Validators.minLength(8),
         Validators.maxLength(255)
       ]),
-      email: new FormControl(this.email, [
+      email: new FormControl('', [
         Validators.required,
         Validators.pattern('[^@]+@[^\.]+\..+')
       ]),
@@ -49,7 +44,29 @@ export class SignupComponent implements OnInit {
 
   }
 
+  get firstName() {
+    return this.userForm.get('firstName');
+  }
+
+  get lastName() {
+    return this.userForm.get('lastName');
+  }
+
+  get username() {
+    return this.userForm.get('username');
+  }
+
+  get password() {
+    return this.userForm.get('password');
+  }
+
+  get email() {
+    return this.userForm.get('email');
+  }
+
+
   signup() {
-    this.authService.signup(this.firstName, this.lastName, this.username, this.password, this.email);
+    const { firstName, lastName, username, password, email} = this.userForm.value;
+    this.authService.signup(firstName, lastName, username, password, email);
   }
 }

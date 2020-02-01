@@ -1,22 +1,20 @@
 package com.scit.xml.controller;
 
-import com.scit.xml.common.api.RestApiEndpoints;
-import com.scit.xml.common.api.RestApiRequestParameters;
-import com.scit.xml.common.util.XmlResponseUtils;
-import com.scit.xml.common.util.XmlWrapper;
-import com.scit.xml.dto.XmlResponse;
-import com.scit.xml.service.UserService;
-import com.scit.xml.service.validator.dto.RegisterDtoValidator;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.scit.xml.common.api.RestApiEndpoints;
 import com.scit.xml.common.api.RestApiRequestParameters;
+import com.scit.xml.common.util.XmlResponseUtils;
 import com.scit.xml.common.util.XmlWrapper;
+import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.service.UserService;
 import com.scit.xml.service.validator.dto.RegisterDtoValidator;
 
@@ -41,20 +39,13 @@ public class UsersController {
         		.path(RestApiEndpoints.USER)
         		.query(RestApiRequestParameters.ID+"={id}")
         		.buildAndExpand(id);
-        
-		return ResponseEntity.created(urlLocation.toUri()).build();
-
-        UriComponents urlLocation = UriComponentsBuilder.newInstance()
-                .path(RestApiEndpoints.USER)
-                .query(RestApiRequestParameters.ID + "={id}")
-                .buildAndExpand(id);
 
         return ResponseEntity.created(urlLocation.toUri()).build();
     }
 
     @GetMapping(value = RestApiEndpoints.AUTHORS,
                 produces = { MediaType.APPLICATION_XML_VALUE })
-    public ResponseEntity getAllAuthors() {
+    public ResponseEntity<?> getAllAuthors() {
         String authors = this.userService.getAllAuthors();
         return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("users", authors)));
     }

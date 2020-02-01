@@ -1,15 +1,15 @@
-<form class="wrapper" #userForm="ngForm" (ngSubmit)="signup()">
+<form class="wrapper" [formGroup] = 'userForm' (ngSubmit)="signup()">
     <h1>SignUP!</h1>
-    <p class="sign-up-p">Hello, my first name is <input class="text-input" type="text" name="firstName" [(ngModel)]="firstName" required #firstNameControl="ngModel"> and last name is <input class="text-input" type="text" name="lastName" [(ngModel)]="lastName" required  #lastNameControl="ngModel">.<br>
-    I prefer this username <input class="text-input" type="text" name="username" [(ngModel)]="username" required  #usernameControl="ngModel"> and this password <input class="text-input" type="password" name="password" [(ngModel)]="password" required #passwordControl="ngModel">,<br> 
-    also this is email <input class="text-email" type="text" name="email" [(ngModel)]="email" required #emailControl="ngModel"> where you can contact me.</p>
+    <p class="sign-up-p">Hello, my first name is <input class="text-input" type="text" formControlName="firstName"> and last name is <input class="text-input" type="text" formControlName="lastName">.<br>
+    I prefer this username <input class="text-input" type="text" formControlName="username"> and this password <input class="text-input" type="password" formControlName="password">,<br> 
+    also this is email <input class="text-email" type="text" formControlName="email"> where you can contact me.</p>
     <div class="messages-button-wrapper">
         <div class="messages" *ngIf = userForm.dirty>
             <p class="message-p" *ngIf=!firstName.valid> First name must exist</p>
-            <p class="message-p" *ngIf=!lastNameControl.valid> Last name must exist</p>
-            <p class="message-p" *ngIf=!usernameControl.valid> Username must have bettween 5 and 32 characters</p>
-            <p class="message-p" *ngIf=!passwordControl.valid> Password must have bettween 8 and 255 characters</p>
-            <p class="message-p" *ngIf=!emailControl.valid> Email must constain '@' amd '.'</p>
+            <p class="message-p" *ngIf=!lastName.valid> Last name must exist</p>
+            <p class="message-p" *ngIf=!username.valid> Username must have bettween 5 and 32 characters</p>
+            <p class="message-p" *ngIf=!password.valid> Password must have bettween 8 and 255 characters</p>
+            <p class="message-p" *ngIf=!email.valid> Email must constain '@'</p>
         </div>
         <input [disabled] ="!userForm.valid" class="btn btn-outline-light" type="submit" value="Confirm">
     </div>

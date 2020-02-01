@@ -1,5 +1,12 @@
-<form class="wrapper" (ngSubmit)="signin()">
+<form class="wrapper" [formGroup] = 'signInForm' (ngSubmit)="signin()">
     <h1>SignIN!</h1>
-    <p>My username is <input class="text-input" type="text" name="username" [(ngModel)]="username"> and password is <input class="text-input" type="password" name="password" [(ngModel)]="password">.<br>
-    <input class="btn btn-outline-light" type="submit" value="Confirm">
+    <p>My username is <input class="text-input" type="text" formControlName="username"> and password is <input class="text-input" type="password" formControlName="password">.<br>
+
+    <div class="messages-button-wrapper">
+        <div class="messages" *ngIf = signInForm.dirty>
+            <p class="message-p" *ngIf=!username.valid> Username must have bettween 5 and 32 characters</p>
+            <p class="message-p" *ngIf=!password.valid> Password must have bettween 8 and 255 characters</p>
+        </div>
+        <input [disabled] ="!signInForm.valid" class="btn btn-outline-light" type="submit" value="Confirm">
+    </div>
 </form>
