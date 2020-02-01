@@ -5,20 +5,18 @@
 
 .wrapper{
     text-align: center;
-    width: 620px;
+    width: 600px;
     margin-left: auto;
     margin-right: auto;
 }
 
-p{
+.sign-up-p{
     text-align: left;
     margin-right:auto;
     margin-left:auto;
 }
 
-.btn{
-    float: right;
-}
+
 
 .text-input, .text-email{
     border-style: none none solid none;
@@ -44,4 +42,27 @@ input, button, div, p, h1 {
     -moz-user-select: none; /* Old versions of Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* supported by Chrome, Opera and Firefox */
+}
+
+
+.messages-button-wrapper {
+    width:100%;
+    height: 100px;
+}
+
+.messages {
+    float: left;
+    text-align: left;
+    font-size: 9px;
+    font-style: italic;
+    color: red;
+}
+
+.btn{
+    margin-top: 15px;
+    float: right;
+}
+
+.message-p{
+    margin:0px;
 }

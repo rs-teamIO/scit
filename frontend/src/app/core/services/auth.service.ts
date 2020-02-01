@@ -98,16 +98,16 @@ export class AuthService {
 
 
   handleError(response: any) {
-    if (response.error) {
+    if (response.error.body) {
       Swal.fire(
         'Oops...',
-        response.error.body.message,
+        'Client side error!',
         'error'
       );
     } else {
       Swal.fire(
         'Oops...',
-        'Client side error!',
+        response.error.message,
         'error'
       );
     }

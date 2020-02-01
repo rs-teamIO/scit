@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { Router } from '@angular/router';
-import { SignUpRequest } from 'src/app/shared/model/signup-request';
+import { Validators, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-signup',
@@ -15,12 +14,39 @@ export class SignupComponent implements OnInit {
   username: string;
   password: string;
   email: string;
+  userForm: FormGroup;
 
   constructor(
     private authService: AuthService
     ) { }
 
   ngOnInit() {
+
+    this.userForm = new FormGroup({
+      firstName: new FormControl(this.firstName, [
+          Validators.required,
+          Validators.maxLength(255)
+      ]),
+      lastName: new FormControl(this.lastName, [
+        Validators.required,
+        Validators.maxLength(255)
+      ]),
+      username: new FormControl(this.username, [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(255)
+      ]),
+      password: new FormControl(this.password, [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(255)
+      ]),
+      email: new FormControl(this.email, [
+        Validators.required,
+        Validators.pattern('[^@]+@[^\.]+\..+')
+      ]),
+    });
+
   }
 
   signup() {
