@@ -12,6 +12,7 @@
                 <xsl:apply-templates select="./paper:abstract"/>
                 <xsl:apply-templates select="./paper:section"/>
                 <xsl:apply-templates select="./paper:references"/>
+                <xsl:apply-templates select="./paper:comment"/>
             </body>
         </html>
     </xsl:template>
@@ -46,6 +47,7 @@
         <div style="margin-top: 15px; margin-right: 40px; margin-bottom:15px; margin-left: 40px;">
             <xsl:apply-templates select="./paper:heading"/>
             <xsl:apply-templates select="./paper:content"/>
+            <xsl:apply-templates select="./paper:comment"/>
         </div>
     </xsl:template>
 
@@ -58,7 +60,7 @@
         <xsl:apply-templates select="./paper:image"/>
     </xsl:template>
 
-    <xsl:template match="paper:image">
+    <xsl:template match="//paper:image">
         <p style="text-align: center;">
             <img style=" width: 210px; height:100px; margin: 15px;" >
                 <xsl:attribute name="src"><xsl:value-of select="./@link"/>
@@ -76,6 +78,12 @@
                 <xsl:value-of select="."/>
                 <br/>
             </xsl:for-each>
+        </div>
+    </xsl:template>
+
+    <xsl:template match="//paper:comment">
+        <div style="margin-top: 15px; margin-right: 40px; margin-bottom:15px; margin-left: 40px;">
+            <p style="font-family: Times New Roman;font-size: 12;text-align: justify; color: red;"><xsl:value-of select="."/></p>
         </div>
     </xsl:template>
 
