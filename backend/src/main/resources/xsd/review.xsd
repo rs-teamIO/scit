@@ -5,21 +5,33 @@
     <xs:element name="review">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" name="title" type="xs:string"/>
-                <xs:element minOccurs="0" name="abstract" type="xs:string"/>
-                <xs:element maxOccurs="unbounded" minOccurs="0" name="section">
-                    <xs:complexType>
-                        <xs:simpleContent>
-                            <xs:extension base="xs:string">
-                                <xs:attribute name="heading" type="xs:string" use="required"/>
-                            </xs:extension>
-                        </xs:simpleContent>
-                    </xs:complexType>
-                </xs:element>
-                <xs:element name="general" type="xs:string"/>
+                <xs:sequence>
+                    <xs:element name="comment" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                    <xs:attribute name="reference_id"/>
+                                </xs:extension>
+                            </xs:simpleContent>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+                <!-- <xs:element minOccurs="0" name="title" type="xs:string"/> -->
+                <!-- <xs:element minOccurs="0" name="abstract" type="xs:string"/> -->
+<!--                <xs:element maxOccurs="unbounded" minOccurs="0" name="section">-->
+<!--                    <xs:complexType>-->
+<!--                        <xs:simpleContent>-->
+<!--                            <xs:extension base="xs:string">-->
+<!--                                <xs:attribute name="heading_id" type="xs:string" use="required"/>-->
+<!--                            </xs:extension>-->
+<!--                        </xs:simpleContent>-->
+<!--                    </xs:complexType>-->
+<!--                </xs:element>-->
+                <!--  <xs:element name="general" type="xs:string"/> -->
             </xs:sequence>
-            <xs:attribute name="paper_id" type="xs:string"/>
-            <xs:attribute name="reviewer_id" type="xs:string" use="required"/>
+            <xs:attribute name="paper_id" type="xs:string" /> <!-- use="required" -->
+            <xs:attribute name="reviewer_id" type="xs:string"/> <!-- use="required" -->
         </xs:complexType>
     </xs:element>
 </xs:schema>
