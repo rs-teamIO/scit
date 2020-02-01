@@ -9,6 +9,9 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+/**
+ * Contains utility methods for evaluating XPath expressions.
+ */
 public class XPathUtils {
 
     private XPathUtils() { }

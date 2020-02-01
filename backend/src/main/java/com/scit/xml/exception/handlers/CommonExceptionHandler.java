@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * Handles general exceptions
+ */
 @ControllerAdvice
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class CommonExceptionHandler {

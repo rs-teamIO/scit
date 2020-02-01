@@ -65,10 +65,8 @@ public class PaperService {
         final RdfExtractor rdfExtractor = new RdfExtractor(id, Constants.PAPER_SCHEMA_URL, Predicate.PREFIX);
         List<RdfTriple> rdfTriples = rdfExtractor.extractRdfTriples(paperWrapper);
 
-        final String paperId = RdfExtractor.wrapId(id);
-        final String userId = RdfExtractor.wrapId(creatorId);
-        RdfTriple createdRdfTriple = new RdfTriple(userId, Predicate.CREATED, paperId);
-        RdfTriple submittedRdfTriple = new RdfTriple(userId, Predicate.SUBMITTED, paperId);
+        RdfTriple createdRdfTriple = new RdfTriple(creatorId, Predicate.CREATED, id);
+        RdfTriple submittedRdfTriple = new RdfTriple(creatorId, Predicate.SUBMITTED, id);
         rdfTriples.add(createdRdfTriple);
         rdfTriples.add(submittedRdfTriple);
 
@@ -169,7 +167,7 @@ public class PaperService {
                 .stream().anyMatch(userId::equals);
         BadRequestUtils.throwInvalidRequestDataExceptionIf(reviewerIsAuthorOfPaper, String.format("Unable to assign the paper for review to user with ID %s", userId));
 
-        RdfTriple assignedRdfTriple = new RdfTriple(RdfExtractor.wrapId(userId), Predicate.ASSIGNED_TO, RdfExtractor.wrapId(paperId));
+        RdfTriple assignedRdfTriple = new RdfTriple(userId, Predicate.ASSIGNED_TO, paperId);
         List<RdfTriple> rdfTriples = Lists.newArrayList(assignedRdfTriple);
         this.rdfRepository.insertTriples(rdfTriples);
     }
@@ -333,9 +331,9 @@ public class PaperService {
         }).collect(Collectors.toList());
 
         authodIds.stream().forEach(authorId -> {
-            RdfTriple createdTriple = new RdfTriple(RdfExtractor.wrapId(authorId), Predicate.CREATED, RdfExtractor.wrapId(paperId));
-            RdfTriple publishedTriple = new RdfTriple(RdfExtractor.wrapId(authorId), Predicate.PUBLISHED, RdfExtractor.wrapId(paperId));
-            RdfTriple wasPublishedByTriple = new RdfTriple(RdfExtractor.wrapId(paperId), Predicate.WAS_PUBLISHED_BY, RdfExtractor.wrapId(authorId));
+            RdfTriple createdTriple = new RdfTriple(authorId, Predicate.CREATED, paperId);
+            RdfTriple publishedTriple = new RdfTriple(authorId, Predicate.PUBLISHED, paperId);
+            RdfTriple wasPublishedByTriple = new RdfTriple(paperId, Predicate.WAS_PUBLISHED_BY, authorId);
             rdfTriples.addAll(Lists.newArrayList(createdTriple, publishedTriple, wasPublishedByTriple));
         });
 

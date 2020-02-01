@@ -83,7 +83,7 @@ public class PaperController {
             produces = {MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity getAuthorOfPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
         String authorId = this.paperService.getAuthorOfPaper(paperId);
-        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, authorId));
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, authorId));
         return ResponseEntity.ok(responseBody);
     }
 
@@ -139,7 +139,7 @@ public class PaperController {
             produces = {MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity getReviewersOfPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
         String reviewers = this.userService.getReviewersOfPaper(paperId);
-        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse("users", reviewers));
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse("users", reviewers));
         return ResponseEntity.ok(responseBody);
     }
 

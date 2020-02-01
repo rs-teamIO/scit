@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
 
+/**
+ * Handles specific custom exceptions
+ */
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SpecificExceptionHandler {

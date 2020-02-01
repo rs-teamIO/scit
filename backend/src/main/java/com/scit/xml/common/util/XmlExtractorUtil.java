@@ -11,6 +11,9 @@ import javax.xml.xpath.XPathConstants;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Contains utility methods for extracting values from {@link Document} instances using XPath expressions.
+ */
 public class XmlExtractorUtil {
 
     private XmlExtractorUtil() { }

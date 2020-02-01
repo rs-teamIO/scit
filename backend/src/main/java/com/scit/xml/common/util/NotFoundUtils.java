@@ -2,6 +2,9 @@ package com.scit.xml.common.util;
 
 import com.scit.xml.exception.NotFoundException;
 
+/**
+ * Contains utility methods for {@link com.scit.xml.exception.NotFoundException}
+ */
 public final class NotFoundUtils {
 
     private NotFoundUtils() { }

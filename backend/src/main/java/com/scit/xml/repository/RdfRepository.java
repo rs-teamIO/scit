@@ -21,7 +21,6 @@ public class RdfRepository {
 
     private static final String PREFIX = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n\n";
     private static final String INSERT_INTO_DEFAULT_GRAPH = PREFIX + "INSERT DATA { %s }";
-    private static final String INSERT_INTO_GRAPH = PREFIX + "INSERT DATA { GRAPH <%s> { %s } }";
     private static final String DELETE_AND_INSERT = PREFIX + "DELETE { <%1$s> ?p ?o } WHERE { <%1$s> ?p ?o } ; INSERT DATA { %2$s }";
     private static final String DELETE_FROM_GRAPH = PREFIX + "DELETE WHERE { <%1$s> %2$s <%3$s> }";
 
@@ -55,10 +54,6 @@ public class RdfRepository {
         return subjectIds;
     }
 
-    public boolean ask(String query) {
-        return this.rdfQueryExecutor.ask(query);
-    }
-
     /**
      * Executes a SPARQL SELECT query on the RDF store.
      *
@@ -67,6 +62,17 @@ public class RdfRepository {
      */
     public Pair<ResultSet, QueryExecution> selectTriples(String query) {
         Pair<ResultSet, QueryExecution> result = this.rdfQueryExecutor.select(query);
+        return result;
+    }
+
+    /**
+     * Executes a SPARQL ASK query. Returns true if query is satisfied, otherwise returns false.
+     *
+     * @param query ASK query to be executed
+     * @return true if query is satisfied, otherwise returns false
+     */
+    public boolean ask(String query) {
+        boolean result = this.rdfQueryExecutor.ask(query);
         return result;
     }
 
@@ -93,7 +99,6 @@ public class RdfRepository {
         this.rdfQueryExecutor.update(query);
     }
 
-
     /**
      * Converts given {@link RdfTriple} instances into string representation.
      *
@@ -108,10 +113,28 @@ public class RdfRepository {
         return rdfTriplesStrings.toString();
     }
 
-    // TODO: Review implementation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // TODO: Review implementation = OVDE DOLAZE UNWRAPPED VREDNOSTI A SAM QUERY IH WRAPPUJE PO PATTERNU
+
     public void deleteTriple(String s, String p, String o) {
+
         String query = String.format(DELETE_FROM_GRAPH, s, p, o);
-        this.rdfQueryExecutor.update(query);
+        this.rdfQueryExecutor.delete(query);
     }
 
     public void deleteAllMetadata(String entityId) {

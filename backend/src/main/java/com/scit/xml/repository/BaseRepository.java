@@ -42,6 +42,7 @@ public abstract class BaseRepository {
 
     protected final XQueryBuilder xQueryBuilder;
     protected final XQueryExecutor xQueryExecutor;
+    protected final String documentId;
 
     protected <T> String marshal(Class<T> clazz, T instance) {
         LOGGER.info(String.format("Marshalling %s instance...", clazz.getName()));

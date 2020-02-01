@@ -76,10 +76,8 @@ public class CoverLetterService {
         final RdfExtractor rdfExtractor = new RdfExtractor(id, Constants.COVER_LETTER_SCHEMA_URL, Predicate.PREFIX);
         List<RdfTriple> rdfTriples = rdfExtractor.extractRdfTriples(coverLetterWrapper);
 
-        final String coverLetterId = RdfExtractor.wrapId(id);
-        final String evaluatedPaperId = RdfExtractor.wrapId(paperId);
-        RdfTriple rdfTriple = new RdfTriple(coverLetterId, Predicate.ACCOMPANIES, evaluatedPaperId);
-        rdfTriples.add(rdfTriple);
+        RdfTriple accompaniesRdfTriple = new RdfTriple(id, Predicate.ACCOMPANIES, paperId);
+        rdfTriples.add(accompaniesRdfTriple);
 
         return rdfTriples;
     }

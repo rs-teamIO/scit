@@ -14,6 +14,9 @@ import javax.xml.validation.Validator;
 import java.io.FileInputStream;
 import java.io.StringReader;
 
+/**
+ * Contains utility methods for XML Schema validation.
+ */
 public class XsdUtils {
 
     private XsdUtils() { }

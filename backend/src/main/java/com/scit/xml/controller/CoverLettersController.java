@@ -57,7 +57,7 @@ public class CoverLettersController {
 
         // TODO: Include paper title and author data in the schema for evaluation form (maybe)
 
-        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, id));
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, id));
         return ResponseEntity.ok(responseBody);
     }
 }

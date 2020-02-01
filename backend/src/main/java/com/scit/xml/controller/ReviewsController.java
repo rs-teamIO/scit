@@ -7,9 +7,7 @@ import com.scit.xml.common.util.ResourceUtils;
 import com.scit.xml.common.util.XmlResponseUtils;
 import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.dto.XmlResponse;
-import com.scit.xml.exception.BadRequestException;
 import com.scit.xml.model.paper.Paper;
-import com.scit.xml.model.review.Review;
 import com.scit.xml.security.JwtTokenDetailsUtil;
 import com.scit.xml.service.EmailService;
 import com.scit.xml.service.PaperService;
@@ -57,7 +55,7 @@ public class ReviewsController {
         String html = ResourceUtils.convertResourceToString(this.paperService.convertToHtml(paperWrapper.getXml()));
         this.emailService.sendPaperReviewedNotificationEmail(editorEmail, paper, reviewerUsername, pdf, html);
 
-        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, reviewId));
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, reviewId));
         return ResponseEntity.ok(responseBody);
     }
 }

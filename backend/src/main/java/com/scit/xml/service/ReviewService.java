@@ -46,8 +46,8 @@ public class ReviewService {
 
             String reviewId = this.reviewRepository.save(reviewWrapper);
 
-            RdfTriple writtenByTriple = new RdfTriple(RdfExtractor.wrapId(reviewId), Predicate.WRITTEN_BY, RdfExtractor.wrapId(userId));
-            RdfTriple reviewedTriple = new RdfTriple(RdfExtractor.wrapId(userId), Predicate.REVIEWED, RdfExtractor.wrapId(paperId));
+            RdfTriple writtenByTriple = new RdfTriple(reviewId, Predicate.WRITTEN_BY, userId);
+            RdfTriple reviewedTriple = new RdfTriple(userId, Predicate.REVIEWED, paperId);
             List<RdfTriple> rdfTriples = Lists.newArrayList(writtenByTriple, reviewedTriple);
             this.rdfRepository.insertTriples(rdfTriples);
             this.rdfRepository.deleteTriple(userId, Predicate.CURRENTLY_REVIEWING, paperId);
@@ -60,7 +60,7 @@ public class ReviewService {
     }
 
     public void acceptReviewRequest(String userId, String paperId) {
-        RdfTriple acceptedRdfTriple = new RdfTriple(RdfExtractor.wrapId(userId), Predicate.CURRENTLY_REVIEWING, RdfExtractor.wrapId(paperId));
+        RdfTriple acceptedRdfTriple = new RdfTriple(userId, Predicate.CURRENTLY_REVIEWING, paperId);
         List<RdfTriple> rdfTriples = Lists.newArrayList(acceptedRdfTriple);
         this.rdfRepository.insertTriples(rdfTriples);
         this.rdfRepository.deleteTriple(userId, Predicate.ASSIGNED_TO, paperId);

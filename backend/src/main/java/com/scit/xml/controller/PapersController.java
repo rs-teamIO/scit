@@ -51,7 +51,7 @@ public class PapersController {
         String html = ResourceUtils.convertResourceToString(this.paperService.exportToHtml(paperId));
         this.emailService.sendPaperSubmissionNotificationEmail(editorEmail, paper, pdf, html);
 
-        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, paperId));
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, paperId));
         return ResponseEntity.ok(responseBody);
     }
 
@@ -61,10 +61,10 @@ public class PapersController {
         String userId = JwtTokenDetailsUtil.getCurrentUserId();
         if(userId != null && ofCurrentUser != null && ofCurrentUser) {
             String papers = this.paperService.getPapersByUserId(userId);
-            return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
+            return ResponseEntity.ok(XmlResponseUtils.wrapResponse(new XmlResponse("papers", papers)));
         }
         List<String> papers = this.paperService.getPublishedPapers(userId);
-        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
+        return ResponseEntity.ok(XmlResponseUtils.wrapResponse(new XmlResponse("papers", papers)));
     }
 
     /**
@@ -125,7 +125,7 @@ public class PapersController {
                 produces = { MediaType.APPLICATION_XML_VALUE } )
     public ResponseEntity getAssignedPapers() {
         String papers = this.paperService.getAssignedPapers(JwtTokenDetailsUtil.getCurrentUserId());
-        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
+        return ResponseEntity.ok(XmlResponseUtils.wrapResponse(new XmlResponse("papers", papers)));
     }
 
     /**
@@ -139,7 +139,7 @@ public class PapersController {
                 produces = { MediaType.APPLICATION_XML_VALUE } )
     public ResponseEntity getPapersInReview() {
         String papers = this.paperService.getPapersInReview(JwtTokenDetailsUtil.getCurrentUserId());
-        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
+        return ResponseEntity.ok(XmlResponseUtils.wrapResponse(new XmlResponse("papers", papers)));
     }
 
     /**
@@ -153,6 +153,6 @@ public class PapersController {
                 produces = { MediaType.APPLICATION_XML_VALUE } )
     public ResponseEntity getSubmittedPapers() {
         String papers = this.paperService.getSubmittedPapers();
-        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
+        return ResponseEntity.ok(XmlResponseUtils.wrapResponse(new XmlResponse("papers", papers)));
     }
 }

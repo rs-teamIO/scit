@@ -1,5 +1,8 @@
 package com.scit.xml.common.api;
 
+/**
+ * This class contains REST API Constants
+ */
 public final class RestApiConstants {
 
     private RestApiConstants() { }
@@ -17,4 +20,6 @@ public final class RestApiConstants {
     public static final String PAPER = "paper";
     public static final String COVER_LETTER = "cover_letter";
     public static final String EVALUATION_FORM = "evaluation_form";
+
+    public static final String USERS = "users";
 }

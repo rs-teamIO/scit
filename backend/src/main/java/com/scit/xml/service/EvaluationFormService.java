@@ -70,10 +70,8 @@ public class EvaluationFormService {
         final RdfExtractor rdfExtractor = new RdfExtractor(id, Constants.EVALUATION_FORM_SCHEMA_URL, Predicate.PREFIX);
         List<RdfTriple> rdfTriples = rdfExtractor.extractRdfTriples(evaluationFormWrapper);
 
-        final String evaluationFormId = RdfExtractor.wrapId(id);
-        final String evaluatedPaperId = RdfExtractor.wrapId(paperId);
-        RdfTriple rdfTriple = new RdfTriple(evaluationFormId, Predicate.EVALUATES, evaluatedPaperId);
-        rdfTriples.add(rdfTriple);
+        RdfTriple evaluatesRdfTriple = new RdfTriple(id, Predicate.EVALUATES, paperId);
+        rdfTriples.add(evaluatesRdfTriple);
 
         return rdfTriples;
     }

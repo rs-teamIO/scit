@@ -26,7 +26,7 @@ public class EvaluationFormRepository extends BaseRepository {
     private Resource findByIdQuery;
 
     public EvaluationFormRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor) {
-        super(xQueryBuilder, xQueryExecutor);
+        super(xQueryBuilder, xQueryExecutor, Constants.EVALUATION_FORM_DOCUMENT_ID);
     }
 
     public String save(EvaluationForm evaluationForm) {
@@ -37,14 +37,14 @@ public class EvaluationFormRepository extends BaseRepository {
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, EVALUATION_FORM_NAMESPACE_ALIAS,
                 EVALUATION_FORM_NAMESPACE, EVALUATION_FORMS_COLLECTION, xml, EVALUATION_FORMS_NAMESPACE);
 
-        this.xQueryExecutor.updateResource(Constants.EVALUATION_FORM_DOCUMENT_ID, query);
+        this.xQueryExecutor.updateResource(this.documentId, query);
 
         return id;
     }
 
     public String findById(String id) {
         String query = xQueryBuilder.buildQuery(findByIdQuery, id);
-        ResourceSet resourceSet = xQueryExecutor.execute(Constants.EVALUATION_FORM_DOCUMENT_ID, query);
+        ResourceSet resourceSet = xQueryExecutor.execute(this.documentId, query);
 
         return ResourceSetUtils.toXml(resourceSet);
     }

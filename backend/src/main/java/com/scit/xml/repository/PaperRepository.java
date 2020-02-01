@@ -28,7 +28,7 @@ public class PaperRepository extends BaseRepository {
     private Resource findByIdQuery;
 
     public PaperRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor) {
-        super(xQueryBuilder, xQueryExecutor);
+        super(xQueryBuilder, xQueryExecutor, Constants.PAPER_DOCUMENT_ID);
     }
 
     public String save(Paper paper) {
@@ -37,7 +37,7 @@ public class PaperRepository extends BaseRepository {
         String xml = this.marshal(Paper.class, paper);
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, PAPER_NAMESPACE_ALIAS, PAPER_NAMESPACE, PAPERS_COLLECTION, xml, PAPERS_NAMESPACE);
 
-        this.xQueryExecutor.updateResource(Constants.PAPER_DOCUMENT_ID, query);
+        this.xQueryExecutor.updateResource(this.documentId, query);
 
         return id;
     }
@@ -46,14 +46,14 @@ public class PaperRepository extends BaseRepository {
         String id = String.format(PAPERS_NAMESPACE_FORMAT, randomUUID().toString());
         String query = this.xQueryBuilder.buildQuery(this.removeTemplate, PAPER_NAMESPACE_ALIAS, PAPER_NAMESPACE, PAPER_INSTANCE, PAPER_PREFIX, paperId, PAPERS_NAMESPACE);
 
-        this.xQueryExecutor.updateResource(Constants.PAPER_DOCUMENT_ID, query);
+        this.xQueryExecutor.updateResource(this.documentId, query);
 
         return id;
     }
 
     public String findById(String id) {
         String query = xQueryBuilder.buildQuery(findByIdQuery, id);
-        ResourceSet resourceSet = xQueryExecutor.execute(Constants.PAPER_DOCUMENT_ID, query);
+        ResourceSet resourceSet = xQueryExecutor.execute(this.documentId, query);
 
         return ResourceSetUtils.toXml(resourceSet);
     }

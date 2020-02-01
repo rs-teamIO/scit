@@ -29,7 +29,7 @@ public class CoverLetterRepository extends BaseRepository {
     private Resource findByPaperIdQuery;
 
     public CoverLetterRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor) {
-        super(xQueryBuilder, xQueryExecutor);
+        super(xQueryBuilder, xQueryExecutor, Constants.COVER_LETTER_DOCUMENT_ID);
     }
 
     public String save(CoverLetter coverLetter) {
@@ -40,21 +40,21 @@ public class CoverLetterRepository extends BaseRepository {
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, COVER_LETTER_NAMESPACE_ALIAS,
                 COVER_LETTER_NAMESPACE, COVER_LETTERS_COLLECTION, xml, COVER_LETTERS_NAMESPACE);
 
-        this.xQueryExecutor.updateResource(Constants.COVER_LETTER_DOCUMENT_ID, query);
+        this.xQueryExecutor.updateResource(this.documentId, query);
 
         return id;
     }
 
     public String findById(String id) {
         String query = xQueryBuilder.buildQuery(findByIdQuery, id);
-        ResourceSet resourceSet = xQueryExecutor.execute(Constants.COVER_LETTER_DOCUMENT_ID, query);
+        ResourceSet resourceSet = xQueryExecutor.execute(this.documentId, query);
 
         return ResourceSetUtils.toXml(resourceSet);
     }
 
     public String findByPaperId(String paperId) {
         String query = xQueryBuilder.buildQuery(findByPaperIdQuery, paperId);
-        ResourceSet resourceSet = xQueryExecutor.execute(Constants.COVER_LETTER_DOCUMENT_ID, query);
+        ResourceSet resourceSet = xQueryExecutor.execute(this.documentId, query);
 
         return ResourceSetUtils.toXml(resourceSet);
     }

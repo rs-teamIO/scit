@@ -56,7 +56,7 @@ public class EvaluationFormsController {
         String paperTitle = this.paperService.getPaperTitle(paperId);
         this.emailService.sendEvaluationFormSubmissionNotificationEmail(editorEmail, evaluationForm, paperTitle, pdf, html);
 
-        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, id));
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, id));
         return ResponseEntity.ok(responseBody);
     }
 }

@@ -19,7 +19,7 @@ public class ReviewRepository extends BaseRepository {
     private final String REVIEWS_NAMESPACE_FORMAT = "http://www.scit.org/review/%s";
 
     public ReviewRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor) {
-        super(xQueryBuilder, xQueryExecutor);
+        super(xQueryBuilder, xQueryExecutor, Constants.REVIEW_DOCUMENT_ID);
     }
 
     public String save(XmlWrapper reviewWrapper) {
@@ -27,10 +27,11 @@ public class ReviewRepository extends BaseRepository {
         reviewWrapper.getDocument().getDocumentElement().setAttribute("id", id);
         reviewWrapper.updateXml();
 
+        String xml = reviewWrapper.getXml();
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, REVIEW_NAMESPACE_ALIAS,
-                REVIEW_NAMESPACE, REVIEWS_COLLECTION, reviewWrapper.getXml(), REVIEWS_NAMESPACE);
+                REVIEW_NAMESPACE, REVIEWS_COLLECTION, xml, REVIEWS_NAMESPACE);
 
-        this.xQueryExecutor.updateResource(Constants.REVIEW_DOCUMENT_ID, query);
+        this.xQueryExecutor.updateResource(this.documentId, query);
 
         return id;
     }

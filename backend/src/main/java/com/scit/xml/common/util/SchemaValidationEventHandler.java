@@ -8,6 +8,9 @@ import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEventLocator;
 
+/**
+ * Event handler for schema validation.
+ */
 public class SchemaValidationEventHandler implements ValidationEventHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemaValidationEventHandler.class);

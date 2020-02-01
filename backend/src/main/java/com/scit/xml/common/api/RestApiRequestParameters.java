@@ -1,5 +1,8 @@
 package com.scit.xml.common.api;
 
+/**
+ * This class contains REST API Request parameter constants
+ */
 public final class RestApiRequestParameters {
 
     private RestApiRequestParameters() { }
