@@ -28,6 +28,8 @@ import org.w3c.dom.Element;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +44,7 @@ public class PaperService {
     private final PaperDatabaseValidator paperDatabaseValidator;
     private final DocumentConverter documentConverter;
     private final RdfRepository rdfRepository;
+    private final UserService userService;
 
     // ======================================= create =======================================
 
@@ -160,6 +163,7 @@ public class PaperService {
     // ======================================= assignReviewer =======================================
 
     public void assignReviewer(String paperId, XmlWrapper paperWrapper, String userId) {
+        // TODO: Fix bug with userId and username
         boolean reviewerIsAuthorOfPaper = XmlExtractorUtil
                 .extractSetOfAttributeValuesAndValidateNotEmpty(paperWrapper.getDocument(), "/paper/authors/*", "id")
                 .stream().anyMatch(userId::equals);
@@ -310,5 +314,36 @@ public class PaperService {
     public void checkIsUserReviewingPaper(String userId, String paperId) {
         boolean userIsReviewing = rdfRepository.ask(String.format(SPARQL_ASK_IS_USER_REVIEWING_PAPER_QUERY, userId, paperId));
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!userIsReviewing);
+    }
+
+
+
+    public void publishPaper(String paperId) {
+
+        this.rdfRepository.deleteMetadataByObject(paperId);
+
+        String paperXml = this.paperRepository.findById(paperId);
+        XmlWrapper paperWrapper = new XmlWrapper(paperXml);
+        List<String> authorUsernames = XmlExtractorUtil.extractSetOfAttributeValuesAndValidateNotEmpty(paperWrapper.getDocument(), "/paper/authors/*", "username");
+        List<RdfTriple> rdfTriples = new ArrayList<>();
+
+        List<String> authodIds = authorUsernames.stream().map(authorUsername -> {
+            XmlWrapper xmlWrapper = new XmlWrapper(this.userService.findByUsername(authorUsername));
+            return XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/user/@id");
+        }).collect(Collectors.toList());
+
+        authodIds.stream().forEach(authorId -> {
+            RdfTriple createdTriple = new RdfTriple(RdfExtractor.wrapId(authorId), Predicate.CREATED, RdfExtractor.wrapId(paperId));
+            RdfTriple publishedTriple = new RdfTriple(RdfExtractor.wrapId(authorId), Predicate.PUBLISHED, RdfExtractor.wrapId(paperId));
+            RdfTriple wasPublishedByTriple = new RdfTriple(RdfExtractor.wrapId(paperId), Predicate.WAS_PUBLISHED_BY, RdfExtractor.wrapId(authorId));
+            rdfTriples.addAll(Lists.newArrayList(createdTriple, publishedTriple, wasPublishedByTriple));
+        });
+
+        this.rdfRepository.insertTriples(rdfTriples);
+    }
+
+    public void rejectPaper(String paperId) {
+
+        this.rdfRepository.deleteMetadataByObject(paperId);
     }
 }

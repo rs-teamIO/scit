@@ -18,5 +18,7 @@ public final class Predicate {
     public static final String CURRENTLY_REVIEWING = PREFIX + ":currently_reviewing";
     public static final String WRITTEN_BY = PREFIX + ":written_by";
     public static final String REVIEWED = PREFIX + ":reviewed";
+    public static final String PUBLISHED = PREFIX + ":published";
+    public static final String WAS_PUBLISHED_BY = PREFIX + ":was_published_by";
 
 }

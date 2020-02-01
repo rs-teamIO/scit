@@ -120,4 +120,9 @@ public class RdfRepository {
         String objectQuery = String.format(DELETE_BY_OBJECT, entityId);
         this.rdfQueryExecutor.delete(objectQuery);
     }
+
+    public void deleteMetadataByObject(String objectId) {
+        String objectQuery = String.format(DELETE_BY_OBJECT, objectId);
+        this.rdfQueryExecutor.delete(objectQuery);
+    }
 }

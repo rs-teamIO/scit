@@ -59,7 +59,7 @@ public class ReviewController {
      * @param paperId unique identifier of the {@link Paper}
      */
     @PreAuthorize("isAuthenticated()")
-    @PutMapping(value = RestApiEndpoints.DECLINE,
+    @PutMapping(value = RestApiEndpoints.REJECT,
                 produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity declineReviewRequest(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) throws MessagingException {
 

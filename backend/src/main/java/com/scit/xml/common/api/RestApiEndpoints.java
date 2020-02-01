@@ -32,7 +32,8 @@ public final class RestApiEndpoints {
     public static final String REVIEW = API_ROOT + "/review";
     public static final String REVIEWS = API_ROOT + "/reviews";
     public static final String ACCEPT = "/accept";
-    public static final String DECLINE = "/decline";
+    public static final String REJECT = "/reject";
+    public static final String PUBLISH = "/publish";
 
 
     public static final String EVALUATION_FORM = API_ROOT + "/evaluation-form";
