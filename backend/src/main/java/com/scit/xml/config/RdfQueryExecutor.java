@@ -92,6 +92,22 @@ public class RdfQueryExecutor {
     }
 
     /**
+     * Executes a SPARQL ASK query.
+     *
+     * @param query query to be executed
+     * @return boolean value indicating if resources exist
+     */
+    public boolean ask(String query) {
+        LOGGER.info("Executing ASK query...");
+
+        QueryExecution queryExecution = QueryExecutionFactory.sparqlService(queryEndpoint, query);
+        boolean result = queryExecution.execAsk();
+
+        LOGGER.info("ASK query executed.");
+        return result;
+    }
+
+    /**
      * Executes an INSERT query.
      *
      * @param query query to be executed
@@ -111,5 +127,16 @@ public class RdfQueryExecutor {
         LOGGER.info("Executing UPDATE query...");
         UpdateExecutionFactory.createRemote(UpdateFactory.create(query), updateEndpoint).execute();
         LOGGER.info("UPDATE query executed.");
+    }
+
+    /**
+     * Executes a SPARQL DELETE query.
+     *
+     * @param query query to be executed
+     */
+    public void delete(String query) {
+        LOGGER.info("Executing DELETE query...");
+        UpdateExecutionFactory.createRemote(UpdateFactory.create(query), updateEndpoint).execute();
+        LOGGER.info("DELETE query executed.");
     }
 }

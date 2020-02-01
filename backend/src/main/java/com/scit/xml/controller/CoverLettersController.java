@@ -7,6 +7,7 @@ import com.scit.xml.common.api.RestApiRequestParameters;
 import com.scit.xml.common.util.*;
 import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.model.cover_letter.CoverLetter;
+import com.scit.xml.model.paper.Paper;
 import com.scit.xml.service.CoverLetterService;
 import com.scit.xml.service.EmailService;
 import com.scit.xml.service.PaperService;
@@ -31,6 +32,14 @@ public class CoverLettersController {
     private final UserService userService;
     private final PaperService paperService;
 
+    /**
+     * POST api/v1/cover-letters
+     * AUTHORIZATION: Only authenticated users
+     *
+     * Creates a {@link CoverLetter} that accompanies a {@link Paper} instance
+     * @param xml XML string representation of the {@link CoverLetter}
+     * @param paperId unique identifier of the {@link Paper} instance
+     */
     @PreAuthorize("isAuthenticated()")
     @PostMapping(params = { RestApiRequestParameters.PAPER_ID },
                  consumes = MediaType.APPLICATION_XML_VALUE,
@@ -51,6 +60,4 @@ public class CoverLettersController {
         String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, id));
         return ResponseEntity.ok(responseBody);
     }
-
-
 }

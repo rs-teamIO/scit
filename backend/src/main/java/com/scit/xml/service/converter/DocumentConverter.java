@@ -4,6 +4,7 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
+import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.exception.InternalServerException;
 import org.apache.tools.ant.filters.StringInputStream;
 import org.springframework.stereotype.Component;
@@ -20,10 +21,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 
 @Component
 public class DocumentConverter {
@@ -60,6 +58,21 @@ public class DocumentConverter {
         return byteArrayOutputStream;
     }
 
+    public String xmlToXml(XmlWrapper wrapper, String xslPath) {
+        StringWriter stringWriter = new StringWriter();
+        StreamResult streamResult = new StreamResult(stringWriter);
+        try {
+            StreamSource transformationSource = getTransformSource(xslPath);
+            Transformer transformer = getXmlToXmlTransformer(transformationSource);
+
+            DOMSource xmlDomSource = getXmlDomSource(wrapper.getXml());
+            transformer.transform(xmlDomSource, streamResult);
+        } catch (Exception e) {
+            throw new InternalServerException(e);
+        }
+        return stringWriter.toString();
+    }
+
     public ByteArrayOutputStream htmlToPdf(String html) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
@@ -85,6 +98,14 @@ public class DocumentConverter {
         transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "2");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xhtml");
+        return transformer;
+    }
+
+    private Transformer getXmlToXmlTransformer(StreamSource transformationSource) throws TransformerConfigurationException {
+        Transformer transformer = transformerFactory.newTransformer(transformationSource);
+        transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "2");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         return transformer;
     }
 

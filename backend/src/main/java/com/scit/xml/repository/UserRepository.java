@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.xmldb.api.base.ResourceSet;
+import org.xmldb.api.base.XMLDBException;
+
+import java.util.List;
 
 import static java.util.UUID.randomUUID;
 
@@ -30,6 +33,9 @@ public class UserRepository extends BaseRepository {
 
     @Value("classpath:xq/user/findByEmail.xq")
     private Resource findByEmailQuery;
+
+    @Value("classpath:xq/user/findAllByRole.xq")
+    private Resource findAllByRoleQuery;
 
     public UserRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor) {
         super(xQueryBuilder, xQueryExecutor);
@@ -66,5 +72,12 @@ public class UserRepository extends BaseRepository {
         ResourceSet resourceSet = xQueryExecutor.execute(DOCUMENT_ID, query);
 
         return ResourceSetUtils.toXml(resourceSet);
+    }
+
+    public List<String> findAllAuthors() {
+        String query = xQueryBuilder.buildQuery(findAllByRoleQuery, "author");
+        ResourceSet resourceSet = xQueryExecutor.execute(DOCUMENT_ID, query);
+
+        return ResourceSetUtils.toList(resourceSet);
     }
 }
