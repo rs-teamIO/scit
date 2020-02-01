@@ -8,12 +8,10 @@ import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.service.UserService;
 import com.scit.xml.service.validator.dto.RegisterDtoValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(RestApiEndpoints.USERS)
@@ -33,5 +31,12 @@ public class UsersController {
 
         String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, id));
         return ResponseEntity.ok(responseBody);
+    }
+
+    @GetMapping(value = RestApiEndpoints.AUTHORS,
+                produces = { MediaType.APPLICATION_XML_VALUE })
+    public ResponseEntity getAllAuthors() {
+        String authors = this.userService.getAllAuthors();
+        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("users", authors)));
     }
 }

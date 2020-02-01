@@ -2,6 +2,8 @@ package com.scit.xml.common.api;
 
 public final class RestApiEndpoints {
 
+
+
     private RestApiEndpoints() { }
 
     private static final String API_ROOT = "/api/v1";
@@ -9,6 +11,8 @@ public final class RestApiEndpoints {
     public static final String USER = API_ROOT + "/user";
     public static final String USERS = API_ROOT + "/users";
     public static final String CURRENT_USER = "/me";
+    public static final String AUTHORS = "/authors";
+    public static final String REVIEWERS = "/reviewers";
 
     public static final String PAPER = API_ROOT + "/paper";
     public static final String DOWNLOAD_RAW = "/raw/download";
