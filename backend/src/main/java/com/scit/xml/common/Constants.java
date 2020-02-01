@@ -12,9 +12,11 @@ public final class Constants {
     public static final String PAPER_DOCUMENT_ID = "papers.xml";
     public static final String COVER_LETTER_DOCUMENT_ID = "cover_letters.xml";
     public static final String EVALUATION_FORM_DOCUMENT_ID = "evaluation_forms.xml";
+    public static final String REVIEW_DOCUMENT_ID = "reviews.xml";
 
     private static final String SCHEMA_PATH = "http://www.scit.org/schema/";
     public static final String PAPER_SCHEMA_URL = SCHEMA_PATH + "paper";
     public static final String COVER_LETTER_SCHEMA_URL = SCHEMA_PATH + "cover_letter";
     public static final String EVALUATION_FORM_SCHEMA_URL = SCHEMA_PATH + "evaluation_form";
+    public static final String REVIEW_SCHEMA_URL = SCHEMA_PATH + "review";
 }

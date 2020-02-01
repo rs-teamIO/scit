@@ -52,6 +52,15 @@ public class EmailService {
         this.sendEmailWithAttachments(recipient, subject, text, paper.getTitle(), pdf, html);
     }
 
+    // TODO: Doc
+    @Async
+    public void sendPaperReviewedNotificationEmail(String recipient, Paper paper, String reviewerUsername, byte[] pdf, String html) throws MessagingException {
+        final String subject = String.format("The user %s has submitted a review", reviewerUsername);
+        final String text = String.format("The paper titled \"<b>%s</b>\" has been reviewed by user <b>%s</b>.<br><br>The files can be found in the attachment.", paper.getTitle(), reviewerUsername);
+
+        this.sendEmailWithAttachments(recipient, subject, text, paper.getTitle(), pdf, html);
+    }
+
     /**
      * Sends a paper assignment notiication e-mail to the recipient.
      * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
@@ -63,7 +72,7 @@ public class EmailService {
     @Async
     public void sendPaperAssignmentNotificationEmail(String recipient, String paperTitle) throws MessagingException {
         final String subject = String.format("Paper \"%s\" has been assigned to you for review", paperTitle);
-        final String text = String.format("A new paper titled \"<b>%s</b>\" has been assigned to you for review.<br><br>Please visit the website to submit the review.", paperTitle);
+        final String text = String.format("A new paper titled \"<b>%s</b>\" has been assigned to you for review.<br><br>Please visit the website to accept and submit the review.", paperTitle);
 
         this.sendEmail(recipient, subject, text);
     }

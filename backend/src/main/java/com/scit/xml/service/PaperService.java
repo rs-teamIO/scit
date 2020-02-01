@@ -92,6 +92,24 @@ public class PaperService {
         }
     }
 
+    public Resource convertToPdf(String xml) {
+        try {
+            ByteArrayOutputStream pdfOutputStream = this.documentConverter.xmlToPdf(xml, Paths.get(this.stylesheet.getURI()).toString());
+            return new ByteArrayResource(pdfOutputStream.toByteArray());
+        } catch (IOException e) {
+            throw new InternalServerException(e);
+        }
+    }
+
+    public Resource convertToHtml(String xml) {
+        try {
+            ByteArrayOutputStream htmlOutputStream = this.documentConverter.xmlToHtml(xml, Paths.get(this.stylesheet.getURI()).toString());
+            return new ByteArrayResource(htmlOutputStream.toByteArray());
+        } catch (IOException e) {
+            throw new InternalServerException(e);
+        }
+    }
+
     // ======================================= getPapers =======================================
 
     private final String SPARQL_GET_PAPERS_OF_USER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
@@ -130,10 +148,10 @@ public class PaperService {
         sb.append("<paper>\n");
         sb.append(indent).append("<id>");
         sb.append(id);
-        sb.append(indent).append("</id>");
+        sb.append("</id>");
         sb.append(indent).append("<title>");
         sb.append(title);
-        sb.append(indent).append("</title>");
+        sb.append("</title>");
         sb.append("</paper>");
 
         return sb.toString();
@@ -284,5 +302,13 @@ public class PaperService {
         this.paperDatabaseValidator.validateExportRequest(paperId);
         this.paperRepository.remove(paperId);
         this.rdfRepository.deleteAllMetadata(paperId);
+    }
+
+    private final String SPARQL_ASK_IS_USER_REVIEWING_PAPER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "ASK\n" + "WHERE {\n" + "\t<%s> rv:currently_reviewing <%s>.\n" + "}";
+
+    public void checkIsUserReviewingPaper(String userId, String paperId) {
+        boolean userIsReviewing = rdfRepository.ask(String.format(SPARQL_ASK_IS_USER_REVIEWING_PAPER_QUERY, userId, paperId));
+        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!userIsReviewing);
     }
 }

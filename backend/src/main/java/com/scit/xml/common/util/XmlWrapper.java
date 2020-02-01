@@ -5,6 +5,7 @@ import com.scit.xml.exception.BadRequestException;
 import com.scit.xml.exception.InternalServerException;
 import lombok.Data;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -151,5 +152,20 @@ public class XmlWrapper {
             return;
         }
         set(xQuerySelector, content);
+    }
+
+    /**
+     * Sets the text content of a {@link Node} instance only in case the content is not null.
+     * @param xQuerySelector used to select {@link Node} instance
+     * @param content text content to be set
+     */
+    public void setElementAttribute(String xQuerySelector, String attributeName, String attributeValue) {
+        Element element = ((Element) XPathUtils.evaluate(xQuerySelector, getDocument(), XPathConstants.NODE));
+        if (element == null) {
+            throw new InternalServerException();
+        }
+
+        element.setAttribute(attributeName, attributeValue);
+        updateXml();
     }
 }
