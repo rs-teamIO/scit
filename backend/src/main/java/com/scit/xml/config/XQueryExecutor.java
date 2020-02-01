@@ -113,7 +113,7 @@ public class XQueryExecutor {
             database.setProperty("create-database", "true");
             DatabaseManager.registerDatabase(database);
 
-            collection = DatabaseManager.getCollection(getCollectionUri());
+            collection = DatabaseManager.getCollection(getCollectionUri(), username, password);
             collection.setProperty(OutputKeys.INDENT, "yes");
             resource = (XMLResource) collection.getResource(documentId);
 
