@@ -1,12 +1,19 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
+
 import Swal from 'sweetalert2';
 
 
 
 const authenticatedUserKey = 'authenticatedUser';
-const url = '/api/v1/users';
+const signUpUrl = '/api/v1/users';
+const signInUrl = '/api/login';
+
+const tokenType = `Bearer`;
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -14,12 +21,13 @@ const url = '/api/v1/users';
 export class AuthService {
 
   constructor(
-    protected http: HttpClient,
+    private http: HttpClient,
+    private cookieService: CookieService,
     private router: Router
     ) {}
 
 
-  userToXml(firstName: string, lastName: string, username: string, password: string, email: string) {
+  userToXml(firstName: string, lastName: string, username: string, password: string, email: string): string {
     const usernameXml = `<user:username>${username}</user:username>`;
     const passwordXml = `<user:password>${password}</user:password>`;
     const emailXml =    `<user:email>${email}</user:email>`;
@@ -35,10 +43,20 @@ export class AuthService {
     return user;
   }
 
+  authToXml(username: string, password: string): string {
+    const usernameXml = `<username>${username}</username>`;
+    const passwordXml = `<password>${password}</password>`;
+    const auth = `<login xmlns="http://www.scit.org/schema/login">` +
+    usernameXml +
+    passwordXml +
+    `</login>`;
+    return auth;
+  }
+
   signup(firstName: string, lastName: string, username: string, password: string, email: string) {
     const user = this.userToXml(firstName, lastName, username, password, email);
 
-    this.http.post(`${url}`, user, {observe: 'response'}).toPromise()
+    this.http.post(`${signUpUrl}`, user, {observe: 'response'}).toPromise()
     .then( response => {
       response.headers.get('Location');
       Swal.fire(
@@ -53,7 +71,29 @@ export class AuthService {
     .catch( response => {
       this.handleError(response);
     });
+  }
+  signin(username: string, password: string) {
+    const auth = this.authToXml(username, password);
 
+    this.http.post<any>(`${signInUrl}`, auth).toPromise()
+    .then( response => {
+      this.cookieService.set(tokenType, response.token);
+      Swal.fire(
+        'Welcome!',
+        'You have signed in successfully.',
+        'success'
+      )
+      .then(
+        () => this.router.navigateByUrl('papers')
+      );
+    })
+    .catch( response => {
+      this.handleError(response);
+    });
+  }
+
+  signout() {
+    this.cookieService.delete(tokenType);
   }
 
 
@@ -73,39 +113,21 @@ export class AuthService {
     }
   }
 
-
-
-  // signin(user: SignInRequest): Observable<SignInResponse> {
-  //   return this.http.post<SignInResponse>(`${url}/signin`, user).pipe(
-  //     tap(res => {
-  //       localStorage.setItem(authenticatedUserKey, JSON.stringify({
-  //         id: res.id,
-  //         username: res.username,
-  //         role: res.role
-  //       }));
-  //     }),
-  //     catchError(this.handleError<SignInResponse>())
-  //   );
-  // }
-
-  // signout(): Observable<void> {
-  //   this.clearStorage();
-  //   return this.http.post<void>(`${url}/signout`, null).pipe(
-  //     catchError(this.handleError<void>())
-  //   );
-  // }
-
-  clearStorage(): void {
-    localStorage.removeItem(authenticatedUserKey);
-  }
-
-  getAuthenticatedUser() {
-    return JSON.parse(localStorage.getItem(authenticatedUserKey));
-  }
-
   isAuthenticated(): boolean {
-    return this.getAuthenticatedUser() != null;
+    return this.cookieService.get(tokenType) ? true : false;
   }
+
+
+
+  // clearStorage(): void {
+  //   localStorage.removeItem(authenticatedUserKey);
+  // }
+
+  // getAuthenticatedUser() {
+  //   return JSON.parse(localStorage.getItem(authenticatedUserKey));
+  // }
+
+
 
 
 

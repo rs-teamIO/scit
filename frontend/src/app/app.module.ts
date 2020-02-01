@@ -9,6 +9,8 @@ import { PapersModule } from './papers/papers.module';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpRequestInterceptor } from './core/services/http/http-request.interceptor';
+import { CookieService } from 'ngx-cookie-service';
+
 
 
 @NgModule({
@@ -26,7 +28,8 @@ import { HttpRequestInterceptor } from './core/services/http/http-request.interc
       provide: HTTP_INTERCEPTORS,
       useClass: HttpRequestInterceptor,
       multi: true
-    }
+    },
+    CookieService
   ],
   bootstrap: [AppComponent]
 })

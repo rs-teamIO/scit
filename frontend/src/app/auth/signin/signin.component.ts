@@ -11,22 +11,16 @@ import { SignInRequest } from 'src/app/shared/model/signin-request';
 })
 export class SigninComponent implements OnInit {
 
-  username:string;
-  password:string;
+  username: string;
+  password: string;
   constructor(
-    private authService: AuthService,
-    private router: Router) { }
+    private authService: AuthService) { }
 
   ngOnInit() {
   }
 
   signin() {
-    // this.authService.signin(new SignInRequest(this.username, this.password)).subscribe(
-    //   res => {
-    //     console.log(`Welcome ${this.username}!`);
-    //     this.router.navigateByUrl('papers');
-    //   },
-    //   err => { });
+    this.authService.signin(this.username, this.password);
   }
 
 }

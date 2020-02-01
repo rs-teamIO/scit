@@ -23,9 +23,6 @@ export class NavBarComponent implements OnInit {
 
 
   signout() {
-    // this.authService.signout().subscribe(
-    //   res => {
-    //     this.router.navigateByUrl('signin');
-    //   }, err => { });
+    this.authService.signout();
   }
 }
