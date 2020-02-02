@@ -30,7 +30,6 @@ import { HttpService } from './services/http/http.service';
     HttpClientModule
   ],
   providers: [
-    AuthService,
     PaperService,
     HttpService
   ]

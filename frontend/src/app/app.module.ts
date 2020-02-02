@@ -11,6 +11,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpRequestInterceptor } from './core/services/http/http-request.interceptor';
 import { CookieService } from 'ngx-cookie-service';
 import { NgxXml2jsonService } from 'ngx-xml2json';
+import { AuthService } from './core/services/auth.service';
 
 
 
@@ -33,7 +34,9 @@ import { NgxXml2jsonService } from 'ngx-xml2json';
       multi: true
     },
     CookieService,
-    NgxXml2jsonService
+    NgxXml2jsonService,
+    AuthService
+
   ],
   bootstrap: [AppComponent]
 })

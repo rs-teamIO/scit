@@ -91,6 +91,7 @@ export class AuthService {
 
   signout() {
     this.cookieService.deleteAll();
+    console.log(this.cookieService.getAll());
   }
 
 

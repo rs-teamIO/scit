@@ -56,7 +56,7 @@ export class PaperService {
         const xml = new DOMParser().parseFromString(response, `text/xml`);
         const responseInJson: any = this.parser.xmlToJson(xml);
         delete responseInJson.response.papers[`#text`];
-        if (responseInJson.response.papers.paper === 1) {
+        if (!responseInJson.response.papers.paper.length) {
           const holder = [];
           holder.push(responseInJson.response.papers.paper);
           this.papersHolder = holder;
