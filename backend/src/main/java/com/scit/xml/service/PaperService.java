@@ -12,6 +12,7 @@ import com.scit.xml.model.user.Role;
 import com.scit.xml.rdf.RdfExtractor;
 import com.scit.xml.rdf.RdfTriple;
 import com.scit.xml.repository.PaperRepository;
+import com.scit.xml.security.JwtTokenDetailsUtil;
 import com.scit.xml.service.converter.DocumentConverter;
 import com.scit.xml.service.validator.database.PaperDatabaseValidator;
 import lombok.RequiredArgsConstructor;
@@ -234,6 +235,17 @@ public class PaperService {
         return userIds.stream()
                 .map(id -> this.userService.findById(id))
                 .collect(Collectors.toList());
+    }
+
+
+    // ======================================= editPaper =======================================
+
+    public void editPaper(String xml, String paperId) {
+        String currentUserId = JwtTokenDetailsUtil.getCurrentUserId();
+        boolean currentUserAllowedToEdit = this.getIdentifiersOfPaperAuthors(paperId).contains(currentUserId);
+        // TODO: Check if paper published - if yes, editing is forbidden
+        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!currentUserAllowedToEdit);
+        this.paperRepository.update(xml, paperId);
     }
 
 

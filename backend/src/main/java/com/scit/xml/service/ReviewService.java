@@ -40,9 +40,10 @@ public class ReviewService {
 
             String reviewId = this.reviewRepository.save(reviewWrapper);
 
+            RdfTriple reviewsTriple = new RdfTriple(reviewId, Predicate.REVIEWS, paperId);
             RdfTriple writtenByTriple = new RdfTriple(reviewId, Predicate.WRITTEN_BY, userId);
             RdfTriple reviewedTriple = new RdfTriple(userId, Predicate.REVIEWED, paperId);
-            List<RdfTriple> rdfTriples = Lists.newArrayList(writtenByTriple, reviewedTriple);
+            List<RdfTriple> rdfTriples = Lists.newArrayList(reviewsTriple, writtenByTriple, reviewedTriple);
             this.reviewRepository.insertTriples(rdfTriples);
             this.reviewRepository.deleteTriple(userId, Predicate.CURRENTLY_REVIEWING, paperId);
 

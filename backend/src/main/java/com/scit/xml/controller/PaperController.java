@@ -1,5 +1,6 @@
 package com.scit.xml.controller;
 
+import com.scit.xml.common.Constants;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
 import com.scit.xml.common.api.RestApiRequestParameters;
@@ -11,6 +12,7 @@ import com.scit.xml.security.JwtTokenDetailsUtil;
 import com.scit.xml.service.EmailService;
 import com.scit.xml.service.PaperService;
 import com.scit.xml.service.UserService;
+import com.scit.xml.service.validator.dto.PaperDtoValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -30,8 +32,27 @@ import java.util.stream.Collectors;
 public class PaperController {
 
     private final PaperService paperService;
-    private final UserService userService;
+    private final PaperDtoValidator paperDtoValidator;
     private final EmailService emailService;
+    private final UserService userService;
+
+    /**
+     * POST api/v1/paper/transform
+     * ACCESS LEVEL: Anyone
+     *
+     * Returns the {@link Paper} transformed to HTML format.
+     *
+     * @param xml XML String representation of the {@link Paper} to be transformed
+     */
+    @PostMapping(value = RestApiEndpoints.TRANSFORM,
+            consumes = MediaType.APPLICATION_XML_VALUE,
+            produces = MediaType.APPLICATION_XHTML_XML_VALUE)
+    public ResponseEntity transformPaper(@RequestBody String xml) {
+        this.paperDtoValidator.validate(xml);
+        String html = ResourceUtils.convertResourceToString(this.paperService.convertPaperToHtml(xml));
+
+        return ResponseEntity.ok(html);
+    }
 
     /**
      * GET api/v1/paper/raw/download/
@@ -125,7 +146,7 @@ public class PaperController {
      */
     @PreAuthorize("hasAuthority('editor')")
     @GetMapping(value = RestApiEndpoints.REVIEWERS,
-                produces = {MediaType.APPLICATION_XML_VALUE})
+                produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity getReviewersOfPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
         List<String> authorIds = this.paperService.getReviewersOfPaper(paperId);
 
@@ -137,6 +158,24 @@ public class PaperController {
 
         String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.USERS, sb.toString()));
 
+        return ResponseEntity.ok(responseBody);
+    }
+
+    // TODO: Doc
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping(consumes = MediaType.APPLICATION_XML_VALUE,
+                produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> editPaper(@RequestBody String xml,
+                                            @RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) throws MessagingException {
+        Paper paper = this.paperDtoValidator.validate(xml);
+        this.paperService.editPaper(xml, paperId);
+
+        String editorEmail =  XmlExtractorUtil.extractUserEmail(this.userService.findByUsername(Constants.EDITOR_USERNAME));
+        byte[] pdf = ResourceUtils.convertResourceToByteArray(this.paperService.exportToPdf(paperId));
+        String html = ResourceUtils.convertResourceToString(this.paperService.exportToHtml(paperId));
+        this.emailService.sendPaperRevisionNotificationEmail(editorEmail, paper, pdf, html);
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, paperId));
         return ResponseEntity.ok(responseBody);
     }
 

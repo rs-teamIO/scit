@@ -63,6 +63,23 @@ public class PaperRepository extends BaseRepository {
         return id;
     }
 
+    public void update(String newPaperXml, String paperId) {
+        XmlWrapper paperWrapper = new XmlWrapper(newPaperXml);
+        paperWrapper.setElementAttribute("/paper", "paper:id", paperId);
+
+
+        String query = this.xQueryBuilder.buildQuery(this.appendTemplate, PAPER_NAMESPACE_ALIAS, PAPER_NAMESPACE, PAPERS_COLLECTION, paperWrapper.getXml(), PAPERS_NAMESPACE);
+
+        this.remove(paperId);
+        this.xQueryExecutor.updateResource(this.documentId, query);
+
+        // TODO: Re-generate Metadata in case keywords changed
+        //List<RdfTriple> rdfTriples = this.extractRdfTriples(id, creatorId);
+        //this.insertTriples(rdfTriples);
+
+        this.removeMetadataOnUpdate(paperId);
+    }
+
     public String findById(String id) {
         String query = xQueryBuilder.buildQuery(findByIdQuery, id);
         ResourceSet resourceSet = xQueryExecutor.execute(this.documentId, query);
@@ -74,6 +91,11 @@ public class PaperRepository extends BaseRepository {
         RdfTriple assignedRdfTriple = new RdfTriple(userId, Predicate.ASSIGNED_TO, paperId);
         List<RdfTriple> rdfTriples = Lists.newArrayList(assignedRdfTriple);
         this.insertTriples(rdfTriples);
+    }
+
+    public void removeMetadataOnUpdate(String paperId) {
+        this.deleteMetadataByPredicateAndObject(Predicate.REVIEWS, paperId);
+        this.deleteMetadataByPredicateAndObject(Predicate.REVIEWED, paperId);
     }
 
     private List<RdfTriple> extractRdfTriples(String id, String creatorId) {

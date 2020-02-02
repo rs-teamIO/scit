@@ -197,14 +197,34 @@ public class PapersController {
     }
 
     /**
+     * GET api/v1/papers/published
+     * ACCESS LEVEL: Anyone
+     *
+     * Returns the IDs and titles of {@link Paper}s that have been published.
+     */
+    @GetMapping(value = RestApiEndpoints.PUBLISHED,
+                produces = MediaType.APPLICATION_XML_VALUE )
+    public ResponseEntity getPublishedPapers() {
+        List<String> papers = this.paperService.getPublishedPapers();
+        StringBuilder sb = new StringBuilder();
+        papers.stream()
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+        return ResponseEntity.ok(responseBody);
+    }
+
+    /**
      * GET api/v1/papers/
      * ACCESS LEVEL: Anyone
      *
      * Returns the IDs and titles of {@link Paper}s that have been published.
      */
-    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE )
-    public ResponseEntity getPublishedPapers() {
-        List<String> papers = this.paperService.getPublishedPapers();
+    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity getPapersOfAuthor(@RequestParam(RestApiRequestParameters.USER_ID) String userId) {
+        List<String> papers = this.paperService.getPapersByUserId(userId);
         StringBuilder sb = new StringBuilder();
         papers.stream()
                 .map(XmlResponseUtils::convertPaperToXmlResponse)

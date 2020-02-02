@@ -84,6 +84,7 @@ public abstract class BaseRepository {
 
     private static final String DELETE_BY_SUBJECT = PREFIX + "DELETE WHERE { <%1$s> ?p ?o }";
     private static final String DELETE_BY_OBJECT = PREFIX + "DELETE WHERE { ?s ?p <%1$s> }";
+    private static final String DELETE_BY_PREDICATE_AND_OBJECT = PREFIX + "DELETE WHERE { ?s <%1$s> <%2$s> }";
 
     protected final RdfQueryBuilder rdfQueryBuilder;
     protected final RdfQueryExecutor rdfQueryExecutor;
@@ -193,5 +194,10 @@ public abstract class BaseRepository {
     public void deleteMetadataByObject(String objectId) {
         String objectQuery = String.format(DELETE_BY_OBJECT, objectId);
         this.rdfQueryExecutor.delete(objectQuery);
+    }
+
+    public void deleteMetadataByPredicateAndObject(String predicate, String objectId) {
+        String predicateAndObjectQuery = String.format(DELETE_BY_PREDICATE_AND_OBJECT, predicate, objectId);
+        this.rdfQueryExecutor.delete(predicateAndObjectQuery);
     }
 }
