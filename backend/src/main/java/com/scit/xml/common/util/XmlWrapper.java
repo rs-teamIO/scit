@@ -22,6 +22,9 @@ import java.io.StringWriter;
 
 import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
 
+/**
+ * Wraps the XML String and DOM representation in one object.
+ */
 @Data
 public class XmlWrapper {
 
@@ -155,9 +158,10 @@ public class XmlWrapper {
     }
 
     /**
-     * Sets the text content of a {@link Node} instance only in case the content is not null.
-     * @param xQuerySelector used to select {@link Node} instance
-     * @param content text content to be set
+     * Sets the attribute of an {@link Element} instance.
+     * @param xQuerySelector used to select {@link Element} instance
+     * @param attributeName attribute to be set
+     * @param attributeValue value of the attribute to be set
      */
     public void setElementAttribute(String xQuerySelector, String attributeName, String attributeValue) {
         Element element = ((Element) XPathUtils.evaluate(xQuerySelector, getDocument(), XPathConstants.NODE));

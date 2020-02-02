@@ -61,6 +61,32 @@ public class EmailService {
         this.sendEmailWithAttachments(recipient, subject, text, paper.getTitle(), pdf, html);
     }
 
+    // TODO: Doc
+    public void sendPaperRevisionNotificationEmail(String editorEmail, Paper paper, byte[] pdf, String html) throws MessagingException {
+        final String subject = String.format("The paper \"%s\" has been edited", paper.getTitle());
+        final String text = String.format("The paper titled \"<b>%s</b>\" has been edited based on the given reviews.<br><br>The revision can be found in the attachment.", paper.getTitle());
+
+        this.sendEmailWithAttachments(editorEmail, subject, text, paper.getTitle(), pdf, html);
+    }
+
+    // TODO: Doc
+    @Async
+    public void sendPaperRejectedNotificationEmail(String recipient, String paperTitle) throws MessagingException {
+        final String subject = "Paper rejected";
+        final String text = String.format("Your paper titled \"<b>%s</b>\" has been rejected by the editor.", paperTitle);
+
+        this.sendEmail(recipient, subject, text);
+    }
+
+    // TODO: Doc
+    @Async
+    public void sendPaperPublishedNotificationEmail(String recipient, String paperTitle) throws MessagingException {
+        final String subject = "Paper published";
+        final String text = String.format("Your paper titled \"<b>%s</b>\" has been approved by the editor and successfully published.", paperTitle);
+
+        this.sendEmail(recipient, subject, text);
+    }
+
     /**
      * Sends a paper assignment notiication e-mail to the recipient.
      * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.

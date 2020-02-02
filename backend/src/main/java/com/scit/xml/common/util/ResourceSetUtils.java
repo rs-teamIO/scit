@@ -37,7 +37,11 @@ public class ResourceSetUtils {
         return sb.toString();
     }
 
-
+    /**
+     * Converts a {@link ResourceSet} instance to List of strings representing the content of the resource
+     * @param resourceSet {@link ResourceSet} instance to be transformed
+     * @return list of strings representing the respective contents of the resource
+     */
     public static List<String> toList(ResourceSet resourceSet) {
         List<String> resources = new ArrayList<>();
         try {

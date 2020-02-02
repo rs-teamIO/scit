@@ -1,5 +1,8 @@
 package com.scit.xml.common.api;
 
+/**
+ * Contains utility methods for constructing error messages.
+ */
 public final class RestApiErrors {
 
     private RestApiErrors() {}

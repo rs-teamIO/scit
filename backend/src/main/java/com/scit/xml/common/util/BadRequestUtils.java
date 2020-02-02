@@ -2,6 +2,9 @@ package com.scit.xml.common.util;
 
 import com.scit.xml.exception.InvalidRequestDataException;
 
+/**
+ * Contains utility methods for {@link com.scit.xml.exception.BadRequestException}
+ */
 public final class BadRequestUtils {
 
     private BadRequestUtils() { }

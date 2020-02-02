@@ -8,7 +8,6 @@ import com.scit.xml.model.evaluation_form.EvaluationForm;
 import com.scit.xml.rdf.RdfExtractor;
 import com.scit.xml.rdf.RdfTriple;
 import com.scit.xml.repository.EvaluationFormRepository;
-import com.scit.xml.repository.RdfRepository;
 import com.scit.xml.service.converter.DocumentConverter;
 import com.scit.xml.service.validator.database.EvaluationFormDatabaseValidator;
 import lombok.RequiredArgsConstructor;
@@ -32,16 +31,10 @@ public class EvaluationFormService {
     private final EvaluationFormDatabaseValidator evaluationFormDatabaseValidator;
     private final EvaluationFormRepository evaluationFormRepository;
     private final DocumentConverter documentConverter;
-    private final RdfRepository rdfRepository;
 
     public String createEvaluationForm(EvaluationForm evaluationForm, String paperId) {
         this.evaluationFormDatabaseValidator.validateCreateRequest(evaluationForm, paperId);
-        String id = this.evaluationFormRepository.save(evaluationForm);
-
-        List<RdfTriple> rdfTriples = this.extractRdfTriples(id, paperId);
-        this.rdfRepository.insertTriples(rdfTriples);
-
-        return id;
+        return this.evaluationFormRepository.save(evaluationForm, paperId);
     }
 
     public Resource exportToPdf(String evaluationFormId) {
@@ -62,19 +55,5 @@ public class EvaluationFormService {
         } catch (IOException e) {
             throw new InternalServerException(e);
         }
-    }
-
-    private List<RdfTriple> extractRdfTriples(String id, String paperId) {
-        final String evaluationFormXml = this.evaluationFormRepository.findById(id);
-        final XmlWrapper evaluationFormWrapper = new XmlWrapper(evaluationFormXml);
-        final RdfExtractor rdfExtractor = new RdfExtractor(id, Constants.EVALUATION_FORM_SCHEMA_URL, Predicate.PREFIX);
-        List<RdfTriple> rdfTriples = rdfExtractor.extractRdfTriples(evaluationFormWrapper);
-
-        final String evaluationFormId = RdfExtractor.wrapId(id);
-        final String evaluatedPaperId = RdfExtractor.wrapId(paperId);
-        RdfTriple rdfTriple = new RdfTriple(evaluationFormId, Predicate.EVALUATES, evaluatedPaperId);
-        rdfTriples.add(rdfTriple);
-
-        return rdfTriples;
     }
 }

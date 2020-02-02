@@ -11,6 +11,9 @@ import javax.xml.xpath.XPathConstants;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Contains utility methods for extracting values from {@link Document} instances using XPath expressions.
+ */
 public class XmlExtractorUtil {
 
     private XmlExtractorUtil() { }
@@ -48,5 +51,15 @@ public class XmlExtractorUtil {
             attributeValues.add(attributeValue);
         }
         return attributeValues;
+    }
+
+    public static String extractPaperTitle(String paperXml) {
+        XmlWrapper xmlWrapper = new XmlWrapper(paperXml);
+        return XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/title");
+    }
+
+    public static String extractUserEmail(String userXml) {
+        XmlWrapper xmlWrapper = new XmlWrapper(userXml);
+        return XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/user/email");
     }
 }

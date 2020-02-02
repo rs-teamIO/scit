@@ -1,5 +1,8 @@
 package com.scit.xml.common.api;
 
+/**
+ * Custom response code for error messages.
+ */
 public enum ResponseCode {
 
     REQUEST_DATA_MISSING(1, "Request does not contain mandatory data."),

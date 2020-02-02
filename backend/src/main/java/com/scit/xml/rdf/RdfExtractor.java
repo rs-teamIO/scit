@@ -42,7 +42,7 @@ public class RdfExtractor {
      * @param id ID to be wrapped
      * @return wrapped ID
      */
-    public static String wrapId(String id) {
+    private static String wrapId(String id) {
         return String.format("<%s>", id);
     }
 
@@ -93,10 +93,20 @@ public class RdfExtractor {
      * @param text
      * @return
      */
-    private String wrapIfId(String text) {
+    private static String wrapIfId(String text) {
         if (text.startsWith("http://"))
             return wrapId(text);
         return String.format("\"%s\"", text);
+    }
+
+    public static String wrap(String text) {
+        if(text.startsWith("<"))
+            return text;
+        if(text.startsWith("\""))
+            return text;
+        if (text.startsWith("http://"))
+            return wrapId(text);
+        return text;
     }
 
     /**

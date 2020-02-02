@@ -5,6 +5,7 @@ import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
 import com.scit.xml.common.api.RestApiRequestParameters;
 import com.scit.xml.common.util.ResourceUtils;
+import com.scit.xml.common.util.XmlExtractorUtil;
 import com.scit.xml.common.util.XmlResponseUtils;
 import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.model.evaluation_form.EvaluationForm;
@@ -35,7 +36,7 @@ public class EvaluationFormsController {
 
     /**
      * POST api/v1/evaluation-forms
-     * AUTHORIZATION: Only authenticated users
+     * ACCESS LEVEL: Only authenticated users
      *
      * Creates an {@link EvaluationForm} for a {@link Paper} instance
      * @param xml XML string representation of the {@link EvaluationForm}
@@ -50,13 +51,13 @@ public class EvaluationFormsController {
         EvaluationForm evaluationForm = this.evaluationFormDtoValidator.validate(xml);
         String id = this.evaluationFormService.createEvaluationForm(evaluationForm, paperId);
 
-        String editorEmail = this.userService.getUserEmail(Constants.EDITOR_USERNAME);
+        String editorEmail = XmlExtractorUtil.extractUserEmail(this.userService.findByUsername(Constants.EDITOR_USERNAME));
         byte[] pdf = ResourceUtils.convertResourceToByteArray(this.evaluationFormService.exportToPdf(id));
         String html = ResourceUtils.convertResourceToString(this.evaluationFormService.exportToHtml(id));
-        String paperTitle = this.paperService.getPaperTitle(paperId);
+        String paperTitle = XmlExtractorUtil.extractPaperTitle(this.paperService.findById(paperId));
         this.emailService.sendEvaluationFormSubmissionNotificationEmail(editorEmail, evaluationForm, paperTitle, pdf, html);
 
-        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, id));
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, id));
         return ResponseEntity.ok(responseBody);
     }
 }

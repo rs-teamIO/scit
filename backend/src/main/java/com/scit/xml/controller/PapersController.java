@@ -23,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(RestApiEndpoints.PAPERS)
@@ -36,7 +37,7 @@ public class PapersController {
 
     /**
      * POST /api/v1/papers
-     * AUTHORIZATION: Author only
+     * ACCESS LEVEL: Author only
      *
      * Creates a new {@link Paper}.
      * @param xml XML string representation of the {@link Paper}
@@ -47,7 +48,7 @@ public class PapersController {
         Paper paper = this.paperDtoValidator.validate(xml);
         String paperId = this.paperService.createPaper(paper, JwtTokenDetailsUtil.getCurrentUserId());
 
-        String editorEmail = this.userService.getUserEmail(Constants.EDITOR_USERNAME);
+        String editorEmail =  XmlExtractorUtil.extractUserEmail(this.userService.findByUsername(Constants.EDITOR_USERNAME));
         byte[] pdf = ResourceUtils.convertResourceToByteArray(this.paperService.exportToPdf(paperId));
         String html = ResourceUtils.convertResourceToString(this.paperService.exportToHtml(paperId));
         this.emailService.sendPaperSubmissionNotificationEmail(editorEmail, paper, pdf, html);
@@ -59,21 +60,100 @@ public class PapersController {
         return ResponseEntity.created(urlLocation.toUri()).build();
     }
 
-    // TODO
-    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE )
-    public ResponseEntity getPapers(@RequestParam(name = RestApiRequestParameters.CURRENT_USER, required = false) Boolean ofCurrentUser) {
-        String userId = JwtTokenDetailsUtil.getCurrentUserId();
-        if(userId != null && ofCurrentUser != null && ofCurrentUser) {
-            String papers = this.paperService.getPapersByUserId(userId);
-            return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
-        }
-        List<String> papers = this.paperService.getPublishedPapers(userId);
-        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
+    // TODO: Move to PaperController class?
+    /**
+     * GET api/v1/papers/html
+     * ACCESS LEVEL: Anyone
+     *
+     * Returns the HTML representation of a {@link Paper}
+     * @param paperId unique identifier of the {@link Paper}
+     */
+    @GetMapping(value = RestApiEndpoints.HTML,
+                produces = MediaType.APPLICATION_XHTML_XML_VALUE)
+    public ResponseEntity getPaperById(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
+        String userXml = this.userService.findById(JwtTokenDetailsUtil.getCurrentUserId());
+        XmlWrapper userWrapper = new XmlWrapper(userXml);
+        String userId = XmlExtractorUtil.extractString(userWrapper.getDocument(), "/user/@id");
+        String userRole = XmlExtractorUtil.extractString(userWrapper.getDocument(), "/user/role");
+
+        String html = ResourceUtils.convertResourceToString(this.paperService.getPaperById(paperId, userId, userRole));
+
+        return ResponseEntity.ok(html);
     }
 
     /**
+     * GET api/v1/papers/submitted
+     * ACCESS LEVEL: Editor only
+     *
+     * Returns the IDs and titles of {@link Paper}s that have been submitted
+     */
+    @PreAuthorize("hasAuthority('editor')")
+    @GetMapping(value = RestApiEndpoints.SUBMITTED,
+                produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity getSubmittedPapers() {
+        List<String> papers = this.paperService.getSubmittedPapers();
+
+        StringBuilder sb = new StringBuilder();
+        papers.stream()
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+
+        return ResponseEntity.ok(responseBody);
+    }
+
+    /**
+     * GET api/v1/papers/assigned
+     * ACCESS LEVEL: Author only
+     *
+     * Returns the IDs and titles of {@link Paper}s assigned to the current user for review
+     */
+    @PreAuthorize("hasAuthority('author')")
+    @GetMapping(value = RestApiEndpoints.ASSIGNED,
+            produces = { MediaType.APPLICATION_XML_VALUE } )
+    public ResponseEntity getAssignedPapers() {
+        List<String> papers = this.paperService.getAssignedPapers(JwtTokenDetailsUtil.getCurrentUserId());
+
+        StringBuilder sb = new StringBuilder();
+        papers.stream()
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+
+        return ResponseEntity.ok(responseBody);
+    }
+
+    /**
+     * GET api/v1/papers/in-review
+     * ACCESS LEVEL: Author only
+     *
+     * Returns the IDs and titles of {@link Paper}s the current user is currently reviewing
+     */
+    @PreAuthorize("hasAuthority('author')")
+    @GetMapping(value = RestApiEndpoints.IN_REVIEW,
+            produces = { MediaType.APPLICATION_XML_VALUE } )
+    public ResponseEntity getPapersInReview() {
+        List<String> papers = this.paperService.getPapersInReview(JwtTokenDetailsUtil.getCurrentUserId());
+
+        StringBuilder sb = new StringBuilder();
+        papers.stream()
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+
+        return ResponseEntity.ok(responseBody);
+    }
+
+    // TODO: Move to PaperController class?
+    /**
      * PUT api/v1/papers/assign
-     * AUTHORIZATION: Editor only
+     * ACCESS LEVEL: Editor only
      *
      * Assigns the {@link Paper} to the given {@link User} for review
      * @param paperId unique identifier of the {@link Paper} to be assigned
@@ -98,65 +178,64 @@ public class PapersController {
     }
 
     /**
+     * GET api/v1/papers/me
+     * ACCESS LEVEL: Author only
+     *
+     * Returns the IDs and titles of {@link Paper}s the current user has created.
+     */
+    @PreAuthorize("hasAuthority('author')")
+    @GetMapping(value = RestApiEndpoints.CURRENT_USER,
+                produces = MediaType.APPLICATION_XML_VALUE )
+    public ResponseEntity getCurrentUserPapers() {
+        String userId = JwtTokenDetailsUtil.getCurrentUserId();
+
+        List<String> papers = this.paperService.getPapersByUserId(userId);
+        StringBuilder sb = new StringBuilder();
+        papers.stream()
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+        return ResponseEntity.ok(responseBody);
+    }
+
+    /**
+     * GET api/v1/papers/published
+     * ACCESS LEVEL: Anyone
+     *
+     * Returns the IDs and titles of {@link Paper}s that have been published.
+     */
+    @GetMapping(value = RestApiEndpoints.PUBLISHED,
+                produces = MediaType.APPLICATION_XML_VALUE )
+    public ResponseEntity getPublishedPapers() {
+        List<String> papers = this.paperService.getPublishedPapers();
+        StringBuilder sb = new StringBuilder();
+        papers.stream()
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+        return ResponseEntity.ok(responseBody);
+    }
+
+    /**
      * GET api/v1/papers/
-     * AUTHORIZATION: Anyone
+     * ACCESS LEVEL: Anyone
      *
-     * Returns the HTML representation of a {@link Paper}
-     * @param paperId unique identifier of the {@link Paper}
+     * Returns the IDs and titles of {@link Paper}s that have been published.
      */
-    @GetMapping(produces = { MediaType.APPLICATION_XHTML_XML_VALUE } )
-    public ResponseEntity findById(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
-        String html = ResourceUtils.convertResourceToString(this.paperService.exportToHtml(paperId));
+    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity getPapersOfAuthor(@RequestParam(RestApiRequestParameters.USER_ID) String userId) {
+        List<String> papers = this.paperService.getPapersByUserId(userId);
+        StringBuilder sb = new StringBuilder();
+        papers.stream()
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
 
-        String xml = this.userService.findById(JwtTokenDetailsUtil.getCurrentUserId());
-        XmlWrapper userWrapper = new XmlWrapper(xml);
-        String userId = XmlExtractorUtil.extractString(userWrapper.getDocument(), "/user/@id");
-        String userRole = XmlExtractorUtil.extractString(userWrapper.getDocument(), "/user/role");
-
-        this.paperService.checkCurrentUserAccess(userId, userRole, paperId);
-
-        return ResponseEntity.ok(html);
-    }
-
-    /**
-     * GET api/v1/papers/assigned
-     * AUTHORIZATION: Author only
-     *
-     * Returns the IDs and titles of {@link Paper}s assigned to the current user for review
-     */
-    @PreAuthorize("hasAuthority('author')")
-    @GetMapping(value = RestApiEndpoints.ASSIGNED,
-                produces = { MediaType.APPLICATION_XML_VALUE } )
-    public ResponseEntity getAssignedPapers() {
-        String papers = this.paperService.getAssignedPapers(JwtTokenDetailsUtil.getCurrentUserId());
-        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
-    }
-
-    /**
-     * GET api/v1/papers/in-review
-     * AUTHORIZATION: Author only
-     *
-     * Returns the IDs and titles of {@link Paper}s the current user is currently reviewing
-     */
-    @PreAuthorize("hasAuthority('author')")
-    @GetMapping(value = RestApiEndpoints.IN_REVIEW,
-                produces = { MediaType.APPLICATION_XML_VALUE } )
-    public ResponseEntity getPapersInReview() {
-        String papers = this.paperService.getPapersInReview(JwtTokenDetailsUtil.getCurrentUserId());
-        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
-    }
-
-    /**
-     * GET api/v1/papers/submitted
-     * AUTHORIZATION: Editor only
-     *
-     * Returns the IDs and titles of {@link Paper}s that have been submitted
-     */
-    @PreAuthorize("hasAuthority('editor')")
-    @GetMapping(value = RestApiEndpoints.SUBMITTED,
-                produces = { MediaType.APPLICATION_XML_VALUE } )
-    public ResponseEntity getSubmittedPapers() {
-        String papers = this.paperService.getSubmittedPapers();
-        return ResponseEntity.ok(XmlResponseUtils.toXmlString(new XmlResponse("papers", papers)));
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+        return ResponseEntity.ok(responseBody);
     }
 }

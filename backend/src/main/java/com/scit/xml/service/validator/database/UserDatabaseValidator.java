@@ -8,13 +8,16 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for persistence layer constraints validation.
+ */
 @Service
 @RequiredArgsConstructor
-public class RegisterDatabaseValidator {
+public class UserDatabaseValidator {
 
     private final UserRepository userRepository;
 
-    public void validate(String username, String email) {
+    public void validateCreateRequest(String username, String email) {
         validateUserWithGivenEmailDoesNotExist(email);
         validateUserWithGivenUsernameDoesNotExist(username);
     }

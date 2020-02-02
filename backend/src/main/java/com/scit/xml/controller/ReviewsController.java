@@ -4,12 +4,11 @@ import com.scit.xml.common.Constants;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
 import com.scit.xml.common.util.ResourceUtils;
+import com.scit.xml.common.util.XmlExtractorUtil;
 import com.scit.xml.common.util.XmlResponseUtils;
 import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.dto.XmlResponse;
-import com.scit.xml.exception.BadRequestException;
 import com.scit.xml.model.paper.Paper;
-import com.scit.xml.model.review.Review;
 import com.scit.xml.security.JwtTokenDetailsUtil;
 import com.scit.xml.service.EmailService;
 import com.scit.xml.service.PaperService;
@@ -40,24 +39,31 @@ public class ReviewsController {
     private final PaperService paperService;
     private final PaperDtoValidator paperDtoValidator;
 
+    /**
+     * POST api/v1/reviews
+     * ACCESS LEVEL: Only authenticated users
+     *
+     * Creates a {@link Review} for a {@link Paper} instance
+     * @param xml XML string representation of the reviewed {@link Paper}
+     * @param paperId unique identifier of the created {@link Review} instance
+     */
     @PreAuthorize("isAuthenticated()")
     @PostMapping(consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
+                 produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> create(@RequestBody String xml) throws MessagingException {
-
-        Paper paper = paperDtoValidator.validate(xml);
-        paperService.checkIsUserReviewingPaper(JwtTokenDetailsUtil.getCurrentUserId(), paper.getId());
+        Paper paper = this.paperDtoValidator.validate(xml);
+        this.reviewService.checkIsUserReviewingPaper(JwtTokenDetailsUtil.getCurrentUserId(), paper.getId());
 
         XmlWrapper paperWrapper = new XmlWrapper(xml);
-        String reviewId = this.reviewService.create(paperWrapper, paper.getId(), JwtTokenDetailsUtil.getCurrentUserId());
+        String reviewId = this.reviewService.createReview(paperWrapper, paper.getId(), JwtTokenDetailsUtil.getCurrentUserId());
 
-        String editorEmail = this.userService.getUserEmail(Constants.EDITOR_USERNAME);
+        String editorEmail =  XmlExtractorUtil.extractUserEmail(this.userService.findByUsername(Constants.EDITOR_USERNAME));
         String reviewerUsername = JwtTokenDetailsUtil.getCurrentUserUsername();
-        byte[] pdf = ResourceUtils.convertResourceToByteArray(this.paperService.convertToPdf(paperWrapper.getXml()));
-        String html = ResourceUtils.convertResourceToString(this.paperService.convertToHtml(paperWrapper.getXml()));
+        byte[] pdf = ResourceUtils.convertResourceToByteArray(this.paperService.convertPaperToPdf(paperWrapper.getXml()));
+        String html = ResourceUtils.convertResourceToString(this.paperService.convertPaperToHtml(paperWrapper.getXml()));
         this.emailService.sendPaperReviewedNotificationEmail(editorEmail, paper, reviewerUsername, pdf, html);
 
-        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, reviewId));
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, reviewId));
         return ResponseEntity.ok(responseBody);
     }
 }

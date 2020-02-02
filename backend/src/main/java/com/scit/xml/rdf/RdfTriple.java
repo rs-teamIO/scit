@@ -18,6 +18,8 @@ public class RdfTriple {
 
     @Override
     public String toString() {
-        return String.format("%s %s %s.\n", this.subject, this.predicate, this.object);
+
+        return String.format("%s %s %s.\n",
+                RdfExtractor.wrap(this.subject), this.predicate, RdfExtractor.wrap(this.object));
     }
 }

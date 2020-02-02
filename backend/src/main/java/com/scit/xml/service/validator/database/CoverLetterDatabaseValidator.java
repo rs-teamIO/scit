@@ -43,6 +43,7 @@ public class CoverLetterDatabaseValidator {
     }
 
     private void validateThatCoverLetterDoesNotExistForGivenPaper(String paperId) {
+        // TODO: Use also RDF for this
         String xml = this.coverLetterRepository.findByPaperId(paperId);
         BadRequestUtils.throwInvalidRequestDataExceptionIf(StringUtils.isNotEmpty(xml),
                 RestApiErrors.entityWithGivenFieldAlreadyExists(RestApiConstants.COVER_LETTER, RestApiRequestParameters.PAPER_ID));
