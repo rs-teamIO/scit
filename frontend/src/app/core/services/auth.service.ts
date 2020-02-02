@@ -90,7 +90,7 @@ export class AuthService {
   }
 
   signout() {
-    this.cookieService.delete(tokenType);
+    this.cookieService.deleteAll();
   }
 
 

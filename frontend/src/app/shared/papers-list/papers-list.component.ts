@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DocumentResponse } from '../model/document-response';
+import { PaperService } from 'src/app/core/services/paper.service';
 
 
 @Component({
@@ -12,14 +13,21 @@ export class PapersListComponent implements OnInit {
 
 
   @Input() state: string;
-  @Input() papers: DocumentResponse[] = new Array<DocumentResponse>();
+  @Input() papers: [] = [];
 
-  constructor(private router: Router) { }
+  constructor(
+    private paperService: PaperService
+    ) { }
 
   ngOnInit() {
   }
 
+  processingClick($event, paper: any) {
+    this.paperService.processing(paper);
+  }
 
-
+  titleClick($event, paper: any){
+    this.paperService.overviewRedirect(paper);
+  }
 
 }

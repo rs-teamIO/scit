@@ -1,3 +1,7 @@
 .list-group-item {
     background-color:black;
 }
+
+.clickable-title {
+    cursor: pointer;
+}

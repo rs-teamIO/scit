@@ -1,7 +1,7 @@
 <ul>
     <li class="list-group-item pointer" *ngFor="let paper of papers">
       <div class="row">
-        <span class="col-md-10">
+        <span class="col-md-10 clickable-title" (click) = 'titleClick(event, paper)'>
           {{paper.title}}
         </span>
         <!-- 
@@ -14,7 +14,7 @@
         </span> 
         -->
         <span class="col-md-2" *ngIf="true">
-          <button class="btn btn-outline-light">Process paper</button>
+          <button class="btn btn-outline-light" (click) = 'processingClick($event, paper)'>Process paper</button>
         </span>
         <!-- 
         <span class="col-md-2" *ngIf="isAuthorPapers()">

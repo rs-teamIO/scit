@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
 import com.scit.xml.common.api.RestApiRequestParameters;
 import com.scit.xml.common.util.XmlResponseUtils;

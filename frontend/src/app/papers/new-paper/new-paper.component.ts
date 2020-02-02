@@ -21,7 +21,7 @@ export class NewPaperComponent implements OnInit {
   ngOnInit() {
     this.paperService.pdfPre.subscribe(
       data => this.paperPreview = data
-    )
+    );
   }
 
   loadPaper() {

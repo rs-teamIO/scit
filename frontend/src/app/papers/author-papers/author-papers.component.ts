@@ -12,7 +12,7 @@ import { PaperService } from '../../core/services/paper.service';
 })
 export class AuthorPapersComponent implements OnInit {
 
-  username: string;
+  // username: string;
 
   papers: DocumentResponse[];
 
@@ -24,24 +24,10 @@ export class AuthorPapersComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    this.username = JSON.parse(localStorage.getItem("authenticatedUser")).username;
-    this.getPapers();
+    // this.username = JSON.parse(localStorage.getItem("authenticatedUser")).username;
+    this.paperService.findMyPapers();
+    this.paperService.papers.subscribe( data => this.papers = data)
   }
-
-  getPapers() {
-    // this.paperService.findMyPapers().subscribe(
-    //   res => {
-    //     this.noSubmittedPapers = '';
-    //     this.papers = res;
-
-    //     if (this.papers.length === 0) {
-    //       this.noSubmittedPapers = 'This author still hasn\'t published any papers.';
-    //     }
-    //   }, err => { });
-  }
-
-
-
 }
 
 
