@@ -21,7 +21,7 @@ public class TestController {
     }
 
     @PreAuthorize("hasAuthority('editor')")
-    @GetMapping(RestApiEndpoints.TEST_EDITOR)
+    @GetMapping(value = RestApiEndpoints.TEST_EDITOR, produces = TEXT_PLAIN_VALUE)
     public String testEditor() {
         return "Editor role test successful.";
     }

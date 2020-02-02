@@ -28,7 +28,7 @@ public class ReviewService {
     //private final ReviewDatabaseValidator reviewDatabaseValidator;
     private final DocumentConverter documentConverter;
 
-    public String create(XmlWrapper paperWrapper, String paperId, String userId) {
+    public String createReview(XmlWrapper paperWrapper, String paperId, String userId) {
 
         paperWrapper.setElementAttribute("/paper/comment", "paper:id", paperId);
 
@@ -53,21 +53,40 @@ public class ReviewService {
         }
     }
 
+    private final String SPARQL_ASK_IS_USER_REVIEWING_PAPER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "ASK\n" + "WHERE {\n" + "\t<%s> rv:currently_reviewing <%s>.\n" + "}";
+
+    public void checkIsUserReviewingPaper(String userId, String paperId) {
+        boolean userIsReviewing = this.reviewRepository.ask(String.format(SPARQL_ASK_IS_USER_REVIEWING_PAPER_QUERY, userId, paperId));
+        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!userIsReviewing);
+    }
+
+
+    // ======================================= acceptReviewRequest =======================================
+
     public void acceptReviewRequest(String userId, String paperId) {
+        this.checkIfUserIsAssigned(userId, paperId);
         RdfTriple acceptedRdfTriple = new RdfTriple(userId, Predicate.CURRENTLY_REVIEWING, paperId);
         List<RdfTriple> rdfTriples = Lists.newArrayList(acceptedRdfTriple);
         this.reviewRepository.insertTriples(rdfTriples);
         this.reviewRepository.deleteTriple(userId, Predicate.ASSIGNED_TO, paperId);
     }
 
+
+    // ======================================= declineReviewRequest =======================================
+
     public void declineReviewRequest(String userId, String paperId) {
+        this.checkIfUserIsAssigned(userId, paperId);
         this.reviewRepository.deleteTriple(userId, Predicate.ASSIGNED_TO, paperId);
     }
+
+
+    // ======================================= common stuff =======================================
 
     private final String SPARQL_ASK_IS_USER_ASSIGNED_TO_PAPER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
             "\n" + "ASK\n" + "WHERE {\n" + "\t<%s> rv:assigned_to <%s>.\n" + "}";
 
-    public void checkIfUserIsAssigned(String userId, String paperId) {
+    private void checkIfUserIsAssigned(String userId, String paperId) {
         boolean isAssigned = this.reviewRepository.ask(String.format(SPARQL_ASK_IS_USER_ASSIGNED_TO_PAPER_QUERY, userId, paperId));
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!isAssigned);
     }

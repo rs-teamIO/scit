@@ -20,6 +20,7 @@ public class EvaluationFormDatabaseValidator {
 
     public void validateCreateRequest(EvaluationForm evaluationForm, String paperId) {
         // TODO: validateCreateRequest for EvaluationForm
+        // TODO: check if current user is assigned to review this paper
         this.validateThatPaperExists(paperId);
     }
 

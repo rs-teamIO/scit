@@ -1,16 +1,23 @@
 package com.scit.xml.repository;
 
+import com.google.common.collect.Lists;
 import com.scit.xml.common.Constants;
+import com.scit.xml.common.Predicate;
 import com.scit.xml.common.util.ResourceSetUtils;
+import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.config.RdfQueryBuilder;
 import com.scit.xml.config.RdfQueryExecutor;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
 import com.scit.xml.model.paper.Paper;
+import com.scit.xml.rdf.RdfExtractor;
+import com.scit.xml.rdf.RdfTriple;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.xmldb.api.base.ResourceSet;
+
+import java.util.List;
 
 import static java.util.UUID.randomUUID;
 
@@ -33,13 +40,16 @@ public class PaperRepository extends BaseRepository {
         super(xQueryBuilder, xQueryExecutor, Constants.PAPER_DOCUMENT_ID, rdfQueryBuilder, rdfQueryExecutor);
     }
 
-    public String save(Paper paper) {
+    public String save(Paper paper, String creatorId) {
         String id = String.format(PAPERS_NAMESPACE_FORMAT, randomUUID().toString());
         paper.setId(id);
         String xml = this.marshal(Paper.class, paper);
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, PAPER_NAMESPACE_ALIAS, PAPER_NAMESPACE, PAPERS_COLLECTION, xml, PAPERS_NAMESPACE);
 
         this.xQueryExecutor.updateResource(this.documentId, query);
+
+        List<RdfTriple> rdfTriples = this.extractRdfTriples(id, creatorId);
+        this.insertTriples(rdfTriples);
 
         return id;
     }
@@ -58,5 +68,25 @@ public class PaperRepository extends BaseRepository {
         ResourceSet resourceSet = xQueryExecutor.execute(this.documentId, query);
 
         return ResourceSetUtils.toXml(resourceSet);
+    }
+
+    public void writeAssignMetadata(String userId, String paperId) {
+        RdfTriple assignedRdfTriple = new RdfTriple(userId, Predicate.ASSIGNED_TO, paperId);
+        List<RdfTriple> rdfTriples = Lists.newArrayList(assignedRdfTriple);
+        this.insertTriples(rdfTriples);
+    }
+
+    private List<RdfTriple> extractRdfTriples(String id, String creatorId) {
+        final String paperXml = this.findById(id);
+        final XmlWrapper paperWrapper = new XmlWrapper(paperXml);
+        final RdfExtractor rdfExtractor = new RdfExtractor(id, Constants.PAPER_SCHEMA_URL, Predicate.PREFIX);
+        List<RdfTriple> rdfTriples = rdfExtractor.extractRdfTriples(paperWrapper);
+
+        RdfTriple createdRdfTriple = new RdfTriple(creatorId, Predicate.CREATED, id);
+        RdfTriple submittedRdfTriple = new RdfTriple(creatorId, Predicate.SUBMITTED, id);
+        rdfTriples.add(createdRdfTriple);
+        rdfTriples.add(submittedRdfTriple);
+
+        return rdfTriples;
     }
 }

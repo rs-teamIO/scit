@@ -52,4 +52,14 @@ public class XmlExtractorUtil {
         }
         return attributeValues;
     }
+
+    public static String extractPaperTitle(String paperXml) {
+        XmlWrapper xmlWrapper = new XmlWrapper(paperXml);
+        return XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/title");
+    }
+
+    public static String extractUserEmail(String userXml) {
+        XmlWrapper xmlWrapper = new XmlWrapper(userXml);
+        return XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/user/email");
+    }
 }

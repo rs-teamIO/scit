@@ -34,12 +34,7 @@ public class EvaluationFormService {
 
     public String createEvaluationForm(EvaluationForm evaluationForm, String paperId) {
         this.evaluationFormDatabaseValidator.validateCreateRequest(evaluationForm, paperId);
-        String id = this.evaluationFormRepository.save(evaluationForm);
-
-        List<RdfTriple> rdfTriples = this.extractRdfTriples(id, paperId);
-        this.evaluationFormRepository.insertTriples(rdfTriples);
-
-        return id;
+        return this.evaluationFormRepository.save(evaluationForm, paperId);
     }
 
     public Resource exportToPdf(String evaluationFormId) {
@@ -60,17 +55,5 @@ public class EvaluationFormService {
         } catch (IOException e) {
             throw new InternalServerException(e);
         }
-    }
-
-    private List<RdfTriple> extractRdfTriples(String id, String paperId) {
-        final String evaluationFormXml = this.evaluationFormRepository.findById(id);
-        final XmlWrapper evaluationFormWrapper = new XmlWrapper(evaluationFormXml);
-        final RdfExtractor rdfExtractor = new RdfExtractor(id, Constants.EVALUATION_FORM_SCHEMA_URL, Predicate.PREFIX);
-        List<RdfTriple> rdfTriples = rdfExtractor.extractRdfTriples(evaluationFormWrapper);
-
-        RdfTriple evaluatesRdfTriple = new RdfTriple(id, Predicate.EVALUATES, paperId);
-        rdfTriples.add(evaluatesRdfTriple);
-
-        return rdfTriples;
     }
 }

@@ -24,6 +24,7 @@ public class UserController {
 
     /**
      * GET api/v1/user/
+     * ACCESS LEVEL: Anyone
      *
      * Returns user data of user with given ID.
      * @param id unique identifier of the User
@@ -38,6 +39,7 @@ public class UserController {
 
     /**
      * GET api/v1/user/me
+     * ACCESS LEVEL: Only if authenticated
      *
      * Returns the current user's data.
      */

@@ -1,12 +1,7 @@
 package com.scit.xml.service;
 
-import com.scit.xml.common.Constants;
-import com.scit.xml.common.Predicate;
-import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.exception.InternalServerException;
 import com.scit.xml.model.cover_letter.CoverLetter;
-import com.scit.xml.rdf.RdfExtractor;
-import com.scit.xml.rdf.RdfTriple;
 import com.scit.xml.repository.CoverLetterRepository;
 import com.scit.xml.service.converter.DocumentConverter;
 import com.scit.xml.service.validator.database.CoverLetterDatabaseValidator;
@@ -24,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,12 +34,7 @@ public class CoverLetterService {
     public String createCoverLetter(CoverLetter coverLetter, String paperId) {
         this.coverLetterDatabaseValidator.validateCreateRequest(coverLetter, paperId);
         coverLetter.setDate(this.getCurrentDate());
-        String id = this.coverLetterRepository.save(coverLetter);
-
-        List<RdfTriple> rdfTriples = this.extractRdfTriples(id, paperId);
-        this.coverLetterRepository.insertTriples(rdfTriples);
-
-        return id;
+        return this.coverLetterRepository.save(coverLetter, paperId);
     }
 
     public Resource exportToPdf(String coverLetterId) {
@@ -66,18 +55,6 @@ public class CoverLetterService {
         } catch (IOException e) {
             throw new InternalServerException(e);
         }
-    }
-
-    private List<RdfTriple> extractRdfTriples(String id, String paperId) {
-        final String coverLetterXml = this.coverLetterRepository.findById(id);
-        final XmlWrapper coverLetterWrapper = new XmlWrapper(coverLetterXml);
-        final RdfExtractor rdfExtractor = new RdfExtractor(id, Constants.COVER_LETTER_SCHEMA_URL, Predicate.PREFIX);
-        List<RdfTriple> rdfTriples = rdfExtractor.extractRdfTriples(coverLetterWrapper);
-
-        RdfTriple accompaniesRdfTriple = new RdfTriple(id, Predicate.ACCOMPANIES, paperId);
-        rdfTriples.add(accompaniesRdfTriple);
-
-        return rdfTriples;
     }
 
     private XMLGregorianCalendar getCurrentDate() {

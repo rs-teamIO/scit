@@ -4,7 +4,9 @@ import com.scit.xml.common.Constants;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
 import com.scit.xml.common.api.RestApiRequestParameters;
-import com.scit.xml.common.util.*;
+import com.scit.xml.common.util.ResourceUtils;
+import com.scit.xml.common.util.XmlExtractorUtil;
+import com.scit.xml.common.util.XmlResponseUtils;
 import com.scit.xml.dto.XmlResponse;
 import com.scit.xml.model.cover_letter.CoverLetter;
 import com.scit.xml.model.paper.Paper;
@@ -34,7 +36,7 @@ public class CoverLettersController {
 
     /**
      * POST api/v1/cover-letters
-     * AUTHORIZATION: Only authenticated users
+     * ACCESS LEVEL: Only authenticated users
      *
      * Creates a {@link CoverLetter} that accompanies a {@link Paper} instance
      * @param xml XML string representation of the {@link CoverLetter}
@@ -49,13 +51,13 @@ public class CoverLettersController {
         CoverLetter coverLetter = this.coverLetterDtoValidator.validate(xml);
         String id = this.coverLetterService.createCoverLetter(coverLetter, paperId);
 
-        String editorEmail = this.userService.getUserEmail(Constants.EDITOR_USERNAME);
+        String editorEmail = XmlExtractorUtil.extractUserEmail(this.userService.findByUsername(Constants.EDITOR_USERNAME));
         byte[] pdf = ResourceUtils.convertResourceToByteArray(this.coverLetterService.exportToPdf(id));
         String html = ResourceUtils.convertResourceToString(this.coverLetterService.exportToHtml(id));
-        String paperTitle = this.paperService.getPaperTitle(paperId);
+        String paperTitle = XmlExtractorUtil.extractPaperTitle(this.paperService.findById(paperId));
         this.emailService.sendCoverLetterSubmissionNotificationEmail(editorEmail, coverLetter, paperTitle, pdf, html);
 
-        // TODO: Include paper title and author data in the schema for evaluation form (maybe)
+        // TODO (idea only): Include paper title and author data in the schema for evaluation form (maybe)
 
         String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, id));
         return ResponseEntity.ok(responseBody);

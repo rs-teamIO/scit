@@ -15,11 +15,15 @@ public final class XmlResponseUtils {
     private final static String USER_FIRST_NAME_XPATH = "/user/first_name";
     private final static String USER_LAST_NAME_XPATH = "/user/last_name";
 
+    private final static String PAPER_ID_XPATH = "/paper/@id";
+    private final static String PAPER_TITLE_XPATH = "/paper/title";
+
     private XmlResponseUtils() { }
 
     public static String wrapResponse(XmlResponse xmlResponse) {
         StringBuilder sb = new StringBuilder();
 
+        // TODO: Check why indentation is not appropriate
         sb.append("<response>\n");
         xmlResponse.keySet().stream().forEach(key -> {
             sb.append(INDENT).append(String.format("<%s>\n", key));
@@ -31,13 +35,13 @@ public final class XmlResponseUtils {
         return sb.toString();
     }
 
-    public static String convertToUserXmlResponse(String xml) {
-        XmlWrapper xmlWrapper = new XmlWrapper(xml);
-        String id = XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), USER_ID_XPATH);
-        String username = XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), USER_USERNAME_XPATH);
-        String email = XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), USER_EMAIL_XPATH);
-        String firstName = XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), USER_FIRST_NAME_XPATH);
-        String lastName = XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), USER_LAST_NAME_XPATH);
+    public static String convertToUserXmlResponse(String userXml) {
+        XmlWrapper userWrapper = new XmlWrapper(userXml);
+        String id = XmlExtractorUtil.extractStringAndValidateNotBlank(userWrapper.getDocument(), USER_ID_XPATH);
+        String username = XmlExtractorUtil.extractStringAndValidateNotBlank(userWrapper.getDocument(), USER_USERNAME_XPATH);
+        String email = XmlExtractorUtil.extractStringAndValidateNotBlank(userWrapper.getDocument(), USER_EMAIL_XPATH);
+        String firstName = XmlExtractorUtil.extractStringAndValidateNotBlank(userWrapper.getDocument(), USER_FIRST_NAME_XPATH);
+        String lastName = XmlExtractorUtil.extractStringAndValidateNotBlank(userWrapper.getDocument(), USER_LAST_NAME_XPATH);
 
         StringBuilder sb = new StringBuilder();
 
@@ -48,6 +52,21 @@ public final class XmlResponseUtils {
                 .append("<first_name>").append(firstName).append("</first_name>")
                 .append("<last_name>").append(lastName).append("</last_name>")
         .append("</user>");
+
+        return sb.toString();
+    }
+
+    public static String convertPaperToXmlResponse(String paperXml) {
+        XmlWrapper paperWrapper = new XmlWrapper(paperXml);
+        String id = XmlExtractorUtil.extractStringAndValidateNotBlank(paperWrapper.getDocument(), PAPER_ID_XPATH);
+        String title = XmlExtractorUtil.extractStringAndValidateNotBlank(paperWrapper.getDocument(), PAPER_TITLE_XPATH);
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<paper>\n").append(INDENT)
+                .append("<id>").append(id).append("</id>").append(INDENT)
+                .append("<title>").append(title).append("</title>")
+        .append("</paper>");
 
         return sb.toString();
     }

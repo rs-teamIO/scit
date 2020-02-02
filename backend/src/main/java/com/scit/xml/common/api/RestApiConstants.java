@@ -22,4 +22,5 @@ public final class RestApiConstants {
     public static final String EVALUATION_FORM = "evaluation_form";
 
     public static final String USERS = "users";
+    public static final String PAPERS = "papers";
 }
