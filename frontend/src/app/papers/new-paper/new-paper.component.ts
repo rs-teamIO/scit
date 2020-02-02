@@ -19,6 +19,9 @@ export class NewPaperComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.paperService.pdfPre.subscribe(
+      data => this.paperPreview = data
+    )
   }
 
   loadPaper() {
@@ -26,25 +29,21 @@ export class NewPaperComponent implements OnInit {
   }
 
   getPreview() {
-    this.paperService.preview(this.harvestPaper()).subscribe(
-      res => {
-        this.paperPreview = res;
-      },
-      err => { });
+    // this.paperService.preview(this.harvestPaper()).subscribe(
+    //   res => {
+    //     this.paperPreview = res;
+    //   },
+    //   err => { });.
+    const paperXml = this.harvestPaper();
+    this.paperService.preview(paperXml);  // OVDE SI STAO
+    console.log(`KLIKNUO`);
   }
 
-  save(){
+  save() {
     const paperXml = this.harvestPaper();
-    const coverLetterXml = this.harvestCoverLetter(); //UNDONE
-    this.paperService.save(paperXml)
-    .subscribe(
-      response => {
-        let idArray = response.headers.get("Location").split("/");
-        let id = idArray[idArray.length-1];
-        console.log(id); //add paperId to coverLetter and change background to process this
-      }, 
-      err => { }
-    );
+    const coverLetterXml = this.harvestCoverLetter();
+    // console.log(this.paperService.addPaperInfo(paperXml));
+    this.paperService.save(paperXml, coverLetterXml);
   }
 
   harvestPaper(): string {

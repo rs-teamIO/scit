@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import java.util.List;
@@ -40,8 +42,7 @@ public class PapersController {
      * @param xml XML string representation of the {@link Paper}
      */
     @PreAuthorize("hasAuthority('author')")
-    @PostMapping(consumes = MediaType.APPLICATION_XML_VALUE,
-                 produces = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> create(@RequestBody String xml) throws MessagingException {
         Paper paper = this.paperDtoValidator.validate(xml);
         String paperId = this.paperService.createPaper(paper, JwtTokenDetailsUtil.getCurrentUserId());
@@ -50,9 +51,12 @@ public class PapersController {
         byte[] pdf = ResourceUtils.convertResourceToByteArray(this.paperService.exportToPdf(paperId));
         String html = ResourceUtils.convertResourceToString(this.paperService.exportToHtml(paperId));
         this.emailService.sendPaperSubmissionNotificationEmail(editorEmail, paper, pdf, html);
-
-        String responseBody = XmlResponseUtils.toXmlString(new XmlResponse(RestApiConstants.ID, paperId));
-        return ResponseEntity.ok(responseBody);
+        
+        UriComponents urlLocation = UriComponentsBuilder.newInstance()
+        		.path(RestApiEndpoints.PAPERS)
+        		.query(RestApiRequestParameters.ID+"={id}")
+        		.buildAndExpand(paperId);
+        return ResponseEntity.created(urlLocation.toUri()).build();
     }
 
     // TODO

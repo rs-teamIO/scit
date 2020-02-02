@@ -29,15 +29,15 @@ export class AuthorPapersComponent implements OnInit {
   }
 
   getPapers() {
-    this.paperService.findMyPapers().subscribe(
-      res => {
-        this.noSubmittedPapers = '';
-        this.papers = res;
+    // this.paperService.findMyPapers().subscribe(
+    //   res => {
+    //     this.noSubmittedPapers = '';
+    //     this.papers = res;
 
-        if (this.papers.length === 0) {
-          this.noSubmittedPapers = 'This author still hasn\'t published any papers.';
-        }
-      }, err => { });
+    //     if (this.papers.length === 0) {
+    //       this.noSubmittedPapers = 'This author still hasn\'t published any papers.';
+    //     }
+    //   }, err => { });
   }
 
 

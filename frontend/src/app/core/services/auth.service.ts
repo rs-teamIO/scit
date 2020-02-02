@@ -5,9 +5,6 @@ import { CookieService } from 'ngx-cookie-service';
 
 import Swal from 'sweetalert2';
 
-
-
-const authenticatedUserKey = 'authenticatedUser';
 const signUpUrl = '/api/v1/users';
 const signInUrl = '/api/login';
 
@@ -84,7 +81,7 @@ export class AuthService {
         'success'
       )
       .then(
-        () => this.router.navigateByUrl('papers')
+        () => this.router.navigateByUrl('new-paper')
       );
     })
     .catch( response => {
