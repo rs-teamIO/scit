@@ -254,6 +254,7 @@ public class PaperController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('editor')")
     @GetMapping(value = RestApiEndpoints.RECOMMENDED_AUTHORS,
                 produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity recommendAuthors(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
