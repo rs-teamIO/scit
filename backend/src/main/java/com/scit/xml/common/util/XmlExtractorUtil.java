@@ -2,6 +2,7 @@ package com.scit.xml.common.util;
 
 import com.scit.xml.common.api.RestApiErrors;
 import org.apache.commons.lang3.StringUtils;
+import org.exist.xquery.XPathUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,6 +52,17 @@ public class XmlExtractorUtil {
             attributeValues.add(attributeValue);
         }
         return attributeValues;
+    }
+
+    public static List<String> extractChildrenContentToList(Document document, String xPathExpression) {
+        final NodeList nodeList = (NodeList) XPathUtils.evaluate(xPathExpression, document, XPathConstants.NODESET);
+        final List<String> content = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            final Element element = (Element) nodeList.item(i);
+            final String text = element.getTextContent();
+            content.add(text);
+        }
+        return content;
     }
 
     public static String extractPaperTitle(String paperXml) {

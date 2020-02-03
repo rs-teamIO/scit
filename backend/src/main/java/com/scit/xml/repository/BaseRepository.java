@@ -90,6 +90,7 @@ public abstract class BaseRepository {
     protected final RdfQueryExecutor rdfQueryExecutor;
 
     private RegexExtractor regexExtractor = new RegexExtractor("(http:\\/\\/www\\.scit\\.org\\/.*\\/[0-9a-z-]+)");
+    private RegexExtractor numberExtractor = new RegexExtractor("([0-9]+)");
 
     /**
      * Returns a list of identifiers of subjects for given query.
@@ -112,6 +113,30 @@ public abstract class BaseRepository {
         queryExecution.close();
 
         return subjectIds;
+    }
+
+    /**
+     * Returns count result for given query.
+     *
+     * @param query SELECT query to be executed
+     * @return number of counted instances
+     */
+    public Integer count(String query) {
+        Pair<ResultSet, QueryExecution> pair = this.rdfQueryExecutor.select(query);
+        ResultSet resultSet = pair.getKey();
+        QueryExecution queryExecution = pair.getValue();
+
+        String extractedData = null;
+        while (resultSet.hasNext()) {
+            extractedData = this.numberExtractor.extract(resultSet.next().toString());
+        }
+        queryExecution.close();
+
+        if(extractedData == null)
+            throw new InternalServerException();
+        Integer value = Integer.valueOf(extractedData);
+
+        return value;
     }
 
     /**
