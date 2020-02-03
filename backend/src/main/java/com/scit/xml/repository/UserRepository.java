@@ -1,12 +1,15 @@
 package com.scit.xml.repository;
 
+import com.google.common.collect.Lists;
 import com.scit.xml.common.Constants;
+import com.scit.xml.common.Predicate;
 import com.scit.xml.common.util.ResourceSetUtils;
 import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.config.RdfQueryBuilder;
 import com.scit.xml.config.RdfQueryExecutor;
 import com.scit.xml.config.XQueryBuilder;
 import com.scit.xml.config.XQueryExecutor;
+import com.scit.xml.rdf.RdfTriple;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -49,6 +52,9 @@ public class UserRepository extends BaseRepository {
         String xml = xmlWrapper.getXml();
         final String query = this.xQueryBuilder.buildQuery(this.appendTemplate, USER_NAMESPACE_ALIAS, USER_NAMESPACE, USERS_COLLECTION, xml, USERS_NAMESPACE);
         this.xQueryExecutor.updateResource(this.documentId, query);
+
+        RdfTriple isAuthorTriple = new RdfTriple(id, Predicate.IS_A, USER_NAMESPACE);
+        this.insertTriples(Lists.newArrayList(isAuthorTriple));
 
         return id;
     }

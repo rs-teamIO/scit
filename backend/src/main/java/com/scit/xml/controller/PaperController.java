@@ -148,10 +148,10 @@ public class PaperController {
     @GetMapping(value = RestApiEndpoints.REVIEWERS,
                 produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity getReviewersOfPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
-        List<String> authorIds = this.paperService.getReviewersOfPaper(paperId);
+        List<String> reviewers = this.paperService.getReviewersOfPaper(paperId);
 
         StringBuilder sb = new StringBuilder();
-        authorIds.stream()
+        reviewers.stream()
                 .map(XmlResponseUtils::convertToUserXmlResponse)
                 .collect(Collectors.toList())
                 .forEach(s -> sb.append(s.trim()));
@@ -252,5 +252,22 @@ public class PaperController {
         });
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = RestApiEndpoints.RECOMMENDED_AUTHORS,
+                produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity recommendAuthors(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
+        List<String> authorIds = this.paperService.recommendAuthors(paperId);
+
+        StringBuilder sb = new StringBuilder();
+        authorIds.stream()
+                .map(id -> this.userService.findById(id))
+                .map(XmlResponseUtils::convertToUserXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.USERS, sb.toString()));
+
+        return ResponseEntity.ok(responseBody);
     }
 }

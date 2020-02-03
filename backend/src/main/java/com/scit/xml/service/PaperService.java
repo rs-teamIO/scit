@@ -26,8 +26,8 @@ import org.w3c.dom.Element;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -302,5 +302,55 @@ public class PaperService {
         NotFoundUtils.throwNotFoundExceptionIf(StringUtils.isEmpty(paperXml),
                 RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiConstants.ID));
         return paperXml;
+    }
+
+
+
+
+
+
+
+
+
+
+    private final String SPARQL_GET_SUGGESTED_AUTHORS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" +
+            "SELECT DISTINCT ?s\n" +
+            "WHERE \n" +
+            "{ \n" +
+            "  ?s rv:is_a <http://www.scit.org/schema/user>\n" +
+            "  MINUS \n" +
+            "  { \n" +
+            "    ?s rv:created|rv:assigned_to|rv:currently_reviewing|rv:reviewed <%s> \n" +
+            "  }\n" +
+            "}\n" +
+            "LIMIT 10";
+
+    private final String SPARQL_COUNT_PAPERS_OF_AUTHOR_CONTAINING_KEYWORD_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" +
+            "SELECT (COUNT(distinct ?paper) as ?count)\n" +
+            "WHERE \n" +
+            "{ \n" +
+            "\t?paper rv:abstract:keywords \"%s\".\n" +
+            "    <%s> rv:created ?paper\n" +
+            "}\n";
+
+    public List<String> recommendAuthors(String paperId) {
+        String paperXml = this.findById(paperId);
+        Map<String, Integer> authorHeatMap = this.paperRepository.selectSubjects(String.format(SPARQL_GET_SUGGESTED_AUTHORS_QUERY, paperId))
+                .stream().collect(Collectors.toMap(x -> x, x -> 0));
+        List<String> keywords = XmlExtractorUtil.extractChildrenContentToList(new XmlWrapper(paperXml).getDocument(), "//paper/abstract/keywords");
+        authorHeatMap.keySet().stream().forEach(authorId -> {
+            keywords.stream().forEach(keyword -> {
+                Integer papersCount = this.paperRepository.count(String.format(SPARQL_COUNT_PAPERS_OF_AUTHOR_CONTAINING_KEYWORD_QUERY, keyword, authorId));
+                authorHeatMap.computeIfPresent(authorId, (k, v) -> v + papersCount);
+            });
+        });
+        List<String> authorIds = authorHeatMap.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .map(kv -> kv.getKey())
+                .collect(Collectors.toList());
+
+        return authorIds;
     }
 }

@@ -11,6 +11,7 @@ public final class RestApiEndpoints {
     public static final String CURRENT_USER = "/me";
     public static final String AUTHORS = "/authors";
     public static final String REVIEWERS = "/reviewers";
+    public static final String RECOMMENDED_AUTHORS = "/recommended-authors";
 
     public static final String PAPER = API_ROOT + "/paper";
     public static final String DOWNLOAD_RAW = "/raw/download";

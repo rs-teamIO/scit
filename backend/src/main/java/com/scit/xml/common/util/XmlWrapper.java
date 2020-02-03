@@ -164,6 +164,8 @@ public class XmlWrapper {
      * @param attributeValue value of the attribute to be set
      */
     public void setElementAttribute(String xQuerySelector, String attributeName, String attributeValue) {
+        // TODO: BUG Ne radi kada nema comment-ova na paper-u
+
         Element element = ((Element) XPathUtils.evaluate(xQuerySelector, getDocument(), XPathConstants.NODE));
         if (element == null) {
             throw new InternalServerException();
