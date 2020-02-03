@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import * as jwt_decode from 'jwt-decode';
 
 import Swal from 'sweetalert2';
 
@@ -75,13 +76,18 @@ export class AuthService {
     this.http.post<any>(`${signInUrl}`, auth).toPromise()
     .then( response => {
       this.cookieService.set(tokenType, response.token);
+      const decoded = jwt_decode(response.token);
+      localStorage.setItem('username', decoded.sub);
+      localStorage.setItem('role', decoded.roles[0].authority);
+      localStorage.setItem('id', decoded.user_id);
+
       Swal.fire(
         'Welcome!',
         'You have signed in successfully.',
         'success'
       )
       .then(
-        () => this.router.navigateByUrl('new-paper')
+        () => this.router.navigateByUrl('papers')
       );
     })
     .catch( response => {
@@ -91,6 +97,7 @@ export class AuthService {
 
   signout() {
     this.cookieService.deleteAll();
+    localStorage.clear();
     console.log(this.cookieService.getAll());
   }
 
@@ -115,18 +122,12 @@ export class AuthService {
     return this.cookieService.get(tokenType) ? true : false;
   }
 
+  isAuthor(): boolean {
+    return localStorage.getItem('role') === 'author';
+  }
 
-
-  // clearStorage(): void {
-  //   localStorage.removeItem(authenticatedUserKey);
-  // }
-
-  // getAuthenticatedUser() {
-  //   return JSON.parse(localStorage.getItem(authenticatedUserKey));
-  // }
-
-
-
-
+  isEditor(): boolean {
+    return localStorage.getItem('role') === 'editor';
+  }
 
 }

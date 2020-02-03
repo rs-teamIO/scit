@@ -1,7 +1,7 @@
 <ul>
     <li class="list-group-item pointer" *ngFor="let paper of papers">
       <div class="row">
-        <span class="col-md-10 clickable-title" (click) = 'titleClick(event, paper)'>
+        <span class="col-md-10"> <!--clickable-title" (click) = 'titleClick(event, paper)'-->
           {{paper.title}}
         </span>
         <!-- 
@@ -12,8 +12,12 @@
         <span class="col-md-2" *ngIf="isAccepted()">
           <button class="btn btn-primary" (click)="reviewPaper(paper)">Review</button>
         </span> 
+        (click)="reviewPaper(paper)"
         -->
-        <span class="col-md-2" *ngIf="true">
+        <span class="col-md-2" *ngIf="type === 'review'">
+          <button class="btn btn-outline-primary btn-sm" (click)="reviewPaper(event, paper)">Review</button>
+        </span> 
+        <span class="col-md-2" *ngIf="isEditor()">
           <button class="btn btn-outline-light" (click) = 'processingClick($event, paper)'>Process paper</button>
         </span>
         <!-- 

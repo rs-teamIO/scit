@@ -7,6 +7,8 @@ import { NewPaperComponent } from '../papers/new-paper/new-paper.component';
 import { AuthorPapersComponent } from '../papers/author-papers/author-papers.component';
 import { PaperProcessingComponent } from '../papers/paper-processing/paper-processing.component';
 import { PaperDetailsComponent } from '../papers/paper-details/paper-details.component';
+import { ReviewsRequestsComponent } from '../reviews/reviews-requests/reviews-requests.component';
+import { ReviewNewComponent } from '../reviews/review-new/review-new.component';
 
 
 
@@ -18,6 +20,9 @@ const routes: Routes = [
   { path: 'papers', component: AuthorPapersComponent},
   { path: 'papers/:id/processing', component: PaperProcessingComponent },
   { path: 'papers/:id', component: PaperDetailsComponent },
+
+  { path: 'review/:id', component: ReviewNewComponent },
+  { path: 'review-requests', component: ReviewsRequestsComponent },
 
 
 

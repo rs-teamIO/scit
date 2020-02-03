@@ -21,6 +21,13 @@ export class NavBarComponent implements OnInit {
     return this.authService.isAuthenticated();
   }
 
+  isAuthor(): boolean {
+    return this.authService.isAuthor();
+  }
+
+  isEditor(): boolean {
+    return this.authService.isEditor();
+  }
 
   signout() {
     this.authService.signout();

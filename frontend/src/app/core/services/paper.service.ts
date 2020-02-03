@@ -19,9 +19,15 @@ const previewUrl = '/api/v1/paper/transform';
 const myPapersUrl = '/api/v1/papers/me';
 const paperHtmlUrl = '/api/v1/papers/html?paper_id=http://www.scit.org/papers/';
 
-const downloadXMLURL = '/api/v1/paper/raw/download?paper_id=http://www.scit.org/papers/';
+const downloadXMLURL  = '/api/v1/paper/raw/download?paper_id=http://www.scit.org/papers/';
 const downloadPDFLURL = '/api/v1/paper/pdf/download?paper_id=http://www.scit.org/papers/';
 
+const submittedPapersUrl = '/api/v1/papers/submitted';
+
+const assignPaperUrl = '/api/v1/papers/assign?paper_id=http://www.scit.org/papers/';
+const useridParam = '&user_id=';
+
+const getXmlByIdUrl = '/api/v1/paper/raw/download?paper_id=http://www.scit.org/papers/';
 
 @Injectable({
   providedIn: 'root'
@@ -42,9 +48,61 @@ export class PaperService {
     private parser: NgxXml2jsonService
   ) { }
 
+  redirectToPreview(id: string) {
+    const idHolder = id.split('/')
+    this.router.navigateByUrl('review/' + idHolder[idHolder.length - 1]);
+  }
+
+  getXmlByPaperId(id: string): string {
+    let toReturn = 'error';
+    this.http.get(`${getXmlByIdUrl + id}`, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/xml',
+        Accept: '*/*, application/xml, application/json'
+      }),
+      responseType: 'text'
+    }).toPromise()
+    .then(
+      response => toReturn = response
+    )
+    .catch(
+      response => this.handleError(response)
+    );
+    return toReturn;
+  }
 
   findMyPapers() {
     this.http.get(`${myPapersUrl}`, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/xml',
+        Accept: '*/*, application/xml, application/json'
+      }),
+      responseType: 'text'
+    }).toPromise()
+    .then(
+      response => {
+        const xml = new DOMParser().parseFromString(response, `text/xml`);
+        const responseInJson: any = this.parser.xmlToJson(xml);
+        delete responseInJson.response.papers[`#text`];
+        if (!responseInJson.response.papers.paper.length) {
+          const holder = [];
+          holder.push(responseInJson.response.papers.paper);
+          this.papersHolder = holder;
+          this.papersOb.next(this.papersHolder);
+        } else {
+          this.papersHolder = responseInJson.response.papers.paper;
+          this.papersOb.next(this.papersHolder);
+        }
+
+      }
+    )
+    .catch(
+      response => this.handleError(response)
+    );
+  }
+
+  findSubmittedPapers() {
+    this.http.get(`${submittedPapersUrl}`, {
       headers: new HttpHeaders({
         'Content-Type': 'application/xml',
         Accept: '*/*, application/xml, application/json'
@@ -192,15 +250,7 @@ export class PaperService {
       }),
       responseType: 'blob'
     }).toPromise()
-    .then(
-      blob => {
-        importedSaveAs(blob, 'paper.pdf');
-        Swal.fire(
-          'Good job!',
-          'You have downloaded your pdf.',
-          'success'
-        );
-    })
+    .then(blob => importedSaveAs(blob, 'paper.pdf'))
     .catch(
       response => {
         this.handleError(response);
@@ -214,19 +264,22 @@ export class PaperService {
       }),
       responseType: 'blob'
     }).toPromise()
-    .then(
-      blob => {
-        importedSaveAs(blob, 'paper.xml');
-        Swal.fire(
-          'Good job!',
-          'You have downloaded your xml.',
-          'success'
-        );
-    })
+    .then( blob => importedSaveAs(blob, 'paper.xml'))
     .catch(
       response => {
         this.handleError(response);
     });
+  }
+
+  assignPaper(chosenAuthors: boolean[], authors: any[], paperId: string) {
+    const path = assignPaperUrl + paperId + useridParam;
+    for (let i = 0; i < chosenAuthors.length; i++) {
+      if (chosenAuthors[i]) {
+        this.http.put(`${path + authors[i].id}`, authors[i]).toPromise()
+        .catch(response => this.handleError(response));
+      }
+    }
+    this.router.navigateByUrl('papers');
   }
 
 }

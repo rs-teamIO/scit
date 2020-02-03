@@ -4,7 +4,9 @@
         <ul class="nav-links">
             <li><a routerLink=""  routerLinkActive = "active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
             <li><a routerLink="papers" routerLinkActive = "active">Papers</a></li>
-            <li><a routerLink="new-paper" routerLinkActive = "active">Compose</a></li>
+            <li><a routerLink="new-paper" routerLinkActive = "active" *ngIf = 'isAuthor()'>Compose</a></li>
+            <li><a routerLink="review-requests" routerLinkActive = "active" *ngIf = 'isAuthor()'>Requests</a></li>
+
             <span class="vl"></span>
             <li><a routerLink="signin" routerLinkActive = "active" *ngIf="!isAuthenticated()">SignIn</a></li>
             <li><a routerLink="signup" routerLinkActive = "active" *ngIf="!isAuthenticated()">SignUp</a></li>

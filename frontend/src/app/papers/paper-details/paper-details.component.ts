@@ -31,11 +31,11 @@ export class PaperDetailsComponent implements OnInit {
     });
   }
 
-  downloadPdf() {
+  downloadPDF() {
     this.paperService.downloadPDF(this.id);
   }
 
-  downloadXml() {
+  downloadXML() {
     this.paperService.downloadXML(this.id);
   }
 

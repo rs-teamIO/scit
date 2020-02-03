@@ -17,11 +17,12 @@ h1{
     text-align: center;
 }
 
-.authors-wrapper{
+.requests-wrapper{
     width: 50vw;
     margin: auto;
 }
 
 .btn {
+    margin-left: 5px;
     float: right;
 }

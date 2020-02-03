@@ -1,1 +1,21 @@
-<p>paper-processing works!</p>
+<div class="wrapper">
+    <h1>Assign reviewer</h1>
+    <div class="authors-wrapper">
+        <ul>
+            <li class="list-group-item" *ngFor="let author of authors">
+                <div class="row">
+                    <span class="col-md-3 clickable-title" (click) = 'titleClick(event, paper)'>
+                        {{author.username}}
+                    </span>
+                    <span class="col-md-8">
+                        {{author.email}}
+                    </span>
+                    <span class="col-md-1">
+                        <input type="checkbox" [(ngModel)] = "checkBoxStates[authors.indexOf(author)]">
+                    </span>
+                </div>
+            </li>
+        </ul>
+        <button class="btn btn-outline-light" (click)='assignClick()'>Assign</button>
+    </div>
+</div>

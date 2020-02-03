@@ -1,5 +1,10 @@
 <div class="wrapper">
-    <h1>Papers!</h1>
-    <shared-papers-list [papers]="papers" [state]="'authors'"></shared-papers-list>
-    <!-- <div class="author-wrapper"><p class="author-sign">Written by: {{username}} </p></div> -->
+    <h1>{{title}}</h1>
+    <shared-papers-list [papers]="papers"></shared-papers-list>
+    <div class="author-wrapper" *ngIf = 'author'><p class="author-sign">Written by: {{username}} </p></div>
+    <div *ngIf = "author">
+        <hr>
+        <h1>Papers to review</h1>
+        <shared-papers-list [papers]="reviews" [type] = "'review'"></shared-papers-list>
+    </div>
 </div>

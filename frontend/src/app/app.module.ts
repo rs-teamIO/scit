@@ -12,6 +12,10 @@ import { HttpRequestInterceptor } from './core/services/http/http-request.interc
 import { CookieService } from 'ngx-cookie-service';
 import { NgxXml2jsonService } from 'ngx-xml2json';
 import { AuthService } from './core/services/auth.service';
+import { UserService } from './core/services/user.service';
+import { ReviewsRequestsComponent } from './reviews/reviews-requests/reviews-requests.component';
+import { ReviewService } from './core/services/review.service';
+import { ReviewNewComponent } from './reviews/review-new/review-new.component';
 
 
 
@@ -19,7 +23,9 @@ import { AuthService } from './core/services/auth.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ReviewsRequestsComponent,
+    ReviewNewComponent
   ],
   imports: [
     AuthModule,
@@ -35,7 +41,9 @@ import { AuthService } from './core/services/auth.service';
     },
     CookieService,
     NgxXml2jsonService,
-    AuthService
+    AuthService,
+    UserService,
+    ReviewService
 
   ],
   bootstrap: [AppComponent]
