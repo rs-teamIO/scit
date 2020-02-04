@@ -45,8 +45,8 @@ public class PaperController {
      * @param xml XML String representation of the {@link Paper} to be transformed
      */
     @PostMapping(value = RestApiEndpoints.TRANSFORM,
-            consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XHTML_XML_VALUE)
+                 consumes = MediaType.APPLICATION_XML_VALUE,
+                 produces = MediaType.APPLICATION_XHTML_XML_VALUE)
     public ResponseEntity transformPaper(@RequestBody String xml) {
         this.paperDtoValidator.validate(xml);
         String html = ResourceUtils.convertResourceToString(this.paperService.convertPaperToHtml(xml));
