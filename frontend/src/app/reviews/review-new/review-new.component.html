@@ -1,1 +1,23 @@
-<p>review-new works!</p>
+<div class = "elements-wrapper">
+
+    <div class="tab-wrapper">
+        <tabset>
+            <tab heading="Review">
+                <iframe src=" assets/forms/my-paper-form.html " class="xonomy-form" #paperFrame (load)="loadPaper()"></iframe>
+            </tab>
+            <tab heading="Evaluation form">
+                <app-evaluation-form></app-evaluation-form>
+            </tab>
+            <!-- <tab heading="Preview">
+                <button class="refresh">
+                    <img src=" assets/icons/refresh.svg"  alt="refresh" (click)="getPreview()">
+                </button>
+                <div class="jumbotron" [innerHtml]="paperPreview"></div>
+            </tab> -->
+        </tabset>
+    </div>
+
+    <div class="button-wrapper" >
+        <input type="button" class="conf btn btn-outline-dark" (click) = "confirmClick()" value="Confirm"> 
+     </div>
+</div>

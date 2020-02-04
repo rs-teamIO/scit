@@ -27,7 +27,7 @@ const submittedPapersUrl = '/api/v1/papers/submitted';
 const assignPaperUrl = '/api/v1/papers/assign?paper_id=http://www.scit.org/papers/';
 const useridParam = '&user_id=';
 
-const getXmlByIdUrl = '/api/v1/paper/raw/download?paper_id=http://www.scit.org/papers/';
+const getXmlByIdUrl = '/api/v1/paper/anonymous?paper_id=http://www.scit.org/papers/';
 
 @Injectable({
   providedIn: 'root'
@@ -53,22 +53,15 @@ export class PaperService {
     this.router.navigateByUrl('review/' + idHolder[idHolder.length - 1]);
   }
 
-  getXmlByPaperId(id: string): string {
-    let toReturn = 'error';
-    this.http.get(`${getXmlByIdUrl + id}`, {
+  getXmlByPaperId(id: string): Observable<string>{
+
+    return this.http.get(`${getXmlByIdUrl + id}`, {
       headers: new HttpHeaders({
         'Content-Type': 'application/xml',
         Accept: '*/*, application/xml, application/json'
       }),
       responseType: 'text'
-    }).toPromise()
-    .then(
-      response => toReturn = response
-    )
-    .catch(
-      response => this.handleError(response)
-    );
-    return toReturn;
+    });
   }
 
   findMyPapers() {
@@ -84,13 +77,18 @@ export class PaperService {
         const xml = new DOMParser().parseFromString(response, `text/xml`);
         const responseInJson: any = this.parser.xmlToJson(xml);
         delete responseInJson.response.papers[`#text`];
-        if (!responseInJson.response.papers.paper.length) {
-          const holder = [];
-          holder.push(responseInJson.response.papers.paper);
-          this.papersHolder = holder;
-          this.papersOb.next(this.papersHolder);
+        if (responseInJson.response.papers.paper) {
+          if (!responseInJson.response.papers.paper.length) {
+            const holder = [];
+            holder.push(responseInJson.response.papers.paper);
+            this.papersHolder = holder;
+            this.papersOb.next(this.papersHolder);
+          } else {
+            this.papersHolder = responseInJson.response.papers.paper;
+            this.papersOb.next(this.papersHolder);
+          }
         } else {
-          this.papersHolder = responseInJson.response.papers.paper;
+          this.papersHolder = [];
           this.papersOb.next(this.papersHolder);
         }
 
@@ -114,13 +112,18 @@ export class PaperService {
         const xml = new DOMParser().parseFromString(response, `text/xml`);
         const responseInJson: any = this.parser.xmlToJson(xml);
         delete responseInJson.response.papers[`#text`];
-        if (!responseInJson.response.papers.paper.length) {
-          const holder = [];
-          holder.push(responseInJson.response.papers.paper);
-          this.papersHolder = holder;
-          this.papersOb.next(this.papersHolder);
+        if (responseInJson.response.papers.paper) {
+          if (!responseInJson.response.papers.paper.length) {
+            const holder = [];
+            holder.push(responseInJson.response.papers.paper);
+            this.papersHolder = holder;
+            this.papersOb.next(this.papersHolder);
+          } else {
+            this.papersHolder = responseInJson.response.papers.paper;
+            this.papersOb.next(this.papersHolder);
+          }
         } else {
-          this.papersHolder = responseInJson.response.papers.paper;
+          this.papersHolder = [];
           this.papersOb.next(this.papersHolder);
         }
 

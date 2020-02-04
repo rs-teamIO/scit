@@ -3,6 +3,7 @@ package com.scit.xml.controller;
 import com.scit.xml.common.Constants;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiEndpoints;
+import com.scit.xml.common.api.RestApiRequestParameters;
 import com.scit.xml.common.util.ResourceUtils;
 import com.scit.xml.common.util.XmlExtractorUtil;
 import com.scit.xml.common.util.XmlResponseUtils;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 
@@ -63,7 +66,11 @@ public class ReviewsController {
         String html = ResourceUtils.convertResourceToString(this.paperService.convertPaperToHtml(paperWrapper.getXml()));
         this.emailService.sendPaperReviewedNotificationEmail(editorEmail, paper, reviewerUsername, pdf, html);
 
-        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, reviewId));
-        return ResponseEntity.ok(responseBody);
+
+        UriComponents urlLocation = UriComponentsBuilder.newInstance()
+        		.path(RestApiEndpoints.REVIEWS)
+        		.query(RestApiRequestParameters.ID+"={id}")
+        		.buildAndExpand(reviewId);
+        return ResponseEntity.created(urlLocation.toUri()).build();
     }
 }

@@ -13,9 +13,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { NgxXml2jsonService } from 'ngx-xml2json';
 import { AuthService } from './core/services/auth.service';
 import { UserService } from './core/services/user.service';
-import { ReviewsRequestsComponent } from './reviews/reviews-requests/reviews-requests.component';
 import { ReviewService } from './core/services/review.service';
-import { ReviewNewComponent } from './reviews/review-new/review-new.component';
+import { ReviewsModule } from './reviews/reviews.module';
 
 
 
@@ -24,14 +23,13 @@ import { ReviewNewComponent } from './reviews/review-new/review-new.component';
 @NgModule({
   declarations: [
     AppComponent,
-    ReviewsRequestsComponent,
-    ReviewNewComponent
   ],
   imports: [
     AuthModule,
     BrowserModule,
     CoreModule,
-    PapersModule
+    PapersModule,
+    ReviewsModule
   ],
   providers: [
     {

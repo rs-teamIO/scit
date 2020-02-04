@@ -29,20 +29,13 @@ export class NewPaperComponent implements OnInit {
   }
 
   getPreview() {
-    // this.paperService.preview(this.harvestPaper()).subscribe(
-    //   res => {
-    //     this.paperPreview = res;
-    //   },
-    //   err => { });.
     const paperXml = this.harvestPaper();
-    this.paperService.preview(paperXml);  // OVDE SI STAO
-    console.log(`KLIKNUO`);
+    this.paperService.preview(paperXml);
   }
 
   save() {
     const paperXml = this.harvestPaper();
     const coverLetterXml = this.harvestCoverLetter();
-    // console.log(this.paperService.addPaperInfo(paperXml));
     this.paperService.save(paperXml, coverLetterXml);
   }
 
