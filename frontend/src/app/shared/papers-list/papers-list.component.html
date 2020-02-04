@@ -1,31 +1,34 @@
 <ul>
     <li class="list-group-item pointer" *ngFor="let paper of papers">
       <div class="row">
-        <span class="col-md-10"> <!--clickable-title" (click) = 'titleClick(event, paper)'-->
+        <span class="col-md-7"> <!--clickable-title" (click) = 'titleClick(event, paper)'-->
           {{paper.title}}
         </span>
-        <!-- 
-        <span class="col-md-2" *ngIf="isAssigned()">
-          <button class="btn btn-primary" (click)="acceptPaper(paper)">Accept</button>
-          <button class="btn btn-primary" (click)="rejectPaper(paper)">Reject</button>
-        </span>
-        <span class="col-md-2" *ngIf="isAccepted()">
-          <button class="btn btn-primary" (click)="reviewPaper(paper)">Review</button>
-        </span> 
-        (click)="reviewPaper(paper)"
-        -->
-        <span class="col-md-2" *ngIf="type === 'review'">
+
+        <span class="col-md-5" *ngIf="type === 'review'">
           <button class="btn btn-outline-primary btn-sm" (click)="reviewPaper(event, paper)">Review</button>
         </span> 
-        <span class="col-md-2" *ngIf="isEditor()">
-          <button class="btn btn-outline-light" (click) = 'processingClick($event, paper)'>Process paper</button>
+
+        <span class="col-md-5" *ngIf="isEditor()">
+          <button class="btn btn-outline-light btn-sm" (click) = 'processingClick($event, paper)' *ngIf="paper.status==='submitted'">Process Paper</button>
+          <span class="yellow bord" *ngIf="paper.status==='in_review'">In Review</span>
+          <button class="btn btn-outline-success btn-sm" *ngIf="paper.status==='reviewed'" (click) = 'publishPaperClick(event, paper)'>Publish Paper</button>
+          <button class="btn btn-outline-warning btn-sm" *ngIf="paper.status==='reviewed'">Send to Revison</button> <!-- paper.status change to to_revison -->
+          <button class="btn btn-outline-info btn-sm" *ngIf="paper.status==='published'" (click) = 'viewClick(event, paper)'>View</button>
         </span>
-        <!-- 
-        <span class="col-md-2" *ngIf="isAuthorPapers()">
-          <button class="btn btn-primary" *ngIf="paper.revisionRequired" (click)="sendRevision(paper)">Send revision</button>
-          <button class="btn btn-lighjt" *ngIf="!paper.revisionRequired" [disabled]="true">Published</button>
-        </span> 
-        -->
+
+        <span class="col-md-5" *ngIf="isAuthor() && type !== 'review'">
+          <span class='white bord' *ngIf="paper.status==='submitted'">Pending</span>
+          <span class="yellow bord" *ngIf="paper.status==='in_review'">In Review</span>
+          <span class="yellow bord" *ngIf="paper.status==='reviewed'">Reviewed</span>
+          <button class="btn btn-outline-warning btn-sm" *ngIf="paper.status==='to_revison'">Make Revison</button>
+          <button class="btn btn-outline-info btn-sm" *ngIf="paper.status==='published'" (click) = 'viewClick(event, paper)'>View</button>
+        </span>
+
+        <span class="col-md-5" *ngIf="!isAuthor() && !isEditor()">
+          <button class="btn btn-outline-info btn-sm" *ngIf="paper.status==='published'" (click) = 'viewClick(event, paper)'>View</button>
+        </span>
+
       </div>
     </li>
 </ul>

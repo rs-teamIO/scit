@@ -6,6 +6,7 @@ import { AuthorPapersComponent } from './author-papers/author-papers.component';
 import { PaperProcessingComponent } from './paper-processing/paper-processing.component';
 import { PaperDetailsComponent } from './paper-details/paper-details.component';
 import { FileSaverModule } from 'ngx-filesaver';
+import { HomeComponent } from './home/home.component';
 
 
 
@@ -15,7 +16,8 @@ import { FileSaverModule } from 'ngx-filesaver';
     NewPaperComponent,
     AuthorPapersComponent,
     PaperProcessingComponent,
-    PaperDetailsComponent
+    PaperDetailsComponent,
+    HomeComponent
   ],
   exports: [
     NewPaperComponent

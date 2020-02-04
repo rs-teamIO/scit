@@ -28,7 +28,7 @@ export class PapersListComponent implements OnInit {
     this.paperService.processing(paper);
   }
 
-  titleClick($event, paper: any){
+  viewClick($event, paper: any){
     this.paperService.overviewRedirect(paper);
   }
 
@@ -44,8 +44,11 @@ export class PapersListComponent implements OnInit {
     return this.authService.isEditor();
   }
   reviewPaper(event, paper: any) {
-    //console.log(paper);
     this.paperService.redirectToPreview(paper.id);
+  }
+
+  publishPaperClick(event, paper: any) {
+    this.paperService.publishPaper(paper);
   }
 
 

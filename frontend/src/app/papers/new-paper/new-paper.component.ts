@@ -25,7 +25,7 @@ export class NewPaperComponent implements OnInit {
   }
 
   loadPaper() {
-    this.paperFrame.nativeElement.contentWindow.start();
+    this.paperFrame.nativeElement.contentWindow.start(localStorage.getItem('username'));
   }
 
   getPreview() {

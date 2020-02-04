@@ -29,6 +29,8 @@ const useridParam = '&user_id=';
 
 const getXmlByIdUrl = '/api/v1/paper/anonymous?paper_id=http://www.scit.org/papers/';
 
+const publishPaperUrl = '/api/v1/paper/publish?paper_id=';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -279,10 +281,32 @@ export class PaperService {
     for (let i = 0; i < chosenAuthors.length; i++) {
       if (chosenAuthors[i]) {
         this.http.put(`${path + authors[i].id}`, authors[i]).toPromise()
+        /*
+        .then( () => {
+          this.papersHolder.forEach( paper => {
+            if (paper.id === 'http://www.scit.org/papers/' + paperId) {
+              paper.status = 'in_review';
+            }
+            this.papersOb.next(this.papersHolder);
+          });
+        })
+        */
         .catch(response => this.handleError(response));
       }
     }
     this.router.navigateByUrl('papers');
+  }
+
+  publishPaper(paper: any) {
+    this.http.put(`${publishPaperUrl + paper.id}`, null).toPromise()
+        .then( response =>
+          Swal.fire(
+            'Good job!',
+            'You have published paper.',
+            'success'
+          ).then( () => paper.status = 'published')
+        )
+        .catch(response => this.handleError(response));
   }
 
 }

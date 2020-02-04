@@ -33,7 +33,8 @@ export class ReviewNewComponent implements OnInit {
   loadPaper() {
     this.route.params.subscribe(params => {
       this.id = params.id;
-      this.paperService.getXmlByPaperId(params.id).subscribe( data => this.paperFrame.nativeElement.contentWindow.start(data) );
+      this.paperService.getXmlByPaperId(params.id).subscribe( data =>
+        this.paperFrame.nativeElement.contentWindow.start(localStorage.getItem('username'), data) );
     });
   }
 

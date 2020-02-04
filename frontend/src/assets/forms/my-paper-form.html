@@ -8,9 +8,9 @@
         <link rel="stylesheet" type="text/css" href="../xonomy/xonomy.css">
         <script src="util.js"></script>
         <script type="text/javascript"> 
-            function start(filledXml) {
+            function start(author, filledXml) {
                 var xml;
-                if (arguments.length > 0) {
+                if (arguments.length > 1) {
                     xml = filledXml;
                 } else {
                     xml = ``+
@@ -19,7 +19,7 @@
                         `<paper:title>Your Paper Title</paper:title>` +
 
                         `<paper:authors>` + //<!--0 or more repetitions:-->
-                            `<paper:author >` +
+                            `<paper:author username='${author}'>` +
                                 `<paper:name>Author&apos;s name...</paper:name>` +
                                 `<paper:email>email@patern.com</paper:email>` +
                                 `<paper:affilliation>Author&apos;s affiliation...</paper:affilliation>` +

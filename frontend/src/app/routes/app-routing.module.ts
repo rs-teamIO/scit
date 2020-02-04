@@ -9,10 +9,12 @@ import { PaperProcessingComponent } from '../papers/paper-processing/paper-proce
 import { PaperDetailsComponent } from '../papers/paper-details/paper-details.component';
 import { ReviewsRequestsComponent } from '../reviews/reviews-requests/reviews-requests.component';
 import { ReviewNewComponent } from '../reviews/review-new/review-new.component';
+import { HomeComponent } from '../papers/home/home.component';
 
 
 
 const routes: Routes = [
+  { path: '', component: HomeComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'signin', component: SigninComponent },
 
