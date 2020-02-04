@@ -36,6 +36,9 @@ public class PaperRepository extends BaseRepository {
     @Value("classpath:xq/paper/findById.xq")
     private Resource findByIdQuery;
 
+    @Value("classpath:xq/paper/findIdsByText.xq")
+    private Resource findIdsByTextQuery;
+
     public PaperRepository(XQueryBuilder xQueryBuilder, XQueryExecutor xQueryExecutor, RdfQueryBuilder rdfQueryBuilder, RdfQueryExecutor rdfQueryExecutor) {
         super(xQueryBuilder, xQueryExecutor, Constants.PAPER_DOCUMENT_ID, rdfQueryBuilder, rdfQueryExecutor);
     }
@@ -85,6 +88,13 @@ public class PaperRepository extends BaseRepository {
         ResourceSet resourceSet = xQueryExecutor.execute(this.documentId, query);
 
         return ResourceSetUtils.toXml(resourceSet);
+    }
+
+    public List<String> findByText(String text) {
+        String query = xQueryBuilder.buildQuery(findIdsByTextQuery, text);
+        ResourceSet resourceSet = xQueryExecutor.execute(this.documentId, query);
+
+        return ResourceSetUtils.toList(resourceSet);
     }
 
     public void writeAssignMetadata(String userId, String paperId) {

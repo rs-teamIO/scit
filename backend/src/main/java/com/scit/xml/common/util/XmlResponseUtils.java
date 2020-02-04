@@ -17,6 +17,7 @@ public final class XmlResponseUtils {
 
     private final static String PAPER_ID_XPATH = "/paper/@id";
     private final static String PAPER_TITLE_XPATH = "/paper/title";
+    private final static String PAPER_STATUS_XPATH = "/paper/paper_info/status";
 
     private XmlResponseUtils() { }
 
@@ -60,12 +61,14 @@ public final class XmlResponseUtils {
         XmlWrapper paperWrapper = new XmlWrapper(paperXml);
         String id = XmlExtractorUtil.extractStringAndValidateNotBlank(paperWrapper.getDocument(), PAPER_ID_XPATH);
         String title = XmlExtractorUtil.extractStringAndValidateNotBlank(paperWrapper.getDocument(), PAPER_TITLE_XPATH);
+        String status = XmlExtractorUtil.extractStringAndValidateNotBlank(paperWrapper.getDocument(), PAPER_STATUS_XPATH);
 
         StringBuilder sb = new StringBuilder();
 
         sb.append("<paper>\n").append(INDENT)
                 .append("<id>").append(id).append("</id>").append(INDENT)
-                .append("<title>").append(title).append("</title>")
+                .append("<title>").append(title).append("</title>").append(INDENT)
+                .append("<status>").append(status).append("</status>")
         .append("</paper>");
 
         return sb.toString();

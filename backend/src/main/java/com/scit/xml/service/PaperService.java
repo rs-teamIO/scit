@@ -170,6 +170,19 @@ public class PaperService {
     }
 
 
+    // ======================================= getReviewedPapers =======================================
+
+    private final String SPARQL_GET_REVIEWED_PAPERS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "SELECT DISTINCT ?o\n" + "WHERE {\n" + "\t?s rv:reviewed ?o.\n" + "}";
+
+    public List<String> getReviewedPapers() {
+        List<String> paperIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_REVIEWED_PAPERS_QUERY));
+        return paperIds.stream()
+                .map(id -> this.findById(id))
+                .collect(Collectors.toList());
+    }
+
+
     // ======================================= getPublishedPapers =======================================
 
     private final String SPARQL_GET_PUBLISHED_PAPERS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
@@ -181,6 +194,31 @@ public class PaperService {
                 .map(id -> this.findById(id))
                 .collect(Collectors.toList());
     }
+
+
+    // ======================================= getPublishedPapersByText =======================================
+
+    public List<String> getPublishedPapersByText(String text) {
+        List<String> publishedPapers = this.getPublishedPapers().stream()
+                .map(p -> XmlExtractorUtil.extractPaperId(p))
+                .collect(Collectors.toList());
+        return this.paperRepository.findByText(text).stream()
+                .filter(publishedPapers::contains)
+                .collect(Collectors.toList());
+    }
+
+
+    // ======================================= getUsersPapersByText =======================================
+
+    public List<String> getUsersPapersByText(String text, String currentUserId) {
+        List<String> papersOfUser = this.getPapersByUserId(currentUserId).stream()
+                .map(p -> XmlExtractorUtil.extractPaperId(p))
+                .collect(Collectors.toList());
+        return this.paperRepository.findByText(text).stream()
+                .filter(papersOfUser::contains)
+                .collect(Collectors.toList());
+    }
+
 
 
     // ======================================= getRaw and getPdf =======================================
@@ -295,45 +333,15 @@ public class PaperService {
     }
 
 
-    // ======================================= common stuff =======================================
-
-    public String findById(String paperId) {
-        final String paperXml = this.paperRepository.findById(paperId);
-        NotFoundUtils.throwNotFoundExceptionIf(StringUtils.isEmpty(paperXml),
-                RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiConstants.ID));
-        return paperXml;
-    }
-
-
-
-
-
-
-
-
-
+    // ======================================= recommendAuthors =======================================
 
     private final String SPARQL_GET_SUGGESTED_AUTHORS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" +
-            "SELECT DISTINCT ?s\n" +
-            "WHERE \n" +
-            "{ \n" +
-            "  ?s rv:is_a <http://www.scit.org/schema/user>\n" +
-            "  MINUS \n" +
-            "  { \n" +
-            "    ?s rv:created|rv:assigned_to|rv:currently_reviewing|rv:reviewed <%s> \n" +
-            "  }\n" +
-            "}\n" +
+            "\nSELECT DISTINCT ?s WHERE { ?s rv:is_a <http://www.scit.org/schema/user>\n" +
+            "  MINUS { ?s rv:created|rv:assigned_to|rv:currently_reviewing|rv:reviewed <%s> } }" +
             "LIMIT 10";
 
     private final String SPARQL_COUNT_PAPERS_OF_AUTHOR_CONTAINING_KEYWORD_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" +
-            "SELECT (COUNT(distinct ?paper) as ?count)\n" +
-            "WHERE \n" +
-            "{ \n" +
-            "\t?paper rv:abstract:keywords \"%s\".\n" +
-            "    <%s> rv:created ?paper\n" +
-            "}\n";
+            "\nSELECT (COUNT(distinct ?paper) as ?count) WHERE { ?paper rv:abstract:keywords \"%s\" . <%s> rv:created ?paper }\n";
 
     public List<String> recommendAuthors(String paperId) {
         String paperXml = this.findById(paperId);
@@ -352,5 +360,15 @@ public class PaperService {
                 .collect(Collectors.toList());
 
         return authorIds;
+    }
+
+
+    // ======================================= common stuff =======================================
+
+    public String findById(String paperId) {
+        final String paperXml = this.paperRepository.findById(paperId);
+        NotFoundUtils.throwNotFoundExceptionIf(StringUtils.isEmpty(paperXml),
+                RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiConstants.ID));
+        return paperXml;
     }
 }
