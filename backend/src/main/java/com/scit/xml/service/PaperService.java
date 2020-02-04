@@ -1,15 +1,14 @@
 package com.scit.xml.service;
 
 import com.google.common.collect.Lists;
-import com.scit.xml.common.Constants;
 import com.scit.xml.common.Predicate;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiErrors;
 import com.scit.xml.common.util.*;
 import com.scit.xml.exception.InternalServerException;
 import com.scit.xml.model.paper.Paper;
+import com.scit.xml.model.paper.PaperStatus;
 import com.scit.xml.model.user.Role;
-import com.scit.xml.rdf.RdfExtractor;
 import com.scit.xml.rdf.RdfTriple;
 import com.scit.xml.repository.PaperRepository;
 import com.scit.xml.security.JwtTokenDetailsUtil;
@@ -27,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +41,7 @@ public class PaperService {
     private final UserService userService;
 
     public String createPaper(Paper paper, String creatorId) {
+        paper.getPaperInfo().setStatus(PaperStatus.SUBMITTED.getName());
         return this.paperRepository.save(paper, creatorId);
     }
 
@@ -145,11 +144,11 @@ public class PaperService {
 
     // ======================================= assignReviewer =======================================
 
-    public void assignReviewer(String paperId, XmlWrapper paperWrapper, String userId) {
-        // TODO: Fix bug with userId and username - there is no id in author in paper, only a username.
+    public void assignReviewer(String paperId, String userId) {
+        String username = XmlExtractorUtil.extractStringAndValidateNotBlank(new XmlWrapper(this.userService.findById(userId)).getDocument(), "/user/username");
         boolean reviewerIsAuthorOfPaper = XmlExtractorUtil
-                .extractSetOfAttributeValuesAndValidateNotEmpty(paperWrapper.getDocument(), "/paper/authors/*", "id")
-                .stream().anyMatch(userId::equals);
+                .extractSetOfAttributeValuesAndValidateNotEmpty(new XmlWrapper(this.findById(paperId)).getDocument(), "/paper/authors/*", "username")
+                .stream().anyMatch(username::equals);
         BadRequestUtils.throwInvalidRequestDataExceptionIf(reviewerIsAuthorOfPaper,
                 String.format("Unable to assign the paper for review to user with ID %s", userId));
 
@@ -255,6 +254,7 @@ public class PaperService {
             "\n" + "SELECT ?s\n" + "WHERE {\n" + "\t?s rv:created <%s>.\n" + "}";
 
     public List<String> getIdentifiersOfPaperAuthors(String paperId) {
+        // TODO: Ovde ima bug kaze coxi
         List<String> userIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_AUTHORS_OF_PAPER_QUERY, paperId));
         NotFoundUtils.throwNotFoundExceptionIf(userIds.isEmpty(),
                 RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiConstants.ID));
@@ -279,11 +279,12 @@ public class PaperService {
     // ======================================= editPaper =======================================
 
     public void editPaper(String xml, String paperId) {
+        // TODO: Change status of paper
         String currentUserId = JwtTokenDetailsUtil.getCurrentUserId();
         boolean currentUserAllowedToEdit = this.getIdentifiersOfPaperAuthors(paperId).contains(currentUserId);
         // TODO: Check if paper published - if yes, editing is forbidden
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!currentUserAllowedToEdit);
-        this.paperRepository.update(xml, paperId);
+        this.paperRepository.updateAndRemoveMetadata(xml, paperId);
     }
 
 
@@ -291,6 +292,7 @@ public class PaperService {
 
     public void revokePaper(String paperId) {
         this.paperDatabaseValidator.validateExportRequest(paperId);
+        // TODO: Don't physically remove paper, just set it's status to revoked (probably no)?
         this.paperRepository.remove(paperId);
         this.paperRepository.deleteAllMetadata(paperId);
     }
@@ -299,8 +301,7 @@ public class PaperService {
     // ======================================= rejectPaper =======================================
 
     public void rejectPaper(String paperId) {
-
-        // TODO: Delete paper from database
+        // TODO: Delete paper from database or set it's status to rejected
         this.paperRepository.deleteMetadataByObject(paperId);
     }
 
@@ -328,6 +329,9 @@ public class PaperService {
             RdfTriple wasPublishedByTriple = new RdfTriple(paperId, Predicate.WAS_PUBLISHED_BY, authorId);
             rdfTriples.addAll(Lists.newArrayList(createdTriple, publishedTriple, wasPublishedByTriple));
         });
+
+        paperWrapper.set("/paper/paper_info/status", PaperStatus.PUBLISHED.getName());
+        this.paperRepository.update(paperWrapper.getXml(), paperId);
 
         this.paperRepository.insertTriples(rdfTriples);
     }
@@ -370,5 +374,9 @@ public class PaperService {
         NotFoundUtils.throwNotFoundExceptionIf(StringUtils.isEmpty(paperXml),
                 RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiConstants.ID));
         return paperXml;
+    }
+
+    public void update(String paperXml, String paperId) {
+        this.paperRepository.update(paperXml, paperId);
     }
 }

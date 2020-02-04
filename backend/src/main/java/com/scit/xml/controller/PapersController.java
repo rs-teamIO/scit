@@ -166,12 +166,10 @@ public class PapersController {
         BadRequestUtils.throwInvalidRequestDataExceptionIf(userId.equals(JwtTokenDetailsUtil.getCurrentUserId()),
                 String.format("Unable to assign the paper for review to user with ID %s", userId));
 
-        final XmlWrapper paperWrapper = new XmlWrapper(paperService.findById(paperId));
-        final XmlWrapper userWrapper = new XmlWrapper(userService.findById(userId));
-        this.paperService.assignReviewer(paperId, paperWrapper, userId);
+        this.paperService.assignReviewer(paperId, userId);
 
-        String paperTitle = XmlExtractorUtil.extractStringAndValidateNotBlank(paperWrapper.getDocument(), "/paper/title");
-        String reviewerEmail = XmlExtractorUtil.extractStringAndValidateNotBlank(userWrapper.getDocument(), "/user/email");
+        String paperTitle = XmlExtractorUtil.extractPaperTitle(paperService.findById(paperId));
+        String reviewerEmail = XmlExtractorUtil.extractUserEmail(userService.findById(userId));
         this.emailService.sendPaperAssignmentNotificationEmail(reviewerEmail, paperTitle);
 
         return ResponseEntity.ok().build();

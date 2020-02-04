@@ -66,10 +66,9 @@ public class PaperRepository extends BaseRepository {
         return id;
     }
 
-    public void update(String newPaperXml, String paperId) {
+    public void updateAndRemoveMetadata(String newPaperXml, String paperId) {
         XmlWrapper paperWrapper = new XmlWrapper(newPaperXml);
         paperWrapper.setElementAttribute("/paper", "paper:id", paperId);
-
 
         String query = this.xQueryBuilder.buildQuery(this.appendTemplate, PAPER_NAMESPACE_ALIAS, PAPER_NAMESPACE, PAPERS_COLLECTION, paperWrapper.getXml(), PAPERS_NAMESPACE);
 
@@ -81,6 +80,16 @@ public class PaperRepository extends BaseRepository {
         //this.insertTriples(rdfTriples);
 
         this.removeMetadataOnUpdate(paperId);
+    }
+
+    public void update(String newPaperXml, String paperId) {
+        XmlWrapper paperWrapper = new XmlWrapper(newPaperXml);
+        paperWrapper.setElementAttribute("/paper", "paper:id", paperId);
+
+        String query = this.xQueryBuilder.buildQuery(this.appendTemplate, PAPER_NAMESPACE_ALIAS, PAPER_NAMESPACE, PAPERS_COLLECTION, paperWrapper.getXml(), PAPERS_NAMESPACE);
+
+        this.remove(paperId);
+        this.xQueryExecutor.updateResource(this.documentId, query);
     }
 
     public String findById(String id) {

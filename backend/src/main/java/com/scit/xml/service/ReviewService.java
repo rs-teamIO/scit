@@ -5,6 +5,7 @@ import com.scit.xml.common.Predicate;
 import com.scit.xml.common.util.ForbiddenUtils;
 import com.scit.xml.common.util.XmlWrapper;
 import com.scit.xml.exception.InternalServerException;
+import com.scit.xml.model.paper.PaperStatus;
 import com.scit.xml.rdf.RdfTriple;
 import com.scit.xml.repository.ReviewRepository;
 import com.scit.xml.service.converter.DocumentConverter;
@@ -27,6 +28,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     //private final ReviewDatabaseValidator reviewDatabaseValidator;
     private final DocumentConverter documentConverter;
+    private final PaperService paperService;
 
     public String createReview(XmlWrapper paperWrapper, String paperId, String userId) {
 
@@ -46,6 +48,9 @@ public class ReviewService {
             List<RdfTriple> rdfTriples = Lists.newArrayList(reviewsTriple, writtenByTriple, reviewedTriple);
             this.reviewRepository.insertTriples(rdfTriples);
             this.reviewRepository.deleteTriple(userId, Predicate.CURRENTLY_REVIEWING, paperId);
+
+            paperWrapper.set("/paper/paper_info/status", PaperStatus.REVIEWED.getName());
+            this.paperService.update(paperWrapper.getXml(), paperId);
 
             return reviewId;
 
@@ -67,6 +72,11 @@ public class ReviewService {
 
     public void acceptReviewRequest(String userId, String paperId) {
         this.checkIfUserIsAssigned(userId, paperId);
+
+        XmlWrapper paperWrapper = new XmlWrapper(this.paperService.findById(paperId));
+        paperWrapper.set("/paper/paper_info/status", PaperStatus.IN_REVIEW.getName());
+        this.paperService.update(paperWrapper.getXml(), paperId);
+
         RdfTriple acceptedRdfTriple = new RdfTriple(userId, Predicate.CURRENTLY_REVIEWING, paperId);
         List<RdfTriple> rdfTriples = Lists.newArrayList(acceptedRdfTriple);
         this.reviewRepository.insertTriples(rdfTriples);
