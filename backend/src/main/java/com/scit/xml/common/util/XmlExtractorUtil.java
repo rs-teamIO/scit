@@ -65,6 +65,11 @@ public class XmlExtractorUtil {
         return content;
     }
 
+    public static String extractPaperId(String paperXml) {
+        XmlWrapper xmlWrapper = new XmlWrapper(paperXml);
+        return XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/@id");
+    }
+
     public static String extractPaperTitle(String paperXml) {
         XmlWrapper xmlWrapper = new XmlWrapper(paperXml);
         return XmlExtractorUtil.extractStringAndValidateNotBlank(xmlWrapper.getDocument(), "/paper/title");

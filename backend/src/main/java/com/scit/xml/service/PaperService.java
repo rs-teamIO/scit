@@ -169,6 +169,18 @@ public class PaperService {
                 .collect(Collectors.toList());
     }
 
+    // ======================================= getReviewedPapers =======================================
+
+    private final String SPARQL_GET_REVIEWED_PAPERS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "SELECT DISTINCT ?o\n" + "WHERE {\n" + "\t?s rv:reviewed ?o.\n" + "}";
+
+    public List<String> getReviewedPapers() {
+        List<String> paperIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_REVIEWED_PAPERS_QUERY));
+        return paperIds.stream()
+                .map(id -> this.findById(id))
+                .collect(Collectors.toList());
+    }
+
 
     // ======================================= getPublishedPapers =======================================
 
@@ -312,7 +324,7 @@ public class PaperService {
 
 
 
-
+    // TODO: Refactor
     private final String SPARQL_GET_SUGGESTED_AUTHORS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
             "\n" +
             "SELECT DISTINCT ?s\n" +
@@ -326,6 +338,7 @@ public class PaperService {
             "}\n" +
             "LIMIT 10";
 
+    // TODO: Refactor
     private final String SPARQL_COUNT_PAPERS_OF_AUTHOR_CONTAINING_KEYWORD_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
             "\n" +
             "SELECT (COUNT(distinct ?paper) as ?count)\n" +
@@ -335,6 +348,7 @@ public class PaperService {
             "    <%s> rv:created ?paper\n" +
             "}\n";
 
+    // TODO: Doc
     public List<String> recommendAuthors(String paperId) {
         String paperXml = this.findById(paperId);
         Map<String, Integer> authorHeatMap = this.paperRepository.selectSubjects(String.format(SPARQL_GET_SUGGESTED_AUTHORS_QUERY, paperId))
@@ -352,5 +366,25 @@ public class PaperService {
                 .collect(Collectors.toList());
 
         return authorIds;
+    }
+
+    // TODO: Doc
+    public List<String> getPublishedPapersByText(String text) {
+        List<String> publishedPapers = this.getPublishedPapers().stream()
+                .map(p -> XmlExtractorUtil.extractPaperId(p))
+                .collect(Collectors.toList());
+        return this.paperRepository.findByText(text).stream()
+                .filter(publishedPapers::contains)
+                .collect(Collectors.toList());
+    }
+
+    // TODO: Doc
+    public List<String> getUsersPapersByText(String text, String currentUserId) {
+        List<String> papersOfUser = this.getPapersByUserId(currentUserId).stream()
+                .map(p -> XmlExtractorUtil.extractPaperId(p))
+                .collect(Collectors.toList());
+        return this.paperRepository.findByText(text).stream()
+                .filter(papersOfUser::contains)
+                .collect(Collectors.toList());
     }
 }

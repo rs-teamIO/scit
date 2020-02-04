@@ -197,6 +197,27 @@ public class PapersController {
     }
 
     /**
+     * GET api/v1/papers/reviewed
+     * ACCESS LEVEL: Editor only
+     *
+     * Returns the IDs and titles of {@link Paper}s that have been published.
+     */
+    @PreAuthorize("hasAuthority('editor')")
+    @GetMapping(value = RestApiEndpoints.REVIEWED,
+                produces = MediaType.APPLICATION_XML_VALUE )
+    public ResponseEntity getReviewedPapers() {
+        List<String> papers = this.paperService.getReviewedPapers();
+        StringBuilder sb = new StringBuilder();
+        papers.stream()
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+        return ResponseEntity.ok(responseBody);
+    }
+
+    /**
      * GET api/v1/papers/published
      * ACCESS LEVEL: Anyone
      *
@@ -234,4 +255,47 @@ public class PapersController {
         String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
         return ResponseEntity.ok(responseBody);
     }
+
+    /**
+     * GET api/v1/papers/search-by-text
+     * ACCESS LEVEL: Anyone
+     *
+     * Returns the IDs and titles of published {@link Paper}s that contain given text.
+     */
+    @GetMapping(value = RestApiEndpoints.SEARCH_BY_TEXT,
+                produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity searchPublishedPapersByText(@RequestParam(RestApiRequestParameters.TEXT) String text) {
+        List<String> paperIds = this.paperService.getPublishedPapersByText(text);
+        StringBuilder sb = new StringBuilder();
+        paperIds.stream()
+                .map(id -> this.paperService.findById(id))
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+        return ResponseEntity.ok(responseBody);
+    }
+
+    /**
+     * GET api/v1/papers/search-by-text/private
+     * ACCESS LEVEL: Anyone
+     *
+     * Returns the IDs and titles of {@link Paper}s that contain given text and are created by the current user.
+     */
+    @GetMapping(value = RestApiEndpoints.SEARCH_BY_TEXT_PRIVATE,
+                produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity searchUsersPapersByText(@RequestParam(RestApiRequestParameters.TEXT) String text) {
+        List<String> paperIds = this.paperService.getUsersPapersByText(text, JwtTokenDetailsUtil.getCurrentUserId());
+        StringBuilder sb = new StringBuilder();
+        paperIds.stream()
+                .map(id -> this.paperService.findById(id))
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+        return ResponseEntity.ok(responseBody);
+    }
+
 }

@@ -22,8 +22,12 @@ public final class RestApiEndpoints {
     public static final String ASSIGNED =  "/assigned";
     public static final String SUBMITTED =  "/submitted";
     public static final String IN_REVIEW = "/in-review";
+    public static final String REVIEWED = "/reviewed";
     public static final String HTML = "/html";
     public static final String TRANSFORM = "/transform";
+    public static final String SEARCH_BY_TEXT = "/search-by-text";
+    public static final String SEARCH_BY_TEXT_PRIVATE = "/search-by-text/private";
+    public static final String SEARCH_BY_METADATA = "/search-by-metadata";
 
     public static final String PAPERS = API_ROOT + "/papers";
     public static final String PUBLISHED = "/published";
