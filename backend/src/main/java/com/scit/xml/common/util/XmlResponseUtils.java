@@ -24,7 +24,6 @@ public final class XmlResponseUtils {
     public static String wrapResponse(XmlResponse xmlResponse) {
         StringBuilder sb = new StringBuilder();
 
-        // TODO: Check why indentation is not appropriate
         sb.append("<response>\n");
         xmlResponse.keySet().stream().forEach(key -> {
             sb.append(INDENT).append(String.format("<%s>\n", key));

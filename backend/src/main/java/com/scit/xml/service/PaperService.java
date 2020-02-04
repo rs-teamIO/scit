@@ -254,7 +254,6 @@ public class PaperService {
             "\n" + "SELECT ?s\n" + "WHERE {\n" + "\t?s rv:created <%s>.\n" + "}";
 
     public List<String> getIdentifiersOfPaperAuthors(String paperId) {
-        // TODO: Ovde ima bug kaze coxi
         List<String> userIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_AUTHORS_OF_PAPER_QUERY, paperId));
         NotFoundUtils.throwNotFoundExceptionIf(userIds.isEmpty(),
                 RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiConstants.ID));
@@ -279,11 +278,13 @@ public class PaperService {
     // ======================================= editPaper =======================================
 
     public void editPaper(String xml, String paperId) {
-        // TODO: Change status of paper
         String currentUserId = JwtTokenDetailsUtil.getCurrentUserId();
         boolean currentUserAllowedToEdit = this.getIdentifiersOfPaperAuthors(paperId).contains(currentUserId);
-        // TODO: Check if paper published - if yes, editing is forbidden
-        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!currentUserAllowedToEdit);
+        boolean paperIsPublished = this.paperRepository.ask(String.format(SPARQL_ASK_IS_PAPER_PUBLISHED_QUERY, paperId));
+        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!currentUserAllowedToEdit || paperIsPublished);
+
+        // TODO: Change status of paper to SUBMITTED (or maybe to something else?)
+
         this.paperRepository.updateAndRemoveMetadata(xml, paperId);
     }
 
