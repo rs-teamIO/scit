@@ -40,7 +40,7 @@ export class AuthorPapersComponent implements OnInit {
       this.reviewService.getReviewPapers();
       this.reviewService.requests.subscribe(data => this.reviews = data);
     } else {
-      this.title = 'Submitted Papers!';
+      this.title = 'Papers!';
       this.paperService.findSubmittedPapers();
     }
     this.paperService.papers.subscribe( data => this.papers = data);

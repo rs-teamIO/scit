@@ -1,12 +1,3 @@
 <div class = "wrapper">
-    <div class= "search-wrapper">
-        <input type="text" (keydown) = "onKeydown()" (keyup) = "onKeyup()" placeholder="Search...">
-    </div>
-
-    <div class="result-wrapper">
-        <div class="spinner-border spinner" role="status" *ngIf="showSpinner">
-            <span class="sr-only">Loading...</span>
-        </div>
-
-    </div>
+    <app-search [type]="'home'"></app-search>
 </div>

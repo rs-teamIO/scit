@@ -51,5 +51,13 @@ export class PapersListComponent implements OnInit {
     this.paperService.publishPaper(paper);
   }
 
+  rejectPaperClick(event, paper: any) {
+    this.paperService.rejectPaper(paper);
+  }
+
+  revokePaperClick(event, paper: any) {
+    this.paperService.revokePaper(paper);
+  }
+
 
 }

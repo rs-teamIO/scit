@@ -13,7 +13,7 @@
           <button class="btn btn-outline-light btn-sm" (click) = 'processingClick($event, paper)' *ngIf="paper.status==='submitted'">Process Paper</button>
           <span class="yellow bord" *ngIf="paper.status==='in_review'">In Review</span>
           <button class="btn btn-outline-success btn-sm" *ngIf="paper.status==='reviewed'" (click) = 'publishPaperClick(event, paper)'>Publish Paper</button>
-          <button class="btn btn-outline-warning btn-sm" *ngIf="paper.status==='reviewed'">Send to Revison</button> <!-- paper.status change to to_revison -->
+          <button class="btn btn-outline-warning btn-sm" *ngIf="paper.status==='reviewed'" (click) = 'rejectPaperClick(event, paper)'>Send to Revison</button> <!-- paper.status change to to_revison -->
           <button class="btn btn-outline-info btn-sm" *ngIf="paper.status==='published'" (click) = 'viewClick(event, paper)'>View</button>
         </span>
 
@@ -22,6 +22,7 @@
           <span class="yellow bord" *ngIf="paper.status==='in_review'">In Review</span>
           <span class="yellow bord" *ngIf="paper.status==='reviewed'">Reviewed</span>
           <button class="btn btn-outline-warning btn-sm" *ngIf="paper.status==='to_revison'">Make Revison</button>
+          <button class="btn btn-outline-danger btn-sm" *ngIf="paper.status==='published'" (click) = 'revokePaperClick(event, paper)'>Revoke</button>
           <button class="btn btn-outline-info btn-sm" *ngIf="paper.status==='published'" (click) = 'viewClick(event, paper)'>View</button>
         </span>
 

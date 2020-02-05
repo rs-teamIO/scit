@@ -9,6 +9,7 @@ import { saveAs as importedSaveAs } from 'file-saver';
 
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { IfStmt } from '@angular/compiler';
 
 
 const papersUrl = '/api/v1/papers';
@@ -30,11 +31,24 @@ const useridParam = '&user_id=';
 const getXmlByIdUrl = '/api/v1/paper/anonymous?paper_id=http://www.scit.org/papers/';
 
 const publishPaperUrl = '/api/v1/paper/publish?paper_id=';
+const rejectPaperUrl = '/api/v1/paper/reject?paper_id=';
+const revokePaperUrl = '/api/v1/paper?paper_id=';
+
+const publishedPapersUrl = '/api/v1/papers/published';
+
+const searchPublishedTextUrl = '/api/v1/papers/search-by-text?text=';
+const searchAuthorsPaperUrl = '/api/v1/papers/search-by-text/private?text=';
+const metadataSearchUrl = 'api/v1/papers/metadata?'; // TODO: Change url;
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaperService {
+
+    private searchPapersOb = new BehaviorSubject<any[]>([]);
+    private searchPapersHolder: any[] = [];
+    searchPapers = this.searchPapersOb.asObservable();
 
     private pdfPreOb = new BehaviorSubject<string>('');
     private pdfPreHolder = '';
@@ -44,11 +58,39 @@ export class PaperService {
     private papersHolder: any[] = [];
     papers = this.papersOb.asObservable();
 
+    private spinnerOb = new BehaviorSubject<boolean>(false);
+    private spinnerHolder: boolean;
+    spinner = this.spinnerOb.asObservable();
+
   constructor(
     protected http: HttpClient,
     private router: Router,
     private parser: NgxXml2jsonService
   ) { }
+
+
+  metadataSearch(doi: string, journalId: string, category: string, yearOfPublishing: number, authorName: string) {
+
+    let query = `doi=${doi ? doi : null}&journalIdi=${journalId ? journalId : null}&category=${category ? category : null}` +
+                  `&yearOfPublishing=${yearOfPublishing ? yearOfPublishing : null}&authorName=${authorName ? authorName : null}`;
+    query = query.split(' ').join('_');
+    query = query.split('/').join('_');
+
+    this.http.get(`${metadataSearchUrl + query}`, { // TODO: Write method
+      headers: new HttpHeaders({
+        'Content-Type': 'application/xml',
+        Accept: '*/*, application/xml, application/json'
+      }),
+      responseType: 'text'
+    }).toPromise()
+    .then(response => {
+      this.extractPapersFromResponse(response);
+      this.spinnerHolder = false;
+      this.spinnerOb.next(this.spinnerHolder);
+    })
+    .catch(response => this.handleError(response));
+  }
+
 
   redirectToPreview(id: string) {
     const idHolder = id.split('/')
@@ -74,31 +116,8 @@ export class PaperService {
       }),
       responseType: 'text'
     }).toPromise()
-    .then(
-      response => {
-        const xml = new DOMParser().parseFromString(response, `text/xml`);
-        const responseInJson: any = this.parser.xmlToJson(xml);
-        delete responseInJson.response.papers[`#text`];
-        if (responseInJson.response.papers.paper) {
-          if (!responseInJson.response.papers.paper.length) {
-            const holder = [];
-            holder.push(responseInJson.response.papers.paper);
-            this.papersHolder = holder;
-            this.papersOb.next(this.papersHolder);
-          } else {
-            this.papersHolder = responseInJson.response.papers.paper;
-            this.papersOb.next(this.papersHolder);
-          }
-        } else {
-          this.papersHolder = [];
-          this.papersOb.next(this.papersHolder);
-        }
-
-      }
-    )
-    .catch(
-      response => this.handleError(response)
-    );
+    .then(response => this.extractPapersFromResponse(response))
+    .catch(response => this.handleError(response));
   }
 
   findSubmittedPapers() {
@@ -109,26 +128,36 @@ export class PaperService {
       }),
       responseType: 'text'
     }).toPromise()
+    .then(response => this.extractPapersFromResponse(response))
     .then(
-      response => {
-        const xml = new DOMParser().parseFromString(response, `text/xml`);
-        const responseInJson: any = this.parser.xmlToJson(xml);
-        delete responseInJson.response.papers[`#text`];
-        if (responseInJson.response.papers.paper) {
-          if (!responseInJson.response.papers.paper.length) {
-            const holder = [];
-            holder.push(responseInJson.response.papers.paper);
-            this.papersHolder = holder;
-            this.papersOb.next(this.papersHolder);
-          } else {
-            this.papersHolder = responseInJson.response.papers.paper;
-            this.papersOb.next(this.papersHolder);
-          }
-        } else {
-          this.papersHolder = [];
-          this.papersOb.next(this.papersHolder);
-        }
+      () => {
+        this.http.get(`${publishedPapersUrl}`, {
+          headers: new HttpHeaders({
+            'Content-Type': 'application/xml',
+            Accept: '*/*, application/xml, application/json'
+          }),
+          responseType: 'text'
+        }).toPromise()
+        .then(
+          response => {
+            const xml = new DOMParser().parseFromString(response, `text/xml`);
+            const responseInJson: any = this.parser.xmlToJson(xml);
+            delete responseInJson.response.papers[`#text`];
 
+            if (responseInJson.response.papers.paper) {
+              if (!responseInJson.response.papers.paper.length) {
+                this.papersHolder.push(responseInJson.response.papers.paper);
+                this.papersOb.next(this.papersHolder);
+              } else {
+                responseInJson.response.papers.paper.forEach(element => this.papersHolder.push(element));
+                this.papersOb.next(this.papersHolder);
+              }
+            }
+          }
+        )
+        .catch(
+          response => this.handleError(response)
+        );
       }
     )
     .catch(
@@ -307,6 +336,114 @@ export class PaperService {
           ).then( () => paper.status = 'published')
         )
         .catch(response => this.handleError(response));
+  }
+
+  rejectPaper(paper: any) {
+    this.http.put(`${rejectPaperUrl + paper.id}`, null).toPromise()
+        .then( response =>
+          Swal.fire(
+            'Good job!',
+            'You have rejected paper.',
+            'success'
+          ).then( () => paper.status = '')
+        )
+        .catch(response => this.handleError(response));
+    }
+
+  revokePaper(paper: any) {
+    this.http.delete(`${revokePaperUrl + paper.id}`).toPromise()
+      .then( response =>
+        Swal.fire(
+          'Good job!',
+          'You have revoked paper.',
+          'success'
+        ).then( () => paper.status = 'revoke')
+      )
+      .catch(response => this.handleError(response));
+  }
+
+
+
+  searchResolver(query: string, type: string) {
+    // tslint:disable-next-line: curly
+    if (type === 'home')
+      this.searchPapersByText(query);
+    // tslint:disable-next-line: curly
+    if (type === 'author')
+      this.searchAuthorPapersByText(query);
+  }
+
+  searchPapersByText(query: string) {
+    this.http.get(`${searchPublishedTextUrl + query}`, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/xml',
+        Accept: '*/*, application/xml, application/json'
+      }),
+      responseType: 'text'
+    }).toPromise()
+    .then(response =>  {
+      this.extractSearchPapersFromResponse(response);
+      this.spinnerHolder = false;
+      this.spinnerOb.next(this.spinnerHolder);
+    })
+    .catch(response => this.handleError(response));
+  }
+
+  searchAuthorPapersByText(query: string) {
+    this.http.get(`${searchAuthorsPaperUrl + query}`, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/xml',
+        Accept: '*/*, application/xml, application/json'
+      }),
+      responseType: 'text'
+    }).toPromise()
+    .then(response => {
+      this.extractPapersFromResponse(response);
+      this.spinnerHolder = false;
+      this.spinnerOb.next(this.spinnerHolder);
+    })
+    .catch(response => this.handleError(response));
+  }
+
+  extractPapersFromResponse(response: any) {
+    const xml = new DOMParser().parseFromString(response, `text/xml`);
+    const responseInJson: any = this.parser.xmlToJson(xml);
+    delete responseInJson.response.papers[`#text`];
+    if (responseInJson.response.papers.paper) {
+      if (!responseInJson.response.papers.paper.length) {
+        const holder = [];
+        holder.push(responseInJson.response.papers.paper);
+        this.papersHolder = holder;
+        this.papersOb.next(this.papersHolder);
+      } else {
+        this.papersHolder = responseInJson.response.papers.paper;
+        this.papersOb.next(this.papersHolder);
+      }
+    } else {
+      this.papersHolder = [];
+      this.papersOb.next(this.papersHolder);
+    }
+  }
+
+
+  extractSearchPapersFromResponse(response: any) {
+    const xml = new DOMParser().parseFromString(response, `text/xml`);
+    const responseInJson: any = this.parser.xmlToJson(xml);
+    delete responseInJson.response.papers[`#text`];
+    if (responseInJson.response.papers.paper) {
+      if (!responseInJson.response.papers.paper.length) {
+        const holder = [];
+        holder.push(responseInJson.response.papers.paper);
+        this.searchPapersHolder = holder;
+        this.searchPapersOb.next(this.searchPapersHolder);
+      } else {
+        this.searchPapersHolder = responseInJson.response.papers.paper;
+        this.searchPapersOb.next(this.searchPapersHolder);
+      }
+    } else {
+      this.searchPapersHolder = [];
+      this.searchPapersOb.next(this.searchPapersHolder);
+    }
   }
 
 }

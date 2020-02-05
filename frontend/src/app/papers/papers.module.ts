@@ -7,6 +7,8 @@ import { PaperProcessingComponent } from './paper-processing/paper-processing.co
 import { PaperDetailsComponent } from './paper-details/paper-details.component';
 import { FileSaverModule } from 'ngx-filesaver';
 import { HomeComponent } from './home/home.component';
+import { SearchComponent } from './search/search.component';
+import { MetaSearchComponent } from './meta-search/meta-search.component';
 
 
 
@@ -17,7 +19,9 @@ import { HomeComponent } from './home/home.component';
     AuthorPapersComponent,
     PaperProcessingComponent,
     PaperDetailsComponent,
-    HomeComponent
+    HomeComponent,
+    SearchComponent,
+    MetaSearchComponent
   ],
   exports: [
     NewPaperComponent

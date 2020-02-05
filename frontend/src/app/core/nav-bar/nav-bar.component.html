@@ -3,7 +3,7 @@
     <nav>
         <ul class="nav-links">
             <li><a routerLink=""  routerLinkActive = "active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
-            <li><a routerLink="papers" routerLinkActive = "active">Papers</a></li>
+            <li><a routerLink="papers" routerLinkActive = "active"*ngIf = 'isAuthenticated()' >Papers</a></li>
             <li><a routerLink="new-paper" routerLinkActive = "active" *ngIf = 'isAuthor()'>Compose</a></li>
             <li><a routerLink="review-requests" routerLinkActive = "active" *ngIf = 'isAuthor()'>Requests</a></li>
 

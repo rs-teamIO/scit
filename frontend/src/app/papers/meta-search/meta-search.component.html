@@ -1,0 +1,28 @@
+<div class = "wrapper">
+    <div class= "search-wrapper">
+        <input type="text" placeholder="Date Of Input..." [(ngModel)] = "doi">
+        <input type="text" placeholder="Journal ID..." [(ngModel)] = "journalId">
+        <input type="number" placeholder="Year of publishing..." [(ngModel)] = "yearOfPublishing">
+        <select [(ngModel)] = "category">
+            <option value="original_research">Original research</option>
+            <option value="proceeding">Proceeding</option>
+            <option value="short_report">Short report</option>
+            <option value="review_article">Review article</option>
+            <option value="case_study">Case study</option>
+            <option value="methodology">Methodology</option>
+        </select>
+        <input type="text" placeholder="Author name..." [(ngModel)] = "authorName">
+    </div>
+    <button class="btn btn-outline-light btn-sm" (click) = "searchClick()">Search</button>
+
+
+
+    <div class="result-wrapper">
+        <div class="spinner-border spinner" role="status" *ngIf="showSpinner">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="list-wrapper" *ngIf="!showSpinner">
+            <shared-papers-list [papers] = papers></shared-papers-list>
+        </div>
+    </div>
+</div>
