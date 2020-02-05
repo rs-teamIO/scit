@@ -32,6 +32,8 @@ public class ReviewService {
 
     public String createReview(XmlWrapper paperWrapper, String paperId, String userId) {
 
+        this.checkIfUserIsReviewing(userId, paperId);
+
         paperWrapper.setElementAttribute("/paper/comment", "paper:id", paperId);
 
         try {
@@ -49,8 +51,9 @@ public class ReviewService {
             this.reviewRepository.insertTriples(rdfTriples);
             this.reviewRepository.deleteTriple(userId, Predicate.CURRENTLY_REVIEWING, paperId);
 
-            paperWrapper.set("/paper/paper_info/status", PaperStatus.REVIEWED.getName());
-            this.paperService.update(paperWrapper.getXml(), paperId);
+            XmlWrapper persistentPaper = new XmlWrapper(this.paperService.findById(paperId));
+            persistentPaper.set("/paper/paper_info/status", PaperStatus.REVIEWED.getName());
+            this.paperService.update(persistentPaper.getXml(), paperId);
 
             return reviewId;
 
@@ -100,5 +103,13 @@ public class ReviewService {
     private void checkIfUserIsAssigned(String userId, String paperId) {
         boolean isAssigned = this.reviewRepository.ask(String.format(SPARQL_ASK_IS_USER_ASSIGNED_TO_PAPER_QUERY, userId, paperId));
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!isAssigned);
+    }
+
+    private final String SPARQL_ASK_HAS_USER_ACCEPTED_TO_REVIEW_PAPER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" + "ASK\n" + "WHERE {\n" + "\t<%s> rv:currently_reviewing <%s>.\n" + "}";
+
+    private void checkIfUserIsReviewing(String userId, String paperId) {
+        boolean isReviewing = this.reviewRepository.ask(String.format(SPARQL_ASK_HAS_USER_ACCEPTED_TO_REVIEW_PAPER_QUERY, userId, paperId));
+        ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!isReviewing);
     }
 }

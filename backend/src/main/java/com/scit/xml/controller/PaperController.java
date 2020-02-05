@@ -161,7 +161,14 @@ public class PaperController {
         return ResponseEntity.ok(responseBody);
     }
 
-    // TODO: Doc
+    /**
+     * put api/v1/paper
+     * ACCESS LEVEL: Authenticated users
+     *
+     * Used to submit revision of {@link Paper} instance.
+     *
+     * @param paperId unique identifier of the {@link Paper}
+     */
     @PreAuthorize("isAuthenticated()")
     @PutMapping(consumes = MediaType.APPLICATION_XML_VALUE,
                 produces = MediaType.APPLICATION_XML_VALUE)
