@@ -51,8 +51,9 @@ public class ReviewService {
             this.reviewRepository.insertTriples(rdfTriples);
             this.reviewRepository.deleteTriple(userId, Predicate.CURRENTLY_REVIEWING, paperId);
 
-            paperWrapper.set("/paper/paper_info/status", PaperStatus.REVIEWED.getName());
-            this.paperService.update(paperWrapper.getXml(), paperId);
+            XmlWrapper persistentPaper = new XmlWrapper(this.paperService.findById(paperId));
+            persistentPaper.set("/paper/paper_info/status", PaperStatus.REVIEWED.getName());
+            this.paperService.update(persistentPaper.getXml(), paperId);
 
             return reviewId;
 
