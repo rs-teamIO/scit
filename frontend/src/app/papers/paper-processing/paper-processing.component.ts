@@ -22,8 +22,10 @@ export class PaperProcessingComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.getId();
-    this.userService.getAllAuthors();
+    this.route.params.subscribe(params => {
+      this.id = params.id;
+      this.userService.getAllAuthors(params.id);
+    });
 
     this.userService.authors.subscribe(
       data => {
@@ -36,11 +38,6 @@ export class PaperProcessingComponent implements OnInit {
     );
   }
 
-  getId() {
-    this.route.params.subscribe(params => {
-      this.id = params.id;
-    });
-  }
 
   assignClick() {
     this.paperService.assignPaper(this.checkBoxStates, this.authors, this.id);

@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { BehaviorSubject } from 'rxjs';
 
 const getAllAuthorsURL = '/api/v1/users/authors';
+const recomendedAuthorsUrl = '/api/v1/paper/recommended-authors?paper_id=http://www.scit.org/papers/';
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +24,8 @@ export class UserService {
   ) { }
 
 
-  getAllAuthors(){
-    this.http.get(`${getAllAuthorsURL}`, {
+  getAllAuthors(id: string) {
+    this.http.get(`${recomendedAuthorsUrl + id}`, {
       headers: new HttpHeaders({
         'Content-Type': 'application/xml',
         Accept: '*/*, application/xml, application/json'
@@ -53,7 +54,7 @@ export class UserService {
     );
   }
 
-  
+
   handleError(response: any) {
     if (response.error.body) {
       Swal.fire(
