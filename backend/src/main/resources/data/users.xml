@@ -1,35 +1,11 @@
 <users:users xmlns:users="http://www.scit.org/schema/users"
              xmlns:user="http://www.scit.org/schema/user">
-    <user:user isActive="true" id="http://www.scit.org/users/28e3af4c-3da7-4a5e-8ebd-1b8a78c0c8a7">
-        <user:first_name>First</user:first_name>
-        <user:last_name>Author</user:last_name>
-        <user:username>author1</user:username>
-        <user:password>123</user:password>
-        <user:email>f.ivkovic16+1@gmail.com</user:email>
-        <user:role>author</user:role>
-    </user:user>
-    <user:user isActive="true" id="http://www.scit.org/users/756814ef-764d-4e54-a284-9aad6ff28251">
-        <user:first_name>Second</user:first_name>
-        <user:last_name>Author</user:last_name>
-        <user:username>author2</user:username>
-        <user:password>123</user:password>
-        <user:email>f.ivkovic16+2@gmail.com</user:email>
-        <user:role>author</user:role>
-    </user:user>
-    <user:user isActive="true" id="http://www.scit.org/users/d1d2bed1-d322-4533-8e51-25c4cb9aaad1">
+    <user:user isActive="true" id="http://www.scit.org/users/b798543d-893e-4277-81ca-3674004e0091">
         <user:first_name>First</user:first_name>
         <user:last_name>Editor</user:last_name>
         <user:username>editor1</user:username>
-        <user:password>123</user:password>
-        <user:email>f.ivkovic16+3@gmail.com</user:email>
-        <user:role>editor</user:role>
-    </user:user>
-    <user:user isActive="true" id="http://www.scit.org/users/b798543d-893e-4277-81ca-3674004e0091">
-        <user:first_name>Second</user:first_name>
-        <user:last_name>Editor</user:last_name>
-        <user:username>editor2</user:username>
-        <user:password>123</user:password>
-        <user:email>f.ivkovic16+4@gmail.com</user:email>
+        <user:password>12341234</user:password>
+        <user:email>scit.noreply+editor1@gmail.com</user:email>
         <user:role>editor</user:role>
     </user:user>
 </users:users>
