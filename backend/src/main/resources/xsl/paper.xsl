@@ -10,9 +10,11 @@
                 <xsl:apply-templates select="./paper:title"/>
                 <xsl:apply-templates select="./paper:authors"/>
                 <xsl:apply-templates select="./paper:abstract"/>
-                <xsl:apply-templates select="./paper:section"/>
+                <!-- zasto 2 // ?-->
+                <xsl:apply-templates select=".//paper:section"/>
                 <xsl:apply-templates select="./paper:references"/>
                 <xsl:apply-templates select="./paper:comment"/>
+                <xsl:apply-templates select="./paper:reference"/>
             </body>
         </html>
     </xsl:template>
@@ -43,8 +45,8 @@
         <xsl:value-of select="."/>,
     </xsl:template>
 
-    <xsl:template match="paper:section">
-        <div style="margin-top: 15px; margin-right: 40px; margin-bottom:15px; margin-left: 40px;">
+    <xsl:template match="//paper:section">
+        <div style="font-family: Times New Roman;font-size: 10;text-align: justify; margin-top: 15px; margin-right: 40px; margin-bottom:15px; margin-left: 40px;">
             <xsl:apply-templates select="./paper:heading"/>
             <xsl:apply-templates select="./paper:content"/>
             <xsl:apply-templates select="./paper:comment"/>
@@ -55,16 +57,27 @@
         <h2 style="font-family: Times New Roman;font-size: 14;font-weight: bold;text-align: center"><xsl:value-of select="."/></h2>
     </xsl:template>
 
-    <xsl:template match="paper:content">
-        <p style="font-family: Times New Roman;font-size: 10;text-align: justify"><xsl:value-of select="."/></p>
-        <xsl:apply-templates select="./paper:image"/>
+    <xsl:template match="//paper:content">
+        <p style="font-family: Times New Roman;font-size: 10;text-align: justify">
+            <xsl:apply-templates/>
+        </p>
     </xsl:template>
 
-    <xsl:template match="//paper:image">
+    <xsl:template match="paper:content//text()">
+        <xsl:value-of select="."/>
+    </xsl:template>
+
+    <xsl:template match="paper:content//paper:reference">
+        <a>
+            <xsl:attribute name="href">#<xsl:value-of select="@paper:reference_id"/></xsl:attribute>
+            <xsl:value-of select="."/>
+        </a>
+    </xsl:template>
+
+    <xsl:template match="paper:content//paper:image">
         <p style="text-align: center;">
             <img style=" width: 210px; height:100px; margin: 15px;" >
-                <xsl:attribute name="src"><xsl:value-of select="./@link"/>
-                </xsl:attribute>
+                <xsl:attribute name="src"><xsl:value-of select="./@link"/></xsl:attribute>
             </img>
             <p style="font-family: Times New Roman;font-size: 10;font-weight: bold; text-align: center"><xsl:value-of select="./@img_title"/></p>
         </p>
@@ -74,9 +87,11 @@
         <div style="font-family: Times New Roman;font-size: 9;margin-top: 15px; margin-right: 40px; margin-bottom:15px; margin-left: 40px;">
             <h2 style="font-family: Times New Roman;font-size: 14;font-weight: bold;text-align: center">References</h2>
             <xsl:for-each select="paper:reference">
-                [<xsl:number value="position()" format="1"/>]
-                <xsl:value-of select="."/>
-                <br/>
+                <p>
+                    <xsl:attribute name="id"><xsl:value-of select="@paper:reference_id"/></xsl:attribute>
+                    [<xsl:number value="position()" format="1"/>]
+                    <xsl:value-of select="."/>
+                </p>
             </xsl:for-each>
         </div>
     </xsl:template>
