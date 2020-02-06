@@ -117,6 +117,20 @@ public class PaperRepository extends BaseRepository {
         this.deleteMetadataByPredicateAndObject(Predicate.REVIEWED, paperId);
     }
 
+    private final String SPARQL_GET_REVIEWS_BY_ID = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" +
+            "SELECT DISTINCT ?reviewId\n" +
+            "WHERE \n" +
+            "{ \n" +
+            "  ?reviewId rv:reviews <%s> .\n" +
+            "}";
+
+    public List<String> getReviewsOfPaper(String id) {
+        List<String> reviewIds = this.selectSubjects(String.format(SPARQL_GET_REVIEWS_BY_ID, id));
+
+        return reviewIds;
+    }
+
     private List<RdfTriple> extractRdfTriples(String id, String creatorId) {
         final String paperXml = this.findById(id);
         final XmlWrapper paperWrapper = new XmlWrapper(paperXml);

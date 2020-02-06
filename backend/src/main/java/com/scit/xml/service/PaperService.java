@@ -12,17 +12,23 @@ import com.scit.xml.model.paper.PaperStatus;
 import com.scit.xml.model.user.Role;
 import com.scit.xml.rdf.RdfTriple;
 import com.scit.xml.repository.PaperRepository;
+import com.scit.xml.repository.ReviewRepository;
 import com.scit.xml.security.JwtTokenDetailsUtil;
 import com.scit.xml.service.converter.DocumentConverter;
 import com.scit.xml.service.validator.database.PaperDatabaseValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.util.TextUtils;
+import org.exist.xquery.XPathUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.xpath.XPathConstants;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -43,6 +49,7 @@ public class PaperService {
     private final PaperDatabaseValidator paperDatabaseValidator;
     private final DocumentConverter documentConverter;
     private final UserService userService;
+    private final ReviewRepository reviewRepository;
 
     public String createPaper(Paper paper, String creatorId) {
         paper.getPaperInfo().setStatus(PaperStatus.SUBMITTED.getName());
@@ -315,14 +322,40 @@ public class PaperService {
 
     // ======================================= rejectPaper =======================================
 
-    public void rejectPaper(String paperId) {
-        // TODO: Set paper's status to rejected (TEST IF IT WORKS)
+    public XmlWrapper rejectPaper(String paperId) {
         String paperXml = this.paperRepository.findById(paperId);
         XmlWrapper paperWrapper = new XmlWrapper(paperXml);
         paperWrapper.set("/paper/paper_info/status", PaperStatus.REJECTED.getName());
         this.paperRepository.update(paperWrapper.getXml(), paperId);
 
+        List<String> reviews = this.paperRepository.getReviewsOfPaper(paperId).stream()
+                .map(reviewId -> this.reviewRepository.findById(reviewId))
+                .collect(Collectors.toList());
+
+        reviews.stream().map(review -> new XmlWrapper(review))
+                .forEach(review -> {
+                    NodeList reviewContent = XmlExtractorUtil.extractChildrenElementsToList(review.getDocument(), "/review/*");
+                    this.mergeReviews(paperWrapper, reviewContent);
+        });
+        paperWrapper.updateXml();
         this.paperRepository.deleteMetadataByObject(paperId);
+
+        return paperWrapper;
+    }
+
+    private void mergeReviews(XmlWrapper paperWrapper, NodeList reviewContent) {
+        for (int i = 0; i < reviewContent.getLength(); i++) {
+            Element element = (Element) reviewContent.item(i);
+            String text = element.getTextContent();
+            String referenceId = element.getAttribute("reference_id");
+            Node node = XmlExtractorUtil.extractNode(paperWrapper.getDocument(), String.format("//*[@id='%s']", referenceId));
+            if(node != null) {
+                Node comment = paperWrapper.getDocument().createElement("paper:comment");
+                comment.setTextContent(text);
+                node.appendChild(comment);
+            }
+        }
+        paperWrapper.updateXml();
     }
 
 
