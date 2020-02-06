@@ -53,6 +53,10 @@ ng serve
 
 Go to <http://localhost:4200> to use the application.
 
+## Demo
+
+[![Watch the demo](https://i.ibb.co/448mYbF/video.jpg)](https://unsacrs-my.sharepoint.com/:v:/g/personal/fivkovic_uns_ac_rs/ET9HN3v2QodBs9DXOvWvXUYBFH2wSr8Xxr40fcD6riz3Sg?e=Yow3PT)
+
 ## About the Team
 
 | [<img src="https://avatars1.githubusercontent.com/u/17569172?s=88&v=4" width="100px;"/>](https://github.com/fivkovic)<br/> [<sub>Filip Ivković</sub>](https://github.com/fivkovic) |
