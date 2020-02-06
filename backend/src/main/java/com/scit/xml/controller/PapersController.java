@@ -71,14 +71,25 @@ public class PapersController {
     @GetMapping(value = RestApiEndpoints.HTML,
                 produces = MediaType.APPLICATION_XHTML_XML_VALUE)
     public ResponseEntity getPaperById(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) {
-        String userXml = this.userService.findById(JwtTokenDetailsUtil.getCurrentUserId());
-        XmlWrapper userWrapper = new XmlWrapper(userXml);
-        String userId = XmlExtractorUtil.extractString(userWrapper.getDocument(), "/user/@id");
-        String userRole = XmlExtractorUtil.extractString(userWrapper.getDocument(), "/user/role");
+        String userId;
+        try {
+            userId = JwtTokenDetailsUtil.getCurrentUserId();
+        } catch (Exception e) {
+            userId = null;
+        }
 
-        String html = ResourceUtils.convertResourceToString(this.paperService.getPaperById(paperId, userId, userRole));
+        if(userId != null) {
+            String userXml = this.userService.findById(userId);
+            XmlWrapper userWrapper = new XmlWrapper(userXml);
+            userId = XmlExtractorUtil.extractString(userWrapper.getDocument(), "/user/@id");
+            String userRole = XmlExtractorUtil.extractString(userWrapper.getDocument(), "/user/role");
 
-        return ResponseEntity.ok(html);
+            String html = ResourceUtils.convertResourceToString(this.paperService.getPaperById(paperId, userId, userRole));
+            return ResponseEntity.ok(html);
+        } else {
+            String html = ResourceUtils.convertResourceToString(this.paperService.getPaperById(paperId, null, null));
+            return ResponseEntity.ok(html);
+        }
     }
 
     /**
