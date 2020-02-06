@@ -1,0 +1,27 @@
+h1{
+    font-family: 'Indonesia';
+    margin-bottom: 3vh;
+}
+
+.list-group-item {
+    background-color:black;
+}
+
+.wrapper{
+    width: 88vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wrapper h1{
+    text-align: center;
+}
+
+.authors-wrapper{
+    width: 50vw;
+    margin: auto;
+}
+
+.btn {
+    float: right;
+}

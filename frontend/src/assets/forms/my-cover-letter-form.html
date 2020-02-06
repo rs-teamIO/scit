@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Submit paper</title>
+    <script src="../xonomy/jquery-3.3.1.min.js"></script>
+    <script src="../xonomy/xonomy.js"></script>
+    <link rel="stylesheet" type="text/css" href="../xonomy/xonomy.css">
+    <script src="util.js"></script>
+    <script type="text/javascript">
+        function start() {
+            var xml = `<cover_letter:cover_letter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cover_letter="http://www.scit.org/schema/cover_letter">` +
+                        `<cover_letter:text>` +
+                            `Write your cover letter here...` +
+                        `</cover_letter:text>` +
+                    `</cover_letter:cover_letter>`;
+            var editor = document.getElementById("editor");
+            var docSpec = {
+                elements: {
+                    "cover_letter:cover_letter": {
+                        menu: [{
+                            caption: "Add <cover_letter:text>",
+                            action: Xonomy.newElementChild,
+                            actionParameter: "<cover_letter:text/>",
+                            hideIf: function (jsElement) {
+                                return jsElement.hasChildElement("cover_letter:text");
+                            }
+                        }]
+                    },
+                    "text": {
+                        hasText: true
+                    }
+                }
+            };
+            Xonomy.setMode("laic");
+            Xonomy.render(xml, editor, docSpec);
+        }
+    </script>
+</head>
+
+<body onload="start()">
+    <div id="editor"></div>
+</body>
+
+</html>

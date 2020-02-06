@@ -20,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 
@@ -57,7 +59,10 @@ public class EvaluationFormsController {
         String paperTitle = XmlExtractorUtil.extractPaperTitle(this.paperService.findById(paperId));
         this.emailService.sendEvaluationFormSubmissionNotificationEmail(editorEmail, evaluationForm, paperTitle, pdf, html);
 
-        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, id));
-        return ResponseEntity.ok(responseBody);
+        UriComponents urlLocation = UriComponentsBuilder.newInstance()
+        		.path(RestApiEndpoints.EVALUATION_FORMS)
+        		.query(RestApiRequestParameters.ID+"={id}")
+        		.buildAndExpand(id);
+        return ResponseEntity.created(urlLocation.toUri()).build();
     }
 }

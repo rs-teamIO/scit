@@ -1,0 +1,18 @@
+<div class="wrapper">
+    <h1>Review requests</h1>
+    <div class="requests-wrapper">
+        <ul>
+            <li class="list-group-item" *ngFor="let request of requests">
+                <div class="row">
+                    <span class="col-md-5">
+                        {{request.title}}
+                    </span>
+                    <span class="col-md-5">
+                        <button class="btn btn-outline-success btn-sm" (click)='acceptClick(event, request)'>Accept</button>
+                        <button class="btn btn-outline-danger btn-sm" (click)='declineClick(event, request)'>Decline</button>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

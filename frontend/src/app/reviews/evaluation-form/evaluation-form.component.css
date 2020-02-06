@@ -1,0 +1,19 @@
+.wrapper{
+    height:calc(100% - 100px);
+    width: 100%;
+    border: none;
+
+    position: absolute;
+
+    color:black;
+    overflow: auto;
+}
+
+table {
+    width: 400px;
+    margin: auto;
+}
+
+table td {
+    align-items: center;
+}

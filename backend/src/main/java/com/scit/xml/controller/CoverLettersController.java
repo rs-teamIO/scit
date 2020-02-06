@@ -20,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 
@@ -59,7 +61,10 @@ public class CoverLettersController {
 
         // TODO (idea only): Include paper title and author data in the schema for evaluation form (maybe)
 
-        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.ID, id));
-        return ResponseEntity.ok(responseBody);
+        UriComponents urlLocation = UriComponentsBuilder.newInstance()
+        		.path(RestApiEndpoints.COVER_LETTERS)
+        		.query(RestApiRequestParameters.ID+"={id}")
+        		.buildAndExpand(id);
+        return ResponseEntity.created(urlLocation.toUri()).build();
     }
 }
