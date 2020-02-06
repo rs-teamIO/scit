@@ -370,7 +370,12 @@ public class PaperService {
     // ======================================= rejectPaper =======================================
 
     public void rejectPaper(String paperId) {
-        // TODO: Delete paper from database or set it's status to rejected
+        // TODO: Set paper's status to rejected (TEST IF IT WORKS)
+        String paperXml = this.paperRepository.findById(paperId);
+        XmlWrapper paperWrapper = new XmlWrapper(paperXml);
+        paperWrapper.set("/paper/paper_info/status", PaperStatus.REJECTED.getName());
+        this.paperRepository.update(paperWrapper.getXml(), paperId);
+
         this.paperRepository.deleteMetadataByObject(paperId);
     }
 
