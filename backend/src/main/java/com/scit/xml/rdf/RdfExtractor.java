@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class RdfExtractor {
 
-    private static final String IS_A = "isa";
+    private static final String TYPE_OF = "type_of";
 
     private final String documentId;
     private final String documentType;
@@ -64,7 +64,7 @@ public class RdfExtractor {
      * @param predicatePrefix predicate prefix
      */
     private void addDocumentTypeRdfTriple(String documentId, String documentType, String predicatePrefix) {
-        this.createAndAddRdfTriple(documentId, String.format("%s:%s", predicatePrefix, IS_A), documentType);
+        this.createAndAddRdfTriple(documentId, String.format("%s:%s", predicatePrefix, TYPE_OF), documentType);
     }
 
     /**
@@ -76,7 +76,7 @@ public class RdfExtractor {
      */
     private void createAndAddRdfTriple(String subject, String predicate, String object) {
         boolean objectIsOfSameType = object.equals(this.documentType);
-        boolean predicateIsInvalid = !predicate.equals(String.format("%s:%s", this.predicatePrefix, IS_A));
+        boolean predicateIsInvalid = !predicate.equals(String.format("%s:%s", this.predicatePrefix, TYPE_OF));
         boolean objectIsEmpty = object.trim().isEmpty();
         if((objectIsOfSameType && predicateIsInvalid) || objectIsEmpty)
             return;

@@ -53,7 +53,7 @@ public class UserRepository extends BaseRepository {
         final String query = this.xQueryBuilder.buildQuery(this.appendTemplate, USER_NAMESPACE_ALIAS, USER_NAMESPACE, USERS_COLLECTION, xml, USERS_NAMESPACE);
         this.xQueryExecutor.updateResource(this.documentId, query);
 
-        RdfTriple isAuthorTriple = new RdfTriple(id, Predicate.IS_A, USER_NAMESPACE);
+        RdfTriple isAuthorTriple = new RdfTriple(id, Predicate.TYPE_OF, USER_NAMESPACE);
         this.insertTriples(Lists.newArrayList(isAuthorTriple));
 
         return id;

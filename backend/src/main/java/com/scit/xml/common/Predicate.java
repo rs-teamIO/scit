@@ -21,6 +21,6 @@ public final class Predicate {
     public static final String REVIEWED = PREFIX + ":reviewed";
     public static final String PUBLISHED = PREFIX + ":published";
     public static final String WAS_PUBLISHED_BY = PREFIX + ":was_published_by";
-    public static final String IS_A = PREFIX + ":is_a";
+    public static final String TYPE_OF = PREFIX + ":type_of";
 
 }
