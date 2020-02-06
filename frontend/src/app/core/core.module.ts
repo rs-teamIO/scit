@@ -15,12 +15,12 @@ import { HttpService } from './services/http/http.service';
 @NgModule({
   declarations: [
     NavBarComponent,
-    NotFoundComponent
+    NotFoundComponent,
   ],
   exports: [
     AppRoutingModule,
     NavBarComponent,
-    NotFoundComponent
+    NotFoundComponent,
   ],
   imports: [
     AppRoutingModule,

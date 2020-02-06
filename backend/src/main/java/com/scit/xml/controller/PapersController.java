@@ -337,7 +337,7 @@ public class PapersController {
     public ResponseEntity searchUsersPapersByMetadata(@RequestParam(value = RestApiRequestParameters.DOI, required = false) String doi,
                                                       @RequestParam(value = RestApiRequestParameters.JOURNAL_ID, required = false) String journalId,
                                                       @RequestParam(value = RestApiRequestParameters.CATEGORY, required = false) String category,
-                                                      @RequestParam(value = RestApiRequestParameters.YEAR, required = false) int year,
+                                                      @RequestParam(value = RestApiRequestParameters.YEAR, required = false) Integer year,
                                                       @RequestParam(value = RestApiRequestParameters.AUTHOR_NAME, required = false) String authorName) {
         List<String> paperIds = this.paperService.getUsersPapersByMetadata(JwtTokenDetailsUtil.getCurrentUserId(), doi, journalId, category, year, authorName);
         StringBuilder sb = new StringBuilder();

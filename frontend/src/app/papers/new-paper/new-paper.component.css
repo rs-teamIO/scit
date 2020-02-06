@@ -44,3 +44,17 @@
 *:focus {
     outline: none;
 }
+
+
+.html-preview{
+    color: black;
+    background-color: white;
+
+    overflow: auto;
+    margin-top: 50px;
+    height:calc(100% - 150px);
+    width: 100%;
+    border: none;
+
+    position: absolute;
+}

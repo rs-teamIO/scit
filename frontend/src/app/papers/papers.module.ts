@@ -9,6 +9,7 @@ import { FileSaverModule } from 'ngx-filesaver';
 import { HomeComponent } from './home/home.component';
 import { SearchComponent } from './search/search.component';
 import { MetaSearchComponent } from './meta-search/meta-search.component';
+import { CoreModule } from '../core/core.module';
 
 
 
@@ -29,7 +30,8 @@ import { MetaSearchComponent } from './meta-search/meta-search.component';
   imports: [
     FileSaverModule,
     CommonModule,
-    SharedModule
+    SharedModule,
+    CoreModule
   ]
 })
 export class PapersModule { }

@@ -1,6 +1,6 @@
     
 <div class="wrapper"> 
-    <div class="border" [innerHtml]="paperOverview"></div>
+    <div class="border html-preview" [innerHtml]="paperOverview | safeHtml"></div>
 </div>
 <div class="button-wrapper">
     <input type="button" class="btn btn-outline-success" value="DOWNLOAD PDF" (click) = 'downloadPDF()'> 

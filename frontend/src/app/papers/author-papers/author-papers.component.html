@@ -1,11 +1,14 @@
 <div class="wrapper">
     <h1>{{title}}</h1>
-    <app-meta-search *ngIf = '!author'></app-meta-search>
     <app-search *ngIf = 'author' [type] = "'author'"></app-search>
-    <!-- <shared-papers-list *ngIf ='!author' [papers]="papers"></shared-papers-list> -->
+    <shared-papers-list *ngIf ='!author' [papers]="papers"></shared-papers-list>
+
     <div class="author-wrapper" *ngIf = 'author'><p class="author-sign">Written by: {{username}} </p></div>
     <div *ngIf = "author" class ="review-wrapper">
         <h1>Papers to review</h1>
         <shared-papers-list [papers]="reviews" [type] = "'review'"></shared-papers-list>
+        <hr>
+        <h1>Metadata search papers</h1>
+        <app-meta-search></app-meta-search>
     </div>
 </div>

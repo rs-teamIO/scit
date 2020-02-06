@@ -1,10 +1,12 @@
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, PipeTransform, Pipe  } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { DocumentResponse } from '../../shared/model/document-response';
 import { NgxXml2jsonService } from 'ngx-xml2json';
 import { saveAs as importedSaveAs } from 'file-saver';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
 
 
 import Swal from 'sweetalert2';
@@ -46,6 +48,7 @@ const metadataSearchUrl = 'api/v1/papers/search-by-metadata/private?'; // TODO: 
 })
 export class PaperService {
 
+
     private searchPapersOb = new BehaviorSubject<any[]>([]);
     private searchPapersHolder: any[] = [];
     searchPapers = this.searchPapersOb.asObservable();
@@ -65,14 +68,15 @@ export class PaperService {
   constructor(
     protected http: HttpClient,
     private router: Router,
-    private parser: NgxXml2jsonService
+    private parser: NgxXml2jsonService,
+    private domSanitizer: DomSanitizer
   ) { }
 
 
   metadataSearch(doi: string, journalId: string, category: string, yearOfPublishing: number, authorName: string) {
 
-    let query = `doi=${doi}&journal_id=${journalId}&category=${category}` +
-                  `&year=${yearOfPublishing}&author_name=${authorName}`;
+    let query = `doi=${doi ? doi : ''}&journal_id=${journalId ? journalId : '' }&category=${category ? category : '' }` +
+                  `&year=${yearOfPublishing ? yearOfPublishing : ''}&author_name=${authorName ? authorName : ''}`;
     query = query.split(' ').join('_');
     query = query.split('/').join('_');
 
@@ -84,7 +88,8 @@ export class PaperService {
       responseType: 'text'
     }).toPromise()
     .then(response => {
-      this.extractPapersFromResponse(response);
+      console.log(response, query);
+      this.extractSearchPapersFromResponse(response);
       this.spinnerHolder = false;
       this.spinnerOb.next(this.spinnerHolder);
     })
@@ -172,12 +177,12 @@ export class PaperService {
         Accept: '*/*, application/xml, application/json'
       }),
       responseType: 'text'
-    }).toPromise()
-    .then(data => {
-      this.pdfPreHolder = data;
-      this.pdfPreOb.next(this.pdfPreHolder);
-    })
-    .catch(
+    }).pipe().subscribe(
+      data => {
+        this.pdfPreHolder = data;
+        this.pdfPreOb.next(this.pdfPreHolder);
+        console.log(data);
+      },
       response => this.handleError(response)
     );
   }
@@ -251,9 +256,9 @@ export class PaperService {
 
     const toCountLett = `<paper:paper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:paper="http://www.scit.org/schema/paper">`;
     const toInsert = `<paper:paper_info>` +
-                    `<paper:doi></paper:doi>` +
+                    `<paper:doi>DOI_1</paper:doi>` +
                     `<paper:journal_id></paper:journal_id>` +
-                    `<paper:category></paper:category>` +
+                    `<paper:category>original_research</paper:category>` +
                     `<paper:status>submitted</paper:status>` +
                     `<paper:submission_dates>${yyyy + '-' + mm + '-' + dd }</paper:submission_dates>` +
                     `<paper:revision_dates></paper:revision_dates>` +

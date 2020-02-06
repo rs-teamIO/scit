@@ -34,16 +34,22 @@ export class UserService {
     }).toPromise()
     .then(
       response => {
+        console.log(response);
         const xml = new DOMParser().parseFromString(response, `text/xml`);
         const responseInJson: any = this.parser.xmlToJson(xml);
         delete responseInJson.response.users[`#text`];
-        if (!responseInJson.response.users.user.length) {
-          const holder = [];
-          holder.push(responseInJson.response.users.user);
-          this.authorsHolder = holder;
-          this.authorsOb.next(this.authorsHolder);
+        if (responseInJson.response.users.user) {
+          if (!responseInJson.response.users.user.length) {
+            const holder = [];
+            holder.push(responseInJson.response.users.user);
+            this.authorsHolder = holder;
+            this.authorsOb.next(this.authorsHolder);
+          } else {
+            this.authorsHolder = responseInJson.response.users.user;
+            this.authorsOb.next(this.authorsHolder);
+          }
         } else {
-          this.authorsHolder = responseInJson.response.users.user;
+          this.authorsHolder = [];
           this.authorsOb.next(this.authorsHolder);
         }
 

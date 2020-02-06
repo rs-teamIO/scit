@@ -12,7 +12,7 @@
                 <button class="refresh">
                     <img src=" assets/icons/refresh.svg"  alt="refresh" (click)="getPreview()">
                 </button>
-                <div class="jumbotron" [innerHtml]="paperPreview"></div>
+                <div class="html-preview" [innerHtml]="paperPreview | safeHtml"></div>
             </tab>
         </tabset>
     </div>
