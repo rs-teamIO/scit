@@ -52,7 +52,17 @@ public class EmailService {
         this.sendEmailWithAttachments(recipient, subject, text, paper.getTitle(), pdf, html);
     }
 
-    // TODO: Doc
+    /**
+     * Sends a paper reviewed notiication e-mail to the recipient.
+     * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
+     *
+     * @param recipient e-mail address of the recipient
+     * @param paper {@link Paper} instance to be attached in PDF and HTML format in the e-mail
+     * @param reviewerUsername username of the {@link User} who submitted the review
+     * @param html HTML representation of the {@link Paper} instance
+     * @param pdf PDF representation of the {@link Paper} instance
+     * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
+     */
     @Async
     public void sendPaperReviewedNotificationEmail(String recipient, Paper paper, String reviewerUsername, byte[] pdf, String html) throws MessagingException {
         final String subject = String.format("The user %s has submitted a review", reviewerUsername);
@@ -61,7 +71,16 @@ public class EmailService {
         this.sendEmailWithAttachments(recipient, subject, text, paper.getTitle(), pdf, html);
     }
 
-    // TODO: Doc
+    /**
+     * Sends a paper revision notiication e-mail to the recipient.
+     * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
+     *
+     * @param editorEmail e-mail address of the recipient
+     * @param paper {@link Paper} instance to be attached in PDF and HTML format in the e-mail
+     * @param pdf PDF representation of the {@link Paper} instance
+     * @param html HTML representation of the {@link Paper} instance
+     * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
+     */
     public void sendPaperRevisionNotificationEmail(String editorEmail, Paper paper, byte[] pdf, String html) throws MessagingException {
         final String subject = String.format("The paper \"%s\" has been edited", paper.getTitle());
         final String text = String.format("The paper titled \"<b>%s</b>\" has been edited based on the given reviews.<br><br>The revision can be found in the attachment.", paper.getTitle());
@@ -69,7 +88,14 @@ public class EmailService {
         this.sendEmailWithAttachments(editorEmail, subject, text, paper.getTitle(), pdf, html);
     }
 
-    // TODO: Doc
+    /**
+     * Sends a paper rejected notiication e-mail to the recipient.
+     * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
+     *
+     * @param recipient e-mail address of the recipient
+     * @param paperTitle title of the paper mentioned
+     * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
+     */
     @Async
     public void sendPaperRejectedNotificationEmail(String recipient, String paperTitle) throws MessagingException {
         final String subject = "Paper rejected";
@@ -78,7 +104,14 @@ public class EmailService {
         this.sendEmail(recipient, subject, text);
     }
 
-    // TODO: Doc
+    /**
+     * Sends a paper published notiication e-mail to the recipient.
+     * In case a messaging error on the SMTP server occurs, a {@link MessagingException} is thrown.
+     *
+     * @param recipient e-mail address of the recipient
+     * @param paperTitle title of the paper mentioned
+     * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
+     */
     @Async
     public void sendPaperPublishedNotificationEmail(String recipient, String paperTitle) throws MessagingException {
         final String subject = "Paper published";

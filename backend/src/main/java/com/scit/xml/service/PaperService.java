@@ -1,6 +1,7 @@
 package com.scit.xml.service;
 
 import com.google.common.collect.Lists;
+import com.scit.xml.common.Constants;
 import com.scit.xml.common.Predicate;
 import com.scit.xml.common.api.RestApiConstants;
 import com.scit.xml.common.api.RestApiErrors;
@@ -16,7 +17,6 @@ import com.scit.xml.service.converter.DocumentConverter;
 import com.scit.xml.service.validator.database.PaperDatabaseValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jena.sparql.function.library.date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -26,7 +26,10 @@ import org.w3c.dom.Element;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,16 +90,10 @@ public class PaperService {
 
     // ======================================= getPaperById =======================================
 
-    private final String SPARQL_ASK_IS_PAPER_PUBLISHED_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "ASK\n" + "WHERE {\n" + "\t?s rv:published <%s>.\n" + "}";
-
-    private final String SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "ASK\n" + "WHERE {\n" + "\t<%s> rv:submitted <%s>.\n" + "}";
-
     public Resource getPaperById(String paperId, String userId, String userRole) {
-        boolean paperPublished = this.paperRepository.ask(String.format(SPARQL_ASK_IS_PAPER_PUBLISHED_QUERY, paperId));
+        boolean paperPublished = this.paperRepository.ask(String.format(Constants.SPARQLQueries.ASK_IS_PAPER_PUBLISHED_QUERY, paperId));
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(userId == null && !paperPublished);
-        boolean userIsAuthor = this.paperRepository.ask(String.format(SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
+        boolean userIsAuthor = this.paperRepository.ask(String.format(Constants.SPARQLQueries.ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
         boolean userIsEditor = Role.EDITOR.getName().equals(userRole);
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!userIsAuthor && !userIsEditor && !paperPublished);
 
@@ -106,11 +103,8 @@ public class PaperService {
 
     // ======================================= getSubmittedPapers =======================================
 
-    private final String SPARQL_GET_SUBMITTED_PAPERS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t?s rv:submitted ?o.\n" + "}";
-
     public List<String> getSubmittedPapers() {
-        List<String> paperIds = this.paperRepository.selectSubjects(SPARQL_GET_SUBMITTED_PAPERS_QUERY);
+        List<String> paperIds = this.paperRepository.selectSubjects(Constants.SPARQLQueries.GET_SUBMITTED_PAPERS_QUERY);
         return paperIds.stream()
                 .map(id -> this.findById(id))
                 .collect(Collectors.toList());
@@ -119,11 +113,8 @@ public class PaperService {
 
     // ======================================= getAssignedPapers =======================================
 
-    private final String SPARQL_GET_ASSIGNED_PAPERS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:assigned_to ?o.\n" + "}";
-
     public List<String> getAssignedPapers(String currentUserId) {
-        List<String> paperIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_ASSIGNED_PAPERS_QUERY, currentUserId));
+        List<String> paperIds = this.paperRepository.selectSubjects(String.format(Constants.SPARQLQueries.GET_ASSIGNED_PAPERS_QUERY, currentUserId));
         return paperIds.stream()
                 .map(id -> this.findById(id))
                 .collect(Collectors.toList());
@@ -132,11 +123,8 @@ public class PaperService {
 
     // ======================================= getPapersInReview =======================================
 
-    private final String SPARQL_GET_PAPERS_IN_REVIEW_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:currently_reviewing ?o.\n" + "}";
-
     public List<String> getPapersInReview(String currentUserId) {
-        List<String> paperIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_IN_REVIEW_QUERY, currentUserId));
+        List<String> paperIds = this.paperRepository.selectSubjects(String.format(Constants.SPARQLQueries.GET_PAPERS_IN_REVIEW_QUERY, currentUserId));
         return paperIds.stream()
                 .map(id -> this.findById(id))
                 .collect(Collectors.toList());
@@ -159,11 +147,8 @@ public class PaperService {
 
     // ======================================= getCurrentUserPapers =======================================
 
-    private final String SPARQL_GET_PAPERS_OF_USER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t<%s> rv:created ?o.\n" + "}";
-
     public List<String> getPapersByUserId(String currentUserId) {
-        List<String> paperIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_PAPERS_OF_USER_QUERY, currentUserId));
+        List<String> paperIds = this.paperRepository.selectSubjects(String.format(Constants.SPARQLQueries.GET_PAPERS_OF_USER_QUERY, currentUserId));
         return paperIds.stream()
                 .map(id -> this.findById(id))
                 .collect(Collectors.toList());
@@ -172,11 +157,8 @@ public class PaperService {
 
     // ======================================= getReviewedPapers =======================================
 
-    private final String SPARQL_GET_REVIEWED_PAPERS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "SELECT DISTINCT ?o\n" + "WHERE {\n" + "\t?s rv:reviewed ?o.\n" + "}";
-
     public List<String> getReviewedPapers() {
-        List<String> paperIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_REVIEWED_PAPERS_QUERY));
+        List<String> paperIds = this.paperRepository.selectSubjects(String.format(Constants.SPARQLQueries.GET_REVIEWED_PAPERS_QUERY));
         return paperIds.stream()
                 .map(id -> this.findById(id))
                 .collect(Collectors.toList());
@@ -185,11 +167,8 @@ public class PaperService {
 
     // ======================================= getPublishedPapers =======================================
 
-    private final String SPARQL_GET_PUBLISHED_PAPERS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "SELECT ?o\n" + "WHERE {\n" + "\t?s rv:published ?o.\n" + "}";
-
     public List<String> getPublishedPapers() {
-        List<String> paperIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_PUBLISHED_PAPERS_QUERY));
+        List<String> paperIds = this.paperRepository.selectSubjects(String.format(Constants.SPARQLQueries.GET_PUBLISHED_PAPERS_QUERY));
         return paperIds.stream()
                 .map(id -> this.findById(id))
                 .collect(Collectors.toList());
@@ -222,19 +201,6 @@ public class PaperService {
 
     // ======================================= getPublishedPapersByMetadata =======================================
 
-    private final String SPARQL_GET_PUBLISHED_PAPERS_BY_METADATA_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" +
-            "SELECT DISTINCT ?paperID\n" +
-            "WHERE \n" +
-            "{ ?paperID rv:was_published_by ?o ; rv:authors:author:name ?authorName .\n" +
-            "  ?paperID rv:paper_info:doi %s .\n" +
-            "  ?paperID rv:paper_info:journal_id %s .\n" +
-            "  ?paperID rv:paper_info:category %s;\n" +
-            "  rv:paper_info:submission_dates ?date .\n" +
-            "  FILTER contains(?date, \"%s\")\n" +
-            "  FILTER contains(?authorName, \"%s\")\n" +
-            "}";
-
     public List<String> getPublishedPapersByMetadata(String doi, String journalId, String category, Integer year, String authorName) {
 
         doi = doi == null || doi.isEmpty() ? "?doi" : "\"" + doi + "\"";
@@ -243,7 +209,7 @@ public class PaperService {
         String yearStr = year == null ? "" : year.toString();
         authorName = authorName == null ? "" : authorName;
 
-        String query = String.format(SPARQL_GET_PUBLISHED_PAPERS_BY_METADATA_QUERY,
+        String query = String.format(Constants.SPARQLQueries.GET_PUBLISHED_PAPERS_BY_METADATA_QUERY,
                 doi, journalId, category, yearStr, authorName);
 
         List<String> paperIds = this.paperRepository.selectSubjects(query);
@@ -255,21 +221,6 @@ public class PaperService {
 
     // ======================================= getPublishedPapersByMetadata =======================================
 
-    private final String SPARQL_GET_USERS_PAPERS_BY_METADATA_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" +
-            "SELECT DISTINCT ?paperID\n" +
-            "WHERE \n" +
-            "{ \n" +
-            "  <%s> rv:created ?paperID .\n" +
-            "  ?paperID rv:type_of <http://www.scit.org/schema/paper> ; rv:authors:author:name ?authorName .\n" +
-            "  ?paperID rv:paper_info:doi ?doi .\n" +
-            "  ?paperID rv:paper_info:journal_id ?journalId .\n" +
-            "  ?paperID rv:paper_info:category ?category;\n" +
-            "  rv:paper_info:submission_dates ?date .\n" +
-            "  FILTER contains(?date, \"\")\n" +
-            "  FILTER contains(?authorName, \"\")\n" +
-            "}";
-
     public List<String> getUsersPapersByMetadata(String userId, String doi, String journalId, String category, Integer year, String authorName) {
 
         doi = doi == null || doi.isEmpty() ? "?doi" : "\"" + doi + "\"";
@@ -278,7 +229,7 @@ public class PaperService {
         String yearStr = year == null ? "" : year.toString();
         authorName = authorName == null ? "" : authorName;
 
-        String query = String.format(SPARQL_GET_USERS_PAPERS_BY_METADATA_QUERY,
+        String query = String.format(Constants.SPARQLQueries.GET_USERS_PAPERS_BY_METADATA_QUERY,
                 userId, doi, journalId, category, yearStr, authorName);
 
         List<String> paperIds = this.paperRepository.selectSubjects(query);
@@ -288,10 +239,11 @@ public class PaperService {
                 .collect(Collectors.toList());
     }
 
+
     // ======================================= getRaw and getPdf =======================================
 
     public String getRawPaperForDownload(String paperId) {
-        boolean isPublished = this.paperRepository.ask(String.format(SPARQL_ASK_IS_PAPER_PUBLISHED_QUERY, paperId));
+        boolean isPublished = this.paperRepository.ask(String.format(Constants.SPARQLQueries.ASK_IS_PAPER_PUBLISHED_QUERY, paperId));
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!isPublished);
 
         return this.findById(paperId);
@@ -304,7 +256,7 @@ public class PaperService {
         String paperXml = this.findById(paperId);
         XmlWrapper paperWrapper = new XmlWrapper(paperXml);
 
-        boolean userIsAuthor = this.paperRepository.ask(String.format(SPARQL_ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
+        boolean userIsAuthor = this.paperRepository.ask(String.format(Constants.SPARQLQueries.ASK_IS_USER_AUTHOR_OF_PAPER_QUERY, userId, paperId));
         if(!userIsAuthor) {
             final Element element = paperWrapper.getDocument().getDocumentElement();
             // TODO: Remove string value, use constant instead
@@ -318,11 +270,8 @@ public class PaperService {
 
     // ======================================= getAuthorsOfPaper =======================================
 
-    private final String SPARQL_GET_AUTHORS_OF_PAPER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "SELECT ?s\n" + "WHERE {\n" + "\t?s rv:created <%s>.\n" + "}";
-
     public List<String> getIdentifiersOfPaperAuthors(String paperId) {
-        List<String> userIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_AUTHORS_OF_PAPER_QUERY, paperId));
+        List<String> userIds = this.paperRepository.selectSubjects(String.format(Constants.SPARQLQueries.GET_AUTHORS_OF_PAPER_QUERY, paperId));
         NotFoundUtils.throwNotFoundExceptionIf(userIds.isEmpty(),
                 RestApiErrors.entityWithGivenFieldNotFound(RestApiConstants.PAPER, RestApiConstants.ID));
         return userIds;
@@ -331,12 +280,9 @@ public class PaperService {
 
     // ======================================= getAuthorsOfPaper =======================================
 
-    private final String SPARQL_GET_REVIEWERS_OF_PAPER_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\n" + "SELECT DISTINCT ?s\n" + "WHERE {\n" + "\t?s rv:assigned_to|rv:currently_reviewing|rv:reviewed <%s>.\n" + "}";
-
     public List<String> getReviewersOfPaper(String paperId) {
         this.findById(paperId);
-        List<String> userIds = this.paperRepository.selectSubjects(String.format(SPARQL_GET_REVIEWERS_OF_PAPER_QUERY, paperId));
+        List<String> userIds = this.paperRepository.selectSubjects(String.format(Constants.SPARQLQueries.GET_REVIEWERS_OF_PAPER_QUERY, paperId));
         return userIds.stream()
                 .map(id -> this.userService.findById(id))
                 .collect(Collectors.toList());
@@ -348,7 +294,7 @@ public class PaperService {
     public void editPaper(String xml, String paperId) {
         String currentUserId = JwtTokenDetailsUtil.getCurrentUserId();
         boolean currentUserAllowedToEdit = this.getIdentifiersOfPaperAuthors(paperId).contains(currentUserId);
-        boolean paperIsPublished = this.paperRepository.ask(String.format(SPARQL_ASK_IS_PAPER_PUBLISHED_QUERY, paperId));
+        boolean paperIsPublished = this.paperRepository.ask(String.format(Constants.SPARQLQueries.ASK_IS_PAPER_PUBLISHED_QUERY, paperId));
         ForbiddenUtils.throwInsufficientPrivilegesExceptionIf(!currentUserAllowedToEdit || paperIsPublished);
 
         // TODO: Change status of paper to SUBMITTED (or maybe to something else?)
@@ -413,23 +359,15 @@ public class PaperService {
 
     // ======================================= recommendAuthors =======================================
 
-    private final String SPARQL_GET_SUGGESTED_AUTHORS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\nSELECT DISTINCT ?s WHERE { ?s rv:type_of <http://www.scit.org/schema/user>\n" +
-            "  MINUS { ?s rv:created|rv:assigned_to|rv:currently_reviewing|rv:reviewed <%s> } }" +
-            "LIMIT 10";
-
-    private final String SPARQL_COUNT_PAPERS_OF_AUTHOR_CONTAINING_KEYWORD_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\nSELECT (COUNT(distinct ?paper) as ?count) WHERE { ?paper rv:abstract:keywords \"%s\" . <%s> rv:created ?paper }\n";
-
     public List<String> recommendAuthors(String paperId) {
         String paperXml = this.findById(paperId);
-        Map<String, Integer> authorHeatMap = this.paperRepository.selectSubjects(String.format(SPARQL_GET_SUGGESTED_AUTHORS_QUERY, paperId))
+        Map<String, Integer> authorHeatMap = this.paperRepository.selectSubjects(String.format(Constants.SPARQLQueries.GET_SUGGESTED_AUTHORS_QUERY, paperId))
                 .stream().collect(Collectors.toMap(x -> x, x -> 0));
         List<String> keywords = XmlExtractorUtil.extractChildrenContentToList(new XmlWrapper(paperXml).getDocument(), "//paper/abstract/keywords");
         authorHeatMap.keySet().stream().forEach(authorId -> {
             keywords.stream().forEach(keyword -> {
-                Integer papersCount = this.paperRepository.count(String.format(SPARQL_COUNT_PAPERS_OF_AUTHOR_CONTAINING_KEYWORD_QUERY, keyword, authorId));
-                authorHeatMap.computeIfPresent(authorId, (k, v) -> v + papersCount);
+                Integer papersCount = this.paperRepository.count(String.format(Constants.SPARQLQueries.COUNT_PAPERS_OF_AUTHOR_CONTAINING_KEYWORD_QUERY, keyword, authorId));
+                authorHeatMap.computeIfPresent(authorId, (k, v) -> v * papersCount);
             });
         });
         List<String> authorIds = authorHeatMap.entrySet().stream()
