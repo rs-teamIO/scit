@@ -68,9 +68,8 @@ export class PaperService {
   constructor(
     protected http: HttpClient,
     private router: Router,
-    private parser: NgxXml2jsonService,
-    private domSanitizer: DomSanitizer
-  ) { }
+    private parser: NgxXml2jsonService
+   ) { }
 
 
   metadataSearch(doi: string, journalId: string, category: string, yearOfPublishing: number, authorName: string) {

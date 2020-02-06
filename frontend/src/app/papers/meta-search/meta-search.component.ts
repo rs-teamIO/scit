@@ -26,7 +26,7 @@ export class MetaSearchComponent implements OnInit {
 
   ngOnInit() {
     this.paperService.spinner.subscribe( data => this.showSpinner = data);
-    this.paperService.papers.subscribe( data => this.papers = data);
+    this.paperService.searchPapers.subscribe( data => this.papers = data);
   }
 
   searchClick() {
