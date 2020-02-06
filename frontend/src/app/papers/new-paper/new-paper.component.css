@@ -1,0 +1,60 @@
+.elements-wrapper{
+    height: 100%;
+    width:100%;
+    background:white;
+    overflow: hidden;
+}
+
+.tab-wrapper{
+    height: calc(100% - 60px);
+}
+
+.button-wrapper{
+    width: 100%;
+    height: 60px;
+    background:white;
+    
+    position: absolute;
+}
+
+.xonomy-form {
+    height:calc(100% - 100px);
+    width: 100%;
+    border: none;
+
+    position: absolute;
+}
+
+.conf{
+    float:right;
+    margin: 10px;
+}
+
+.refresh{
+    float:right;
+    padding: 2px;
+    border-radius: 25px;
+    margin: 7px;
+}
+
+.refresh:hover{
+    background-color: white;
+}
+
+*:focus {
+    outline: none;
+}
+
+
+.html-preview{
+    color: black;
+    background-color: white;
+
+    overflow: auto;
+    margin-top: 50px;
+    height:calc(100% - 150px);
+    width: 100%;
+    border: none;
+
+    position: absolute;
+}

@@ -1,0 +1,23 @@
+<div class = "elements-wrapper">
+
+    <div class="tab-wrapper">
+        <tabset>
+            <tab heading="Paper">
+                <iframe src=" assets/forms/my-paper-form.html " class="xonomy-form" #paperFrame (load)="loadPaper()"></iframe>
+            </tab>
+            <tab heading="Cover Letter">
+                <iframe src=" assets/forms/my-cover-letter-form.html " class="xonomy-form" #coverLetterFrame></iframe>
+            </tab>
+            <tab heading="Preview">
+                <button class="refresh">
+                    <img src=" assets/icons/refresh.svg"  alt="refresh" (click)="getPreview()">
+                </button>
+                <div class="html-preview" [innerHtml]="paperPreview | safeHtml"></div>
+            </tab>
+        </tabset>
+    </div>
+
+    <div class="button-wrapper" >
+        <input type="button" class="conf btn btn-outline-dark" (click) = "save()" value="Confirm"> 
+     </div>
+</div>

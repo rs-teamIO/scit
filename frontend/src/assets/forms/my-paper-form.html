@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Submit paper</title>
+        <script src="../xonomy/jquery-3.3.1.min.js"></script>
+        <script src="../xonomy/xonomy.js"></script>
+        <link rel="stylesheet" type="text/css" href="../xonomy/xonomy.css">
+        <script src="util.js"></script>
+        <script type="text/javascript"> 
+            function start(author, filledXml) {
+                var xml;
+                if (arguments.length > 1) {
+                    xml = filledXml;
+                } else {
+                    xml = ``+
+                    `<paper:paper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:paper="http://www.scit.org/schema/paper">`+
+
+                        `<paper:title>Your Paper Title</paper:title>` +
+
+                        `<paper:authors>` + //<!--0 or more repetitions:-->
+                            `<paper:author username='${author}'>` +
+                                `<paper:name>Author&apos;s name...</paper:name>` +
+                                `<paper:email>email@patern.com</paper:email>` +
+                                `<paper:affilliation>Author&apos;s affiliation...</paper:affilliation>` +
+                            `</paper:author>` +
+                        `</paper:authors>` +
+
+                        `<paper:abstract>`+
+                            `<paper:content>` +
+                                `Your abstract content...` +
+                            `</paper:content>` +
+                            `<paper:keywords>Add your key words...</paper:keywords>` +  // 1 or more repetitions
+                        `</paper:abstract>` +
+
+                        `<paper:section paper:id='First section ID... (required, must be unique)'>` + // <!--1 or more repetitions:--> vidi sta je sa referencama i sa slikama xD
+                            `<paper:heading> Section Heading...</paper:heading>` +
+                            `<paper:content>   Section content...</paper:content>` +
+                            `<paper:section paper:id='Second section ID... (required, must be unique)'>` +
+                                `<paper:heading>Subsection Heading...</paper:heading>` +
+                                `<paper:content>Subsection content...</paper:content>` +
+                            `</paper:section>` +
+                        `</paper:section>` +
+
+                        `<paper:references>` + // <!--Zero or more repetitions:-->
+                            `<paper:reference paper:reference_id='ID of referenced paper...'>` +
+                                `Citation...` +
+                            `</paper:reference>` +
+                            `<paper:reference paper:reference_id='ID of referenced paper...'>` +
+                                `Citation...` +
+                            `</paper:reference>` +
+
+                        `</paper:references>` +
+                        /*
+                        <!--<paper:reference paper:reference_id='ID for referencing in text...'>-->
+                        <!--Before cross reference -->
+                        <!--Zero or more repetitions:-->
+                        <!--<paper:cross_reference paper:cross_reference_id="cross_reference_1">Cross reference 1</paper:cross_reference>-->
+                        <!--After cross reference -->
+                        <!--</paper:reference>-->
+
+                        <!--Zero or more repetitions:-->
+                        <!-- <paper:comment>First paper comment</paper:comment> -->
+                            */
+                    `</paper:paper>`;
+                }
+                var editor = document.getElementById("editor");
+                var docSpec = {
+                    elements: {
+                        "paper:paper": {
+                            menu: [{
+                                caption: "Add <paper:paper_info>",
+                                action: Xonomy.newElementChild,
+                                actionParameter: "</paper:paper_info>",
+                                hideIf: function (jsElement) {
+                                    return jsElement.hasChildElement("paper:paper_info");
+                                }
+                            }, {
+                                caption: "Add <paper:title>",
+                                action: Xonomy.newElementChild,
+                                actionParameter: "</paper:title>",
+                                hideIf: function (jsElement) {
+                                    return jsElement.hasChildElement("paper:title");
+                                }
+                            }, {
+                                caption: "Add <paper:authors>",
+                                action: Xonomy.newElementChild,
+                                actionParameter: "</paper:authors>",
+                                hideIf: function (jsElement) {
+                                    return jsElement.hasChildElement("paper:authors");
+                                }
+                            }, {
+                                caption: "Add <paper:abstract>",
+                                action: Xonomy.newElementChild,
+                                actionParameter: "</paper:abstract>",
+                                hideIf: function (jsElement) {
+                                    return jsElement.hasChildElement("paper:abstract");
+                                }
+                            }, {
+                                caption: "Add <paper:section>",
+                                action: Xonomy.newElementChild,
+                                actionParameter: "</paper:section>"
+                            }, {
+                                caption: "Add <paper:references>",
+                                action: Xonomy.newElementChild,
+                                actionParameter: "</paper:references>",
+                                hideIf: function (jsElement) {
+                                    return jsElement.hasChildElement("paper:references");
+                                }
+                            }]
+                        }
+                    }
+                };
+                Xonomy.setMode("laic");
+                Xonomy.render(xml, editor, docSpec);
+            }  
+
+            // TODO: USE XONOMY ELEMENTS TO MAKE MORE ELEMENTS!
+        
+        </script>
+    </head>
+
+    <body>
+        <div id="editor"></div>
+    </body>
+</html>

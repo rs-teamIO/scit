@@ -1,0 +1,29 @@
+.list-group-item {
+    background-color:black;
+}
+
+.clickable-title {
+    cursor: pointer;
+}
+
+.bord {
+    border: solid;
+    border-width: thin;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: medium;
+    float: right;
+}
+
+.yellow {
+    color: #ffff00;
+}
+.white {
+    color: white;
+}
+
+.btn {
+    margin-left: 5px;
+    margin-bottom: 4px;
+    float: right;
+}
