@@ -219,12 +219,14 @@ public class PaperController {
     public ResponseEntity rejectPaper(@RequestParam(RestApiRequestParameters.PAPER_ID) String paperId) throws MessagingException {
         String paperTitle =  XmlExtractorUtil.extractPaperTitle(this.paperService.findById(paperId));
         List<String> authorIds = this.paperService.getIdentifiersOfPaperAuthors(paperId);
-        this.paperService.rejectPaper(paperId);
+        XmlWrapper paperWrapper = this.paperService.rejectPaper(paperId);
+        byte[] pdf = ResourceUtils.convertResourceToByteArray(this.paperService.convertPaperToPdf(paperWrapper.getXml()));
+        String html = ResourceUtils.convertResourceToString(this.paperService.convertPaperToHtml(paperWrapper.getXml()));
         authorIds.stream().forEach(authorId -> {
             XmlWrapper userWrapper = new XmlWrapper(this.userService.findById(authorId));
             String recipient = XmlExtractorUtil.extractStringAndValidateNotBlank(userWrapper.getDocument(), "/user/email");
             try {
-                this.emailService.sendPaperRejectedNotificationEmail(recipient, paperTitle);
+                this.emailService.sendPaperRejectedNotificationEmail(recipient, paperTitle, pdf, html);
             } catch (MessagingException e) {
                 throw new InternalServerException(e);
             }

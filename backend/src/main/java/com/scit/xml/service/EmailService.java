@@ -94,14 +94,16 @@ public class EmailService {
      *
      * @param recipient e-mail address of the recipient
      * @param paperTitle title of the paper mentioned
+     * @param pdf PDF representation of the {@link Paper} instance
+     * @param html HTML representation of the {@link Paper} instance
      * @throws MessagingException Exception thrown in case an error on the SMTP server occurs
      */
     @Async
-    public void sendPaperRejectedNotificationEmail(String recipient, String paperTitle) throws MessagingException {
+    public void sendPaperRejectedNotificationEmail(String recipient, String paperTitle, byte[] pdf, String html) throws MessagingException {
         final String subject = "Paper rejected";
-        final String text = String.format("Your paper titled \"<b>%s</b>\" has been rejected by the editor.", paperTitle);
+        final String text = String.format("Your paper titled \"<b>%s</b>\" has been rejected by the editor. You can take a look at the comments in the document.", paperTitle);
 
-        this.sendEmail(recipient, subject, text);
+        this.sendEmailWithAttachments(recipient, subject, text, paperTitle, pdf, html);
     }
 
     /**

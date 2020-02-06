@@ -70,12 +70,12 @@ public final class Constants {
                 "SELECT DISTINCT ?paperID WHERE { \n" +
                 "  <%s> " + Predicate.CREATED + " ?paperID .\n" +
                 "  ?paperID " + Predicate.TYPE_OF + " <http://www.scit.org/schema/paper> ; rv:authors:author:name ?authorName .\n" +
-                "  ?paperID rv:paper_info:doi ?doi .\n" +
-                "  ?paperID rv:paper_info:journal_id ?journalId .\n" +
-                "  ?paperID rv:paper_info:category ?category;\n" +
+                "  ?paperID rv:paper_info:doi %s .\n" +
+                "  ?paperID rv:paper_info:journal_id %s .\n" +
+                "  ?paperID rv:paper_info:category %s;\n" +
                 "  rv:paper_info:submission_dates ?date .\n" +
-                "  FILTER contains(?date, \"\")\n" +
-                "  FILTER contains(?authorName, \"\")\n" +
+                "  FILTER contains(?date, \"%s\")\n" +
+                "  FILTER contains(?authorName, \"%s\")\n" +
                 "}";
 
         public static final String GET_AUTHORS_OF_PAPER_QUERY = VOCABULARY_PREFIX +

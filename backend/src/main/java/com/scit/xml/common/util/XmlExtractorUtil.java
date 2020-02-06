@@ -2,6 +2,7 @@ package com.scit.xml.common.util;
 
 import com.scit.xml.common.api.RestApiErrors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.vocabulary.VOID;
 import org.exist.xquery.XPathUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,6 +28,10 @@ public class XmlExtractorUtil {
                 RestApiErrors.fieldShouldNotBeEmptyString(xPathExpression));
 
         return field;
+    }
+
+    public static Node extractNode(Document document, String xPathExpression) {
+        return ((Node) XPathUtils.evaluate(xPathExpression, document, XPathConstants.NODE));
     }
 
     public static String extractString(Document document, String xPathExpression) {
@@ -63,6 +68,10 @@ public class XmlExtractorUtil {
             content.add(text);
         }
         return content;
+    }
+
+    public static NodeList extractChildrenElementsToList(Document document, String xPathExpression) {
+        return (NodeList) XPathUtils.evaluate(xPathExpression, document, XPathConstants.NODESET);
     }
 
     public static String extractPaperId(String paperXml) {
