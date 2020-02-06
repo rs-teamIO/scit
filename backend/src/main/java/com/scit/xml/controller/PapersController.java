@@ -277,10 +277,11 @@ public class PapersController {
 
     /**
      * GET api/v1/papers/search-by-text/private
-     * ACCESS LEVEL: Anyone
+     * ACCESS LEVEL: Only authenticated users
      *
      * Returns the IDs and titles of {@link Paper}s that contain given text and are created by the current user.
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = RestApiEndpoints.SEARCH_BY_TEXT_PRIVATE,
                 produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity searchUsersPapersByText(@RequestParam(RestApiRequestParameters.TEXT) String text) {
@@ -296,4 +297,52 @@ public class PapersController {
         return ResponseEntity.ok(responseBody);
     }
 
+    /**
+     * GET api/v1/papers/search-by-metadata
+     * ACCESS LEVEL: Anyone
+     *
+     * Returns the IDs and titles of published {@link Paper}s that match given metadata parameters.
+     */
+    @GetMapping(value = RestApiEndpoints.SEARCH_BY_METADATA,
+            produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity searchPublishedPapersByMetadata(@RequestParam(value = RestApiRequestParameters.DOI, required = false) String doi,
+                                                          @RequestParam(value = RestApiRequestParameters.JOURNAL_ID, required = false) String journalId,
+                                                          @RequestParam(value = RestApiRequestParameters.CATEGORY, required = false) String category,
+                                                          @RequestParam(value = RestApiRequestParameters.YEAR, required = false) Integer year,
+                                                          @RequestParam(value = RestApiRequestParameters.AUTHOR_NAME, required = false) String authorName) {
+        List<String> paperIds = this.paperService.getPublishedPapersByMetadata(doi, journalId, category, year, authorName);
+        StringBuilder sb = new StringBuilder();
+        paperIds.stream()
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+        return ResponseEntity.ok(responseBody);
+    }
+
+    /**
+     * GET api/v1/papers/search-by-metadata/private
+     * ACCESS LEVEL: Only authenticated users
+     *
+     * Returns the IDs and titles of {@link Paper}s that match given metadata parameters and are created by the current user.
+     */
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = RestApiEndpoints.SEARCH_BY_METADATA_PRIVATE,
+            produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity searchUsersPapersByMetadata(@RequestParam(value = RestApiRequestParameters.DOI, required = false) String doi,
+                                                      @RequestParam(value = RestApiRequestParameters.JOURNAL_ID, required = false) String journalId,
+                                                      @RequestParam(value = RestApiRequestParameters.CATEGORY, required = false) String category,
+                                                      @RequestParam(value = RestApiRequestParameters.YEAR, required = false) int year,
+                                                      @RequestParam(value = RestApiRequestParameters.AUTHOR_NAME, required = false) String authorName) {
+        List<String> paperIds = this.paperService.getUsersPapersByMetadata(JwtTokenDetailsUtil.getCurrentUserId(), doi, journalId, category, year, authorName);
+        StringBuilder sb = new StringBuilder();
+        paperIds.stream()
+                .map(XmlResponseUtils::convertPaperToXmlResponse)
+                .collect(Collectors.toList())
+                .forEach(s -> sb.append(s.trim()));
+
+        String responseBody = XmlResponseUtils.wrapResponse(new XmlResponse(RestApiConstants.PAPERS, sb.toString()));
+        return ResponseEntity.ok(responseBody);
+    }
 }

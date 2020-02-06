@@ -28,6 +28,7 @@ public final class RestApiEndpoints {
     public static final String SEARCH_BY_TEXT = "/search-by-text";
     public static final String SEARCH_BY_TEXT_PRIVATE = "/search-by-text/private";
     public static final String SEARCH_BY_METADATA = "/search-by-metadata";
+    public static final String SEARCH_BY_METADATA_PRIVATE = "/search-by-metadata/private";
 
     public static final String PAPERS = API_ROOT + "/papers";
     public static final String PUBLISHED = "/published";

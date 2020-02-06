@@ -16,6 +16,7 @@ import com.scit.xml.service.converter.DocumentConverter;
 import com.scit.xml.service.validator.database.PaperDatabaseValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.sparql.function.library.date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -219,6 +220,73 @@ public class PaperService {
     }
 
 
+    // ======================================= getPublishedPapersByMetadata =======================================
+
+    private final String SPARQL_GET_PUBLISHED_PAPERS_BY_METADATA_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" +
+            "SELECT DISTINCT ?paperID\n" +
+            "WHERE \n" +
+            "{ ?paperID rv:was_published_by ?o ; rv:authors:author:name ?authorName .\n" +
+            "  ?paperID rv:paper_info:doi %s .\n" +
+            "  ?paperID rv:paper_info:journal_id %s .\n" +
+            "  ?paperID rv:paper_info:category %s;\n" +
+            "  rv:paper_info:submission_dates ?date .\n" +
+            "  FILTER contains(?date, \"%s\")\n" +
+            "  FILTER contains(?authorName, \"%s\")\n" +
+            "}";
+
+    public List<String> getPublishedPapersByMetadata(String doi, String journalId, String category, Integer year, String authorName) {
+
+        doi = doi == null || doi.isEmpty() ? "?doi" : "\"" + doi + "\"";
+        journalId = journalId == null || journalId.isEmpty() ? "?journalId" : "\"" + journalId + "\"";
+        category = category == null || category.isEmpty() ? "?category" : "\"" + category + "\"";
+        String yearStr = year == null ? "" : year.toString();
+        authorName = authorName == null ? "" : authorName;
+
+        String query = String.format(SPARQL_GET_PUBLISHED_PAPERS_BY_METADATA_QUERY,
+                doi, journalId, category, yearStr, authorName);
+
+        List<String> paperIds = this.paperRepository.selectSubjects(query);
+
+        return paperIds.stream()
+                .map(id -> this.findById(id))
+                .collect(Collectors.toList());
+    }
+
+    // ======================================= getPublishedPapersByMetadata =======================================
+
+    private final String SPARQL_GET_USERS_PAPERS_BY_METADATA_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
+            "\n" +
+            "SELECT DISTINCT ?paperID\n" +
+            "WHERE \n" +
+            "{ \n" +
+            "  <%s> rv:created ?paperID .\n" +
+            "  ?paperID rv:type_of <http://www.scit.org/schema/paper> ; rv:authors:author:name ?authorName .\n" +
+            "  ?paperID rv:paper_info:doi ?doi .\n" +
+            "  ?paperID rv:paper_info:journal_id ?journalId .\n" +
+            "  ?paperID rv:paper_info:category ?category;\n" +
+            "  rv:paper_info:submission_dates ?date .\n" +
+            "  FILTER contains(?date, \"\")\n" +
+            "  FILTER contains(?authorName, \"\")\n" +
+            "}";
+
+    public List<String> getUsersPapersByMetadata(String userId, String doi, String journalId, String category, Integer year, String authorName) {
+
+        doi = doi == null || doi.isEmpty() ? "?doi" : "\"" + doi + "\"";
+        journalId = journalId == null || journalId.isEmpty() ? "?journalId" : "\"" + journalId + "\"";
+        category = category == null || category.isEmpty() ? "?category" : "\"" + category + "\"";
+        String yearStr = year == null ? "" : year.toString();
+        authorName = authorName == null ? "" : authorName;
+
+        String query = String.format(SPARQL_GET_USERS_PAPERS_BY_METADATA_QUERY,
+                userId, doi, journalId, category, yearStr, authorName);
+
+        List<String> paperIds = this.paperRepository.selectSubjects(query);
+
+        return paperIds.stream()
+                .map(id -> this.findById(id))
+                .collect(Collectors.toList());
+    }
 
     // ======================================= getRaw and getPdf =======================================
 
@@ -341,7 +409,7 @@ public class PaperService {
     // ======================================= recommendAuthors =======================================
 
     private final String SPARQL_GET_SUGGESTED_AUTHORS_QUERY = "PREFIX rv: <http://www.scit.org/rdfvocabulary/>\n" +
-            "\nSELECT DISTINCT ?s WHERE { ?s rv:is_a <http://www.scit.org/schema/user>\n" +
+            "\nSELECT DISTINCT ?s WHERE { ?s rv:type_of <http://www.scit.org/schema/user>\n" +
             "  MINUS { ?s rv:created|rv:assigned_to|rv:currently_reviewing|rv:reviewed <%s> } }" +
             "LIMIT 10";
 
