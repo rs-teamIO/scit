@@ -38,7 +38,7 @@ const publishedPapersUrl = '/api/v1/papers/published';
 
 const searchPublishedTextUrl = '/api/v1/papers/search-by-text?text=';
 const searchAuthorsPaperUrl = '/api/v1/papers/search-by-text/private?text=';
-const metadataSearchUrl = 'api/v1/papers/metadata?'; // TODO: Change url;
+const metadataSearchUrl = 'api/v1/papers/search-by-metadata/private?'; // TODO: Change url;
 
 
 @Injectable({
@@ -71,8 +71,8 @@ export class PaperService {
 
   metadataSearch(doi: string, journalId: string, category: string, yearOfPublishing: number, authorName: string) {
 
-    let query = `doi=${doi ? doi : null}&journalIdi=${journalId ? journalId : null}&category=${category ? category : null}` +
-                  `&yearOfPublishing=${yearOfPublishing ? yearOfPublishing : null}&authorName=${authorName ? authorName : null}`;
+    let query = `doi=${doi}&journal_id=${journalId}&category=${category}` +
+                  `&year=${yearOfPublishing}&author_name=${authorName}`;
     query = query.split(' ').join('_');
     query = query.split('/').join('_');
 
@@ -97,7 +97,7 @@ export class PaperService {
     this.router.navigateByUrl('review/' + idHolder[idHolder.length - 1]);
   }
 
-  getXmlByPaperId(id: string): Observable<string>{
+  getXmlByPaperId(id: string): Observable<string> {
 
     return this.http.get(`${getXmlByIdUrl + id}`, {
       headers: new HttpHeaders({
@@ -251,6 +251,7 @@ export class PaperService {
 
     const toCountLett = `<paper:paper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:paper="http://www.scit.org/schema/paper">`;
     const toInsert = `<paper:paper_info>` +
+                    `<paper:doi></paper:doi>` +
                     `<paper:journal_id></paper:journal_id>` +
                     `<paper:category></paper:category>` +
                     `<paper:status>submitted</paper:status>` +
